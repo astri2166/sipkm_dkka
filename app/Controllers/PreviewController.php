@@ -54,30 +54,209 @@ class PreviewController extends BaseController
     }
 
     // ====================================================================
-    // STUB / PLACEHOLDER UNTUK TAHAP SELANJUTNYA (TAHAP 3 - 5)
-    // Akan diisi tampilan lengkap saat memasuki Tahap masing-masing
+    // TAHAP 3: FRONTEND UI/UX MODUL MAHASISWA
     // ====================================================================
 
-    // Tahap 3: Mahasiswa
     public function mhsDashboard()
     {
-        return $this->renderPlaceholder('Dashboard Mahasiswa', 'Ketua Kelompok', 'dashboard', 'Tahap 3');
+        $role = $this->request->getGet('role') ?? 'Ketua Kelompok';
+        $hasKelompok = $this->request->getGet('has_kelompok') !== '0';
+
+        $data = [
+            'title'         => 'Dashboard Mahasiswa | SIPKM-DKKA',
+            'pageHeader'    => 'Dashboard Mahasiswa',
+            'role'          => $role,
+            'activeMenu'    => 'dashboard',
+            'userName'      => ($role === 'Ketua Kelompok') ? 'Rizky Pratama' : 'Nadia Putri',
+            'hasKelompok'   => $hasKelompok,
+            'hasProposal'   => $hasKelompok,
+            'mahasiswa'     => [
+                'nim'           => ($role === 'Ketua Kelompok') ? '2412501001' : '2412501002',
+                'namaMahasiswa' => ($role === 'Ketua Kelompok') ? 'Rizky Pratama' : 'Nadia Putri',
+                'programStudi'  => ($role === 'Ketua Kelompok') ? 'Sistem Informasi' : 'Teknik Informatika',
+                'noWhatsapp'    => ($role === 'Ketua Kelompok') ? '081234567801' : '081234567802',
+            ],
+            'kelompok'      => [
+                'idKelompok'    => 1,
+                'namaKelompok'  => 'Tim Inovasi Smart Campus UBL',
+                'tahunPeriode'  => '2026',
+                'nimKetua'      => '2412501001',
+                'jumlahAnggota' => 2,
+            ],
+            'daftarAnggota' => [
+                [
+                    'nim'           => '2412501001',
+                    'namaMahasiswa' => 'Rizky Pratama',
+                    'programStudi'  => 'Sistem Informasi',
+                    'noWhatsapp'    => '081234567801',
+                    'email'         => '2412501001@student.budiluhur.ac.id',
+                ],
+                [
+                    'nim'           => '2412501002',
+                    'namaMahasiswa' => 'Nadia Putri',
+                    'programStudi'  => 'Teknik Informatika',
+                    'noWhatsapp'    => '081234567802',
+                    'email'         => '2412501002@student.budiluhur.ac.id',
+                ],
+            ],
+            'proposal'      => [
+                'idProposal'       => 1,
+                'judulProposal'    => 'Sistem Deteksi Dini Kualitas Udara Kampus Berbasis IoT dan Edge AI',
+                'jenisPKM'         => 'PKM-KC',
+                'tautanGoogleDocs' => 'https://drive.google.com/drive/folders/1ContohFolderProposalTimUBL2026',
+                'statusProposal'   => 'Sudah Ditinjau',
+                'tglUnggah'        => '2026-11-10',
+            ],
+            'dosen'         => [
+                'nipDosen'  => '0315088501',
+                'namaDosen' => 'Dr. Ahmad Fauzi, M.T.',
+            ],
+        ];
+
+        return view('mahasiswa/dashboard', $data);
     }
 
     public function mhsKelompok()
     {
-        return $this->renderPlaceholder('Data Kelompok PKM', 'Ketua Kelompok', 'kelompok', 'Tahap 3');
+        $role = $this->request->getGet('role') ?? 'Ketua Kelompok';
+        $hasKelompok = $this->request->getGet('has_kelompok') !== '0';
+
+        $data = [
+            'title'          => 'Data Kelompok PKM | SIPKM-DKKA',
+            'pageHeader'     => 'Data Kelompok PKM',
+            'role'           => $role,
+            'activeMenu'     => 'kelompok',
+            'userName'       => ($role === 'Ketua Kelompok') ? 'Rizky Pratama' : 'Nadia Putri',
+            'hasKelompok'    => $hasKelompok,
+            'kodeKelompok'   => 'PKM-UBL-2026-X89',
+            'mahasiswa'      => [
+                'nim'           => ($role === 'Ketua Kelompok') ? '2412501001' : '2412501002',
+                'namaMahasiswa' => ($role === 'Ketua Kelompok') ? 'Rizky Pratama' : 'Nadia Putri',
+                'programStudi'  => ($role === 'Ketua Kelompok') ? 'Sistem Informasi' : 'Teknik Informatika',
+            ],
+            'kelompok'       => [
+                'idKelompok'    => 1,
+                'namaKelompok'  => 'Tim Inovasi Smart Campus UBL',
+                'tahunPeriode'  => '2026',
+                'nimKetua'      => '2412501001',
+                'jumlahAnggota' => 2,
+            ],
+            'daftarAnggota'  => [
+                [
+                    'nim'           => '2412501001',
+                    'namaMahasiswa' => 'Rizky Pratama',
+                    'programStudi'  => 'Sistem Informasi',
+                    'noWhatsapp'    => '081234567801',
+                    'email'         => '2412501001@student.budiluhur.ac.id',
+                ],
+                [
+                    'nim'           => '2412501002',
+                    'namaMahasiswa' => 'Nadia Putri',
+                    'programStudi'  => 'Teknik Informatika',
+                    'noWhatsapp'    => '081234567802',
+                    'email'         => '2412501002@student.budiluhur.ac.id',
+                ],
+            ],
+            'mahasiswaBebas' => [
+                [
+                    'nim'           => '2412501872',
+                    'namaMahasiswa' => 'Alya Zahra Maharani',
+                    'programStudi'  => 'Sistem Informasi',
+                    'noWhatsapp'    => '081234567872',
+                ],
+                [
+                    'nim'           => '2412501873',
+                    'namaMahasiswa' => 'Dimas Arya Sena',
+                    'programStudi'  => 'Teknik Informatika',
+                    'noWhatsapp'    => '081234567873',
+                ],
+            ],
+        ];
+
+        return view('mahasiswa/kelompok', $data);
     }
 
     public function mhsProposal()
     {
-        return $this->renderPlaceholder('Input Proposal PKM', 'Ketua Kelompok', 'proposal', 'Tahap 3');
+        $role = $this->request->getGet('role') ?? 'Ketua Kelompok';
+
+        $data = [
+            'title'       => 'Input Proposal PKM | SIPKM-DKKA',
+            'pageHeader'  => 'Input Proposal PKM',
+            'role'        => $role,
+            'activeMenu'  => 'proposal',
+            'userName'    => ($role === 'Ketua Kelompok') ? 'Rizky Pratama' : 'Nadia Putri',
+            'hasProposal' => true,
+            'mahasiswa'   => [
+                'nim'           => '2412501001',
+                'namaMahasiswa' => 'Rizky Pratama',
+            ],
+            'kelompok'    => [
+                'idKelompok'   => 1,
+                'namaKelompok' => 'Tim Inovasi Smart Campus UBL',
+                'tahunPeriode' => '2026',
+                'nimKetua'     => '2412501001',
+            ],
+            'proposal'    => [
+                'idProposal'       => 1,
+                'judulProposal'    => 'Sistem Deteksi Dini Kualitas Udara Kampus Berbasis IoT dan Edge AI',
+                'jenisPKM'         => 'PKM-KC',
+                'tautanGoogleDocs' => 'https://drive.google.com/drive/folders/1ContohFolderProposalTimUBL2026',
+                'statusProposal'   => 'Sudah Ditinjau',
+                'tglUnggah'        => '2026-11-10',
+            ],
+        ];
+
+        return view('mahasiswa/proposal', $data);
     }
 
     public function mhsTracking()
     {
-        return $this->renderPlaceholder('Tracking Status Proposal', 'Ketua Kelompok', 'tracking', 'Tahap 3');
+        $role = $this->request->getGet('role') ?? 'Ketua Kelompok';
+        $statusParam = $this->request->getGet('status') ?? 'Sudah Ditinjau';
+
+        $data = [
+            'title'          => 'Tracking Status Proposal | SIPKM-DKKA',
+            'pageHeader'     => 'Tracking Status Proposal',
+            'role'           => $role,
+            'activeMenu'     => 'tracking',
+            'userName'       => ($role === 'Ketua Kelompok') ? 'Rizky Pratama' : 'Nadia Putri',
+            'statusProposal' => $statusParam,
+            'kelompok'       => [
+                'idKelompok'   => 1,
+                'namaKelompok' => 'Tim Inovasi Smart Campus UBL',
+                'tahunPeriode' => '2026',
+                'nimKetua'     => '2412501001',
+            ],
+            'proposal'       => [
+                'idProposal'       => 1,
+                'judulProposal'    => 'Sistem Deteksi Dini Kualitas Udara Kampus Berbasis IoT dan Edge AI',
+                'jenisPKM'         => 'PKM-KC',
+                'tautanGoogleDocs' => 'https://drive.google.com/drive/folders/1ContohFolderProposalTimUBL2026',
+                'statusProposal'   => $statusParam,
+                'tglUnggah'        => '2026-11-10',
+            ],
+            'dosen'          => [
+                'nipDosen'  => '0315088501',
+                'namaDosen' => 'Dr. Ahmad Fauzi, M.T.',
+            ],
+            'peninjauan'     => [
+                'idPeninjauan'        => 1,
+                'catatanAdministrasi' => "1. Margin kiri sudah 4 cm, namun daftar pustaka belum menggunakan format Harvard secara konsisten.\n2. Perbaiki penomoran halaman romawi pada lembar pengesahan.",
+                'catatanSubstansi'    => "1. Latar belakang masalah sangat kuat dan relevan dengan SDG 11.\n2. Metodologi kalibrasi sensor MQ-135 perlu diperjelas pada Bab 3.\n3. Perbaiki rincian anggaran biaya pos operasional agar tidak melebihi 25% dari total plafon pendanaan.",
+                'tautanRekapDrive'    => 'https://drive.google.com/drive/folders/1HasilRekapPenilaianDosenUBL2026',
+                'statusPenugasan'     => 'Selesai',
+                'tglPenugasan'        => '2026-11-11',
+                'tglSelesaiTinjau'    => '2026-11-14',
+            ],
+        ];
+
+        return view('mahasiswa/tracking', $data);
     }
+
+    // ====================================================================
+    // STUB / PLACEHOLDER UNTUK TAHAP SELANJUTNYA (TAHAP 4 - 5)
+    // ====================================================================
 
     // Tahap 4: Dosen Peninjau
     public function dosenDashboard()
@@ -144,16 +323,15 @@ class PreviewController extends BaseController
             '<h4 class="fw-bold text-dark">' . esc($title) . '</h4>' .
             '<p class="text-muted">Halaman ini adalah bagian dari <strong>' . esc($tahap) . '</strong> Frontend UI/UX SIPKM-DKKA.</p>' .
             '<div class="alert alert-info d-inline-block text-start small">' .
-            '<i class="bi bi-info-circle me-1"></i> Saat ini <strong>Tahap 2 (Halaman Publik & Auth)</strong> telah selesai diimplementasikan.<br>' .
+            '<i class="bi bi-info-circle me-1"></i> Saat ini <strong>Tahap 2 & Tahap 3 (Frontend Mahasiswa)</strong> telah selesai diimplementasikan.<br>' .
             'Ketik atau konfirmasi <strong>"Lanjut ' . esc($tahap) . '"</strong> untuk men-generate tampilan antarmuka ini.' .
             '</div>' .
             '<div class="mt-3">' .
-            '<a href="' . base_url('/') . '" class="btn btn-outline-primary btn-sm me-2"><i class="bi bi-globe me-1"></i> Buka Papan Lomba Publik</a>' .
-            '<a href="' . base_url('login') . '" class="btn btn-primary btn-sm"><i class="bi bi-box-arrow-in-right me-1"></i> Halaman Login</a>' .
+            '<a href="' . base_url('mahasiswa/dashboard') . '" class="btn btn-outline-primary btn-sm me-2"><i class="bi bi-speedometer2 me-1"></i> Dashboard Mahasiswa</a>' .
+            '<a href="' . base_url('/') . '" class="btn btn-primary btn-sm"><i class="bi bi-globe me-1"></i> Papan Lomba Publik</a>' .
             '</div>' .
             '</div>';
 
-        // Render via layout main
         $content = view('layouts/main', [
             'title'      => esc($title) . ' | SIPKM-DKKA Preview',
             'pageHeader' => esc($title),

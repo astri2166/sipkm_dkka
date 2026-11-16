@@ -161,3 +161,97 @@ body {
   right: 24px;
   z-index: 9999;
 }
+
+/* 7. Stepper Horizontal Timeline (Tracking Proposal) */
+.sipkm-stepper {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin: 30px 0 20px 0;
+}
+
+.sipkm-stepper::before {
+  content: '';
+  position: absolute;
+  top: 24px;
+  left: 30px;
+  right: 30px;
+  height: 4px;
+  background: #e2e8f0;
+  z-index: 1;
+}
+
+.step-item {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  flex: 1;
+}
+
+.step-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 3px solid #cbd5e1;
+  color: #64748b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  margin-bottom: 8px;
+}
+
+.step-item.completed .step-circle {
+  background: #10b981;
+  border-color: #10b981;
+  color: #ffffff;
+}
+
+.step-item.active .step-circle {
+  background: #0f294a;
+  border-color: #f59e0b;
+  color: #ffffff;
+  box-shadow: 0 0 0 5px rgba(245, 158, 11, 0.25);
+}
+
+.step-item.rejected .step-circle {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: #ffffff;
+}
+
+.step-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 2px;
+}
+
+.step-subtitle {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+/* 8. 2 Card Catatan Peninjauan */
+.card-catatan-admin {
+  border-left: 5px solid #2563eb !important;
+  background: #f8fafc;
+}
+
+.card-catatan-substansi {
+  border-left: 5px solid #f59e0b !important;
+  background: #fffdf5;
+}
+
+.code-box {
+  background: #f1f5f9;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-family: monospace;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
