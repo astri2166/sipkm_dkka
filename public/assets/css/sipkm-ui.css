@@ -1,0 +1,163 @@
+:root {
+  --sipkm-primary: #0f294a;
+  --sipkm-primary-light: #1e40af;
+  --sipkm-accent: #f59e0b;
+  --sipkm-bg: #f4f6f9;
+  --sipkm-card-border: #e2e8f0;
+}
+
+body {
+  background-color: var(--sipkm-bg);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: #1e293b;
+  overflow-x: hidden;
+}
+
+/* 1. Interactive Card & Hover Lift Effect */
+.sipkm-card {
+  background: #ffffff;
+  border: 1px solid var(--sipkm-card-border);
+  border-radius: 14px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sipkm-card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -8px rgba(15, 41, 74, 0.14);
+  border-color: #93c5fd;
+}
+
+/* 2. Button States & Active Press */
+.btn-sipkm {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.btn-sipkm:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn-primary-sipkm {
+  background-color: var(--sipkm-primary);
+  border-color: var(--sipkm-primary);
+  color: #fff;
+}
+
+.btn-primary-sipkm:hover:not(:disabled) {
+  background-color: var(--sipkm-primary-light);
+  border-color: var(--sipkm-primary-light);
+  color: #fff;
+}
+
+/* 3. Interactive Form Inputs & Shake Feedback */
+.form-control, .form-select {
+  border-radius: 10px;
+  border-color: #cbd5e1;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--sipkm-primary-light);
+  box-shadow: 0 0 0 0.22rem rgba(30, 64, 175, 0.15);
+}
+
+@keyframes subtleShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.input-shake {
+  animation: subtleShake 0.3s ease-in-out;
+  border-color: #dc2626 !important;
+}
+
+/* 4. Smooth Fade-In & Slide-Up Transitions */
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fadeSlideUp 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* 5. Skeleton Shimmer Loading */
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #f0f2f5 25%, #e2e8f0 50%, #f0f2f5 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: 8px;
+}
+
+.skeleton-poster {
+  width: 100%;
+  height: 200px;
+  border-radius: 12px 12px 0 0;
+}
+
+.skeleton-line {
+  height: 14px;
+  margin-bottom: 10px;
+}
+
+.skeleton-badge {
+  width: 90px;
+  height: 22px;
+  border-radius: 50px;
+}
+
+.lazy-img {
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out;
+}
+
+.lazy-img.loaded {
+  opacity: 1;
+}
+
+/* 6. Sidebar Layout & Floating Toast */
+.sipkm-sidebar {
+  width: 265px;
+  min-height: 100vh;
+  background: var(--sipkm-primary);
+  color: #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.sipkm-sidebar .nav-link {
+  color: #cbd5e1;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s ease;
+}
+
+.sipkm-sidebar .nav-link:hover,
+.sipkm-sidebar .nav-link.active {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  transform: translateX(3px);
+}
+
+#sipkm-toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+}
