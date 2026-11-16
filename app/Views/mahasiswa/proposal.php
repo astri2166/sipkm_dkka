@@ -2,6 +2,20 @@
 
 <?= $this->section('content') ?>
 <div class="container-fluid p-0">
+  <!-- Flash Messages -->
+  <?php if (session()->getFlashdata('success')): ?>
+    <div class="alert alert-success small py-2 px-3 mb-3 d-flex align-items-center gap-2">
+      <i class="bi bi-check-circle-fill flex-shrink-0"></i>
+      <div><?= session()->getFlashdata('success') ?></div>
+    </div>
+  <?php endif; ?>
+  <?php if (session()->getFlashdata('error')): ?>
+    <div class="alert alert-danger small py-2 px-3 mb-3 d-flex align-items-center gap-2">
+      <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+      <div><?= session()->getFlashdata('error') ?></div>
+    </div>
+  <?php endif; ?>
+
   <!-- Header Halaman -->
   <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
     <div>
@@ -61,16 +75,18 @@
             </span>
           </div>
 
-          <form class="sipkm-form" onsubmit="event.preventDefault(); showSipkmToast('Proposal berhasil disimpan! Status berubah menjadi: Diunggah.', 'success'); setTimeout(() => window.location.href='<?= base_url('mahasiswa/tracking') ?>', 1200);">
+          <form action="<?= base_url('mahasiswa/proposal/simpan') ?>" method="post" class="sipkm-form">
+            <?= csrf_field() ?>
+
             <!-- Informasi Tim (Readonly) -->
             <div class="row g-3 mb-3">
               <div class="col-md-6">
                 <label class="form-label small fw-semibold text-muted">Nama Kelompok PKM:</label>
-                <input type="text" class="form-control bg-light" value="<?= esc($kelompok['namaKelompok'] ?? 'Tim Inovasi Smart Campus UBL') ?>" readonly>
+                <input type="text" class="form-control bg-light" value="<?= esc($kelompok['namaKelompok'] ?? 'Belum ada kelompok') ?>" readonly>
               </div>
               <div class="col-md-6">
                 <label class="form-label small fw-semibold text-muted">Ketua Tim (NIM):</label>
-                <input type="text" class="form-control bg-light font-monospace" value="<?= esc($kelompok['nimKetua'] ?? '2412501001') ?> - <?= esc($mahasiswa['namaMahasiswa'] ?? 'Rizky Pratama') ?>" readonly>
+                <input type="text" class="form-control bg-light font-monospace" value="<?= esc($kelompok['nimKetua'] ?? $mahasiswa['nim']) ?> - <?= esc($mahasiswa['namaMahasiswa']) ?>" readonly>
               </div>
             </div>
 
@@ -102,7 +118,7 @@
                 </label>
                 <small class="text-muted" id="charCount">0 / 250 karakter</small>
               </div>
-              <textarea class="form-control" rows="3" required placeholder="Contoh: Sistem Deteksi Dini Kualitas Udara Kampus Berbasis IoT dan Edge AI" id="judulProposal" maxlength="250" oninput="document.getElementById('charCount').textContent = `${this.value.length} / 250 karakter`;"><?= esc($proposal['judulProposal'] ?? '') ?></textarea>
+              <textarea name="judulProposal" class="form-control" rows="3" required placeholder="Contoh: Sistem Deteksi Dini Kualitas Udara Kampus Berbasis IoT dan Edge AI" id="judulProposal" maxlength="250" oninput="document.getElementById('charCount').textContent = `${this.value.length} / 250 karakter`;"><?= esc($proposal['judulProposal'] ?? '') ?></textarea>
               <div class="form-text">Judul harus padat, jelas, menarik, dan tidak menggunakan singkatan yang tidak baku.</div>
             </div>
 
@@ -115,7 +131,7 @@
                 <span class="input-group-text bg-light text-danger">
                   <i class="bi bi-google"></i>
                 </span>
-                <input type="url" class="form-control" placeholder="https://docs.google.com/document/d/... atau https://drive.google.com/..." required data-validate-drive="true" id="tautanGoogleDocs" value="<?= esc($proposal['tautanGoogleDocs'] ?? '') ?>">
+                <input type="url" name="tautanGoogleDocs" class="form-control" placeholder="https://docs.google.com/document/d/... atau https://drive.google.com/..." required data-validate-drive="true" id="tautanGoogleDocs" value="<?= esc($proposal['tautanGoogleDocs'] ?? '') ?>">
               </div>
               <div class="form-text mt-1 text-muted" id="driveHelp">
                 <i class="bi bi-shield-check text-success me-1"></i>

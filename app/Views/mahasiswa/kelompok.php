@@ -2,6 +2,20 @@
 
 <?= $this->section('content') ?>
 <div class="container-fluid p-0">
+  <!-- Flash Messages -->
+  <?php if (session()->getFlashdata('success')): ?>
+    <div class="alert alert-success small py-2 px-3 mb-3 d-flex align-items-center gap-2">
+      <i class="bi bi-check-circle-fill flex-shrink-0"></i>
+      <div><?= session()->getFlashdata('success') ?></div>
+    </div>
+  <?php endif; ?>
+  <?php if (session()->getFlashdata('error')): ?>
+    <div class="alert alert-danger small py-2 px-3 mb-3 d-flex align-items-center gap-2">
+      <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+      <div><?= session()->getFlashdata('error') ?></div>
+    </div>
+  <?php endif; ?>
+
   <!-- Header Switcher Preview State -->
   <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
     <div>
@@ -10,14 +24,11 @@
     </div>
     <!-- Switcher Simulasi Pengujian -->
     <div class="btn-group btn-group-sm shadow-sm">
-      <a href="<?= base_url('mahasiswa/kelompok?has_kelompok=1&role=Ketua+Kelompok') ?>" class="btn <?= $hasKelompok && $role === 'Ketua Kelompok' ? 'btn-primary' : 'btn-outline-primary' ?>">
-        <i class="bi bi-person-check-fill me-1"></i> Simulasi: Sudah Berkelompok (Ketua)
+      <a href="<?= base_url('mahasiswa/kelompok?role=Ketua+Kelompok') ?>" class="btn <?= $hasKelompok && $role === 'Ketua Kelompok' ? 'btn-primary' : 'btn-outline-primary' ?>">
+        <i class="bi bi-person-check-fill me-1"></i> Ketua Kelompok
       </a>
-      <a href="<?= base_url('mahasiswa/kelompok?has_kelompok=1&role=Anggota+Kelompok') ?>" class="btn <?= $hasKelompok && $role === 'Anggota Kelompok' ? 'btn-primary' : 'btn-outline-primary' ?>">
-        <i class="bi bi-person-fill me-1"></i> Simulasi: Anggota Kelompok
-      </a>
-      <a href="<?= base_url('mahasiswa/kelompok?has_kelompok=0') ?>" class="btn <?= !$hasKelompok ? 'btn-warning text-dark fw-bold' : 'btn-outline-warning text-dark' ?>">
-        <i class="bi bi-person-plus-fill me-1"></i> Simulasi: Belum Kelompok (Form Buat)
+      <a href="<?= base_url('mahasiswa/kelompok?role=Anggota+Kelompok') ?>" class="btn <?= $hasKelompok && $role === 'Anggota Kelompok' ? 'btn-primary' : 'btn-outline-primary' ?>">
+        <i class="bi bi-person-fill me-1"></i> Anggota Kelompok
       </a>
     </div>
   </div>
@@ -32,10 +43,10 @@
         <div class="sipkm-card p-4 shadow-sm mb-4 border-top border-primary border-4">
           <div class="d-flex justify-content-between align-items-start mb-3">
             <span class="badge bg-primary text-white px-3 py-1 rounded-pill">
-              Periode <?= esc($kelompok['tahunPeriode']) ?>
+              Periode <?= esc($kelompok['tahunPeriode'] ?? '2026') ?>
             </span>
             <span class="badge bg-success-subtle text-success border border-success-subtle">
-              <i class="bi bi-lock-fill me-1"></i> Terkunci
+              <i class="bi bi-lock-fill me-1"></i> Terdaftar
             </span>
           </div>
 
@@ -68,7 +79,7 @@
             </div>
             <div class="d-flex justify-content-between mb-2">
               <span class="text-muted">Total Anggota:</span>
-              <span class="fw-bold"><?= esc($kelompok['jumlahAnggota']) ?> / 5 Mahasiswa</span>
+              <span class="fw-bold"><?= count($daftarAnggota) ?> / 5 Mahasiswa</span>
             </div>
             <div class="d-flex justify-content-between">
               <span class="text-muted">Status Validasi:</span>
@@ -83,7 +94,7 @@
             <i class="bi bi-shield-lock-fill text-warning me-1"></i> Kebijakan Kunci Kelompok
           </h6>
           <p class="mb-0 text-muted">
-            Anggota kelompok yang telah terdaftar akan otomatis terkunci (<code>idKelompok</code> terkunci). Perubahan anggota hanya dapat dilakukan sebelum proposal resmi diajukan.
+            Anggota kelompok yang telah terdaftar akan otomatis terkunci (<code>idKelompok</code> terikat). Perubahan anggota hanya dapat dilakukan sebelum proposal resmi diajukan.
           </p>
         </div>
       </div>
@@ -115,9 +126,6 @@
                   <th>Program Studi</th>
                   <th>No. WhatsApp</th>
                   <th>Peran</th>
-                  <?php if ($role === 'Ketua Kelompok'): ?>
-                    <th class="text-center">Aksi</th>
-                  <?php endif; ?>
                 </tr>
               </thead>
               <tbody class="small">
@@ -142,17 +150,6 @@
                         <span class="badge bg-secondary-subtle text-secondary px-2 py-1">Anggota</span>
                       <?php endif; ?>
                     </td>
-                    <?php if ($role === 'Ketua Kelompok'): ?>
-                      <td class="text-center">
-                        <?php if ($m['nim'] !== $kelompok['nimKetua']): ?>
-                          <button class="btn btn-outline-danger btn-sm py-0 px-2" onclick="showSipkmToast('Simulasi: Anggota <?= esc($m['namaMahasiswa']) ?> dapat dikeluarkan selama proposal belum terkunci.', 'warning')">
-                            <i class="bi bi-trash"></i>
-                          </button>
-                        <?php else: ?>
-                          <span class="text-muted" style="font-size: 11px;">(Ketua)</span>
-                        <?php endif; ?>
-                      </td>
-                    <?php endif; ?>
                   </tr>
                 <?php endforeach; ?>
               </tbody>
@@ -184,14 +181,15 @@
             </h6>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <form class="sipkm-form" onsubmit="event.preventDefault(); showSipkmToast('Simulasi: Mahasiswa berhasil ditambahkan ke kelompok!', 'success'); bootstrap.Modal.getInstance(document.getElementById('modalTambahAnggota')).hide();">
+          <form action="<?= base_url('mahasiswa/kelompok/tambah-anggota') ?>" method="post" class="sipkm-form">
+            <?= csrf_field() ?>
             <div class="modal-body">
               <p class="text-muted small">
                 Pilih mahasiswa yang saat ini berstatus <strong>belum memiliki kelompok</strong> (<code>idKelompok IS NULL</code>):
               </p>
               <div class="mb-3">
                 <label class="form-label small fw-semibold">Pilih Mahasiswa Bebas:</label>
-                <select class="form-select" required>
+                <select name="nim" class="form-select" required>
                   <option value="">-- Pilih Mahasiswa --</option>
                   <?php foreach ($mahasiswaBebas as $mb): ?>
                     <option value="<?= esc($mb['nim']) ?>">
@@ -232,21 +230,22 @@
             </p>
           </div>
 
-          <form class="sipkm-form" onsubmit="event.preventDefault(); showSipkmToast('Simulasi: Kelompok baru berhasil dibentuk! Role Anda otomatis berubah menjadi Ketua Kelompok.', 'success'); setTimeout(() => window.location.href='<?= base_url('mahasiswa/kelompok?has_kelompok=1&role=Ketua+Kelompok') ?>', 1200);">
+          <form action="<?= base_url('mahasiswa/kelompok/buat') ?>" method="post" class="sipkm-form">
+            <?= csrf_field() ?>
             <div class="mb-3">
               <label class="form-label fw-semibold text-dark">Nama Kelompok PKM <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" placeholder="Contoh: Tim Inovasi Smart Campus UBL" required>
+              <input type="text" name="namaKelompok" class="form-control" placeholder="Contoh: Tim Inovasi Smart Campus UBL" required>
               <div class="form-text">Gunakan nama tim yang representatif dan sesuai tema inovasi.</div>
             </div>
 
             <div class="row g-3 mb-3">
               <div class="col-md-6">
                 <label class="form-label fw-semibold text-dark">Tahun Periode <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" value="2026" readonly>
+                <input type="text" name="tahunPeriode" class="form-control" value="2026" readonly>
               </div>
               <div class="col-md-6">
                 <label class="form-label fw-semibold text-dark">NIM Ketua (Akun Anda) <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" value="<?= esc($mahasiswa['nim'] ?? '2412501872') ?>" readonly>
+                <input type="text" class="form-control font-monospace" value="<?= esc($mahasiswa['nim']) ?> - <?= esc($mahasiswa['namaMahasiswa']) ?>" readonly>
                 <div class="form-text">Pembuat kelompok akan otomatis ditetapkan sebagai <strong>Ketua Kelompok</strong>.</div>
               </div>
             </div>
@@ -254,19 +253,23 @@
             <!-- Pilih Anggota Bebas -->
             <div class="mb-4">
               <label class="form-label fw-semibold text-dark d-flex justify-content-between align-items-center">
-                <span>Undang Anggota Tim (Minimal 2 orang tambahan) <span class="text-danger">*</span></span>
+                <span>Undang Rekan Tim Tambahan (Pilihan)</span>
                 <span class="badge bg-info-subtle text-info-emphasis">Filter: idKelompok = NULL</span>
               </label>
               <div class="border rounded-3 p-3 bg-light">
-                <p class="small text-muted mb-2">Daftar mahasiswa yang belum tergabung dalam kelompok manapun:</p>
-                <?php foreach ($mahasiswaBebas as $mb): ?>
-                  <div class="form-check mb-2">
-                    <input class="form-check-input" type="checkbox" value="<?= esc($mb['nim']) ?>" id="mhs_<?= esc($mb['nim']) ?>">
-                    <label class="form-check-label small" for="mhs_<?= esc($mb['nim']) ?>">
-                      <strong><?= esc($mb['namaMahasiswa']) ?></strong> (NIM: <?= esc($mb['nim']) ?>) &bull; <?= esc($mb['programStudi']) ?>
-                    </label>
-                  </div>
-                <?php endforeach; ?>
+                <p class="small text-muted mb-2">Centang mahasiswa yang ingin diikutsertakan dalam kelompok:</p>
+                <?php if (!empty($mahasiswaBebas)): ?>
+                  <?php foreach ($mahasiswaBebas as $mb): if ($mb['nim'] !== $mahasiswa['nim']): ?>
+                    <div class="form-check mb-2">
+                      <input class="form-check-input" type="checkbox" name="anggota[]" value="<?= esc($mb['nim']) ?>" id="mhs_<?= esc($mb['nim']) ?>">
+                      <label class="form-check-label small" for="mhs_<?= esc($mb['nim']) ?>">
+                        <strong><?= esc($mb['namaMahasiswa']) ?></strong> (NIM: <?= esc($mb['nim']) ?>) &bull; <?= esc($mb['programStudi']) ?>
+                      </label>
+                    </div>
+                  <?php endif; endforeach; ?>
+                <?php else: ?>
+                  <span class="small text-muted">Belum ada mahasiswa lain yang berstatus bebas (belum berkelompok).</span>
+                <?php endif; ?>
               </div>
             </div>
 

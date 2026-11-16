@@ -23,10 +23,13 @@ $routes->get('logout', 'AuthController::logout');
 // RUTE MODUL MAHASISWA (DIPROTEKSI AUTHFILTER PER ROLE)
 // ====================================================================
 $routes->group('mahasiswa', ['filter' => 'auth:Ketua Kelompok,Anggota Kelompok'], static function ($routes) {
-    $routes->get('dashboard', 'PreviewController::mhsDashboard');
-    $routes->get('kelompok', 'PreviewController::mhsKelompok');
-    $routes->get('proposal', 'PreviewController::mhsProposal');
-    $routes->get('tracking', 'PreviewController::mhsTracking');
+    $routes->get('dashboard', 'MahasiswaController::dashboard');
+    $routes->get('kelompok', 'MahasiswaController::kelompok');
+    $routes->post('kelompok/buat', 'MahasiswaController::buatKelompok');
+    $routes->post('kelompok/tambah-anggota', 'MahasiswaController::tambahAnggota');
+    $routes->get('proposal', 'MahasiswaController::proposal');
+    $routes->post('proposal/simpan', 'MahasiswaController::kirimProposal');
+    $routes->get('tracking', 'MahasiswaController::tracking');
 });
 
 // ====================================================================
