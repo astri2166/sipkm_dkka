@@ -2,6 +2,20 @@
 
 <?= $this->section('content') ?>
 <div class="container-fluid p-0">
+  <!-- Flash Messages -->
+  <?php if (session()->getFlashdata('success')): ?>
+    <div class="alert alert-success small py-2 px-3 mb-3 d-flex align-items-center gap-2">
+      <i class="bi bi-check-circle-fill flex-shrink-0"></i>
+      <div><?= session()->getFlashdata('success') ?></div>
+    </div>
+  <?php endif; ?>
+  <?php if (session()->getFlashdata('error')): ?>
+    <div class="alert alert-danger small py-2 px-3 mb-3 d-flex align-items-center gap-2">
+      <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+      <div><?= session()->getFlashdata('error') ?></div>
+    </div>
+  <?php endif; ?>
+
   <!-- Navigasi Balik & Status Banner -->
   <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
     <div class="d-flex align-items-center gap-2">
@@ -65,7 +79,8 @@
       </div>
     </div>
 
-    <form class="sipkm-form" onsubmit="event.preventDefault(); showSipkmToast('Tahap 1: Catatan Card 1 & Card 2 berhasil disimpan! Status proposal menjadi: Sudah Ditinjau.', 'success'); document.getElementById('badgeTahap1Status').className='badge bg-success text-white'; document.getElementById('badgeTahap1Status').innerText='Tersimpan (Sudah Ditinjau)';">
+    <form action="<?= base_url('dosen/peninjauan/simpan-catatan/' . $tugas['idPeninjauan']) ?>" method="post" class="sipkm-form">
+      <?= csrf_field() ?>
       <div class="row g-4 mb-4">
         <!-- CARD 1: Catatan Administrasi -->
         <div class="col-lg-6">
@@ -80,7 +95,7 @@
               </button>
             </div>
             <p class="small text-muted mb-2">Evaluasi format margin (4-3-3-3), jenis font, batas halaman, lembar pengesahan, & daftar pustaka.</p>
-            <textarea class="form-control" rows="6" id="catatanAdminInput" required placeholder="Contoh:&#10;1. Margin kiri masih 3 cm, ubah menjadi 4 cm sesuai pedoman.&#10;2. Lembar pengesahan belum ditandatangani Dosen Pendamping."><?= esc($tugas['catatanAdministrasi'] ?? '') ?></textarea>
+            <textarea class="form-control" rows="6" name="catatanAdministrasi" id="catatanAdminInput" required placeholder="Contoh:&#10;1. Margin kiri masih 3 cm, ubah menjadi 4 cm sesuai pedoman.&#10;2. Lembar pengesahan belum ditandatangani Dosen Pendamping."><?= esc($tugas['catatanAdministrasi'] ?? '') ?></textarea>
           </div>
         </div>
 
@@ -97,7 +112,7 @@
               </button>
             </div>
             <p class="small text-muted mb-2">Evaluasi metodologi penelitian, latar belakang urgensi masalah, novelty karya cipta, & rasionalitas anggaran.</p>
-            <textarea class="form-control" rows="6" id="catatanSubstansiInput" required placeholder="Contoh:&#10;1. Latar belakang inovasi sangat baik dan selaras dengan tema SDG.&#10;2. Metodologi pengujian akurasi sensor perlu diperdalam pada Bab 3.&#10;3. Rincian anggaran biaya pos konsumsi melebihi 15% plafon."><?= esc($tugas['catatanSubstansi'] ?? '') ?></textarea>
+            <textarea class="form-control" rows="6" name="catatanSubstansi" id="catatanSubstansiInput" required placeholder="Contoh:&#10;1. Latar belakang inovasi sangat baik dan selaras dengan tema SDG.&#10;2. Metodologi pengujian akurasi sensor perlu diperdalam pada Bab 3.&#10;3. Rincian anggaran biaya pos konsumsi melebihi 15% plafon."><?= esc($tugas['catatanSubstansi'] ?? '') ?></textarea>
           </div>
         </div>
       </div>
@@ -131,7 +146,8 @@
       </div>
     </div>
 
-    <form class="sipkm-form" onsubmit="event.preventDefault(); showSipkmToast('Tahap 2 Selesai! Tautan rekap berhasil dikirim ke Admin DKKA. Status penugasan kini: Selesai.', 'success'); document.getElementById('badgeTahap2Status').className='badge bg-success text-white'; document.getElementById('badgeTahap2Status').innerText='Penugasan Selesai (100%)';">
+    <form action="<?= base_url('dosen/peninjauan/kirim-rekap/' . $tugas['idPeninjauan']) ?>" method="post" class="sipkm-form">
+      <?= csrf_field() ?>
       <div class="row g-3 align-items-end mb-3">
         <div class="col-md-9">
           <label class="form-label fw-semibold text-dark">
@@ -139,7 +155,7 @@
           </label>
           <div class="input-group">
             <span class="input-group-text bg-light text-success"><i class="bi bi-google"></i></span>
-            <input type="url" class="form-control" id="tautanRekapDriveInput" placeholder="https://drive.google.com/drive/folders/..." required data-validate-drive="true" value="<?= esc($tugas['tautanRekapDrive'] ?? '') ?>">
+            <input type="url" name="tautanRekapDrive" class="form-control" id="tautanRekapDriveInput" placeholder="https://drive.google.com/drive/folders/..." required data-validate-drive="true" value="<?= esc($tugas['tautanRekapDrive'] ?? '') ?>">
           </div>
           <div class="form-text mt-1 text-muted">
             <i class="bi bi-shield-check text-success me-1"></i>

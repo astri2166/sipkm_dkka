@@ -36,9 +36,11 @@ $routes->group('mahasiswa', ['filter' => 'auth:Ketua Kelompok,Anggota Kelompok']
 // RUTE MODUL DOSEN PENINJAU (DIPROTEKSI AUTHFILTER)
 // ====================================================================
 $routes->group('dosen', ['filter' => 'auth:Dosen Peninjau'], static function ($routes) {
-    $routes->get('dashboard', 'PreviewController::dosenDashboard');
-    $routes->get('peninjauan', 'PreviewController::dosenPeninjauan');
-    $routes->get('peninjauan/detail/(:num)', 'PreviewController::dosenDetailPeninjauan/$1');
+    $routes->get('dashboard', 'DosenController::dashboard');
+    $routes->get('peninjauan', 'DosenController::peninjauan');
+    $routes->get('peninjauan/detail/(:num)', 'DosenController::detailPeninjauan/$1');
+    $routes->post('peninjauan/simpan-catatan/(:num)', 'DosenController::simpanCatatanCard/$1');
+    $routes->post('peninjauan/kirim-rekap/(:num)', 'DosenController::kirimRekapPenilaian/$1');
 });
 
 // ====================================================================

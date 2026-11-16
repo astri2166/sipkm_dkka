@@ -53,4 +53,18 @@ class PeninjauanProposalModel extends Model
                     ->where('peninjauan_proposal.idDosen', $idDosen)
                     ->findAll();
     }
+
+    /**
+     * Dapatkan detail penugasan proposal lengkap dengan rincian proposal & kelompok
+     */
+    public function getDetailPeninjauan(int $idPeninjauan): ?array
+    {
+        return $this->select('peninjauan_proposal.*, proposal_pkm.judulProposal, proposal_pkm.jenisPKM,
+                              proposal_pkm.tautanGoogleDocs, proposal_pkm.statusProposal,
+                              kelompok_pkm.namaKelompok, kelompok_pkm.nimKetua, kelompok_pkm.tahunPeriode')
+                    ->join('proposal_pkm', 'proposal_pkm.idProposal = peninjauan_proposal.idProposal')
+                    ->join('kelompok_pkm', 'kelompok_pkm.idKelompok = proposal_pkm.idKelompok')
+                    ->where('peninjauan_proposal.idPeninjauan', $idPeninjauan)
+                    ->first();
+    }
 }
