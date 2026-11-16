@@ -19,11 +19,25 @@
           <p class="text-muted small">Gunakan akun Mahasiswa, Dosen Peninjau, atau Admin</p>
         </div>
 
-        <form action="<?= base_url('mahasiswa/dashboard') ?>" method="get" class="sipkm-form" novalidate>
+        <?php if (session()->getFlashdata('error')): ?>
+          <div class="alert alert-danger small py-2 px-3 mb-3 d-flex align-items-center gap-2">
+            <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+            <div><?= session()->getFlashdata('error') ?></div>
+          </div>
+        <?php endif; ?>
+
+        <?php if (session()->getFlashdata('success')): ?>
+          <div class="alert alert-success small py-2 px-3 mb-3 d-flex align-items-center gap-2">
+            <i class="bi bi-check-circle-fill flex-shrink-0"></i>
+            <div><?= session()->getFlashdata('success') ?></div>
+          </div>
+        <?php endif; ?>
+
+        <form action="<?= base_url('login') ?>" method="post" class="sipkm-form" novalidate>
           <?= csrf_field() ?>
           <div class="mb-3">
             <label class="form-label fw-medium">Username atau Email</label>
-            <input type="text" name="username" id="loginUsername" class="form-control" placeholder="Contoh: ketua_pkm1" required>
+            <input type="text" name="username" id="loginUsername" class="form-control" placeholder="Contoh: ketua_pkm1" value="<?= old('username') ?>" required>
           </div>
           <div class="mb-3">
             <label class="form-label fw-medium">Password</label>

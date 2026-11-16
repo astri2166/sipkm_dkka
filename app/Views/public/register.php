@@ -19,41 +19,59 @@
           <p class="text-muted small">Akun baru otomatis terdaftar sebagai <strong>Anggota Kelompok</strong> dan dapat langsung membuat atau bergabung ke tim PKM.</p>
         </div>
 
-        <form action="<?= base_url('login') ?>" method="get" class="sipkm-form" novalidate>
+        <?php if (session()->getFlashdata('errors')): ?>
+          <div class="alert alert-danger small py-2 px-3 mb-3">
+            <div class="fw-bold mb-1"><i class="bi bi-exclamation-triangle-fill me-1"></i> Mohon perbaiki data berikut:</div>
+            <ul class="mb-0 ps-3">
+              <?php foreach (session()->getFlashdata('errors') as $err): ?>
+                <li><?= esc($err) ?></li>
+              <?php endforeach; ?>
+            </ul>
+          </div>
+        <?php endif; ?>
+
+        <?php if (session()->getFlashdata('error')): ?>
+          <div class="alert alert-danger small py-2 px-3 mb-3 d-flex align-items-center gap-2">
+            <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+            <div><?= session()->getFlashdata('error') ?></div>
+          </div>
+        <?php endif; ?>
+
+        <form action="<?= base_url('register') ?>" method="post" class="sipkm-form" novalidate>
           <?= csrf_field() ?>
           <div class="row g-3">
             <div class="col-md-6">
               <label class="form-label fw-medium">NIM <span class="text-danger">*</span></label>
-              <input type="text" name="nim" class="form-control" placeholder="Contoh: 2412501872" pattern="[0-9]{8,15}" required>
+              <input type="text" name="nim" class="form-control" placeholder="Contoh: 2412501872" pattern="[0-9]{8,15}" value="<?= old('nim') ?>" required>
             </div>
             <div class="col-md-6">
               <label class="form-label fw-medium">Nama Lengkap Mahasiswa <span class="text-danger">*</span></label>
-              <input type="text" name="namaMahasiswa" class="form-control" placeholder="Sesuai KTM" required>
+              <input type="text" name="namaMahasiswa" class="form-control" placeholder="Sesuai KTM" value="<?= old('namaMahasiswa') ?>" required>
             </div>
             <div class="col-md-6">
               <label class="form-label fw-medium">Program Studi <span class="text-danger">*</span></label>
               <select name="programStudi" class="form-select" required>
                 <option value="">-- Pilih Program Studi --</option>
-                <option value="Sistem Informasi">Sistem Informasi</option>
-                <option value="Teknik Informatika">Teknik Informatika</option>
-                <option value="Sistem Komputer">Sistem Komputer</option>
-                <option value="Manajemen">Manajemen</option>
-                <option value="Akuntansi">Akuntansi</option>
-                <option value="Ilmu Komunikasi">Ilmu Komunikasi</option>
-                <option value="Hubungan Internasional">Hubungan Internasional</option>
+                <option value="Sistem Informasi" <?= old('programStudi') === 'Sistem Informasi' ? 'selected' : '' ?>>Sistem Informasi</option>
+                <option value="Teknik Informatika" <?= old('programStudi') === 'Teknik Informatika' ? 'selected' : '' ?>>Teknik Informatika</option>
+                <option value="Sistem Komputer" <?= old('programStudi') === 'Sistem Komputer' ? 'selected' : '' ?>>Sistem Komputer</option>
+                <option value="Manajemen" <?= old('programStudi') === 'Manajemen' ? 'selected' : '' ?>>Manajemen</option>
+                <option value="Akuntansi" <?= old('programStudi') === 'Akuntansi' ? 'selected' : '' ?>>Akuntansi</option>
+                <option value="Ilmu Komunikasi" <?= old('programStudi') === 'Ilmu Komunikasi' ? 'selected' : '' ?>>Ilmu Komunikasi</option>
+                <option value="Hubungan Internasional" <?= old('programStudi') === 'Hubungan Internasional' ? 'selected' : '' ?>>Hubungan Internasional</option>
               </select>
             </div>
             <div class="col-md-6">
               <label class="form-label fw-medium">No. WhatsApp Aktif <span class="text-danger">*</span></label>
-              <input type="tel" name="noWhatsapp" class="form-control" placeholder="0812xxxxxxxx" required>
+              <input type="tel" name="noWhatsapp" class="form-control" placeholder="0812xxxxxxxx" value="<?= old('noWhatsapp') ?>" required>
             </div>
             <div class="col-md-6">
               <label class="form-label fw-medium">Username <span class="text-danger">*</span></label>
-              <input type="text" name="username" class="form-control" placeholder="Username login" required>
+              <input type="text" name="username" class="form-control" placeholder="Username login" value="<?= old('username') ?>" required>
             </div>
             <div class="col-md-6">
               <label class="form-label fw-medium">Email Kampus / Aktif <span class="text-danger">*</span></label>
-              <input type="email" name="email" class="form-control" placeholder="nim@student.budiluhur.ac.id" required>
+              <input type="email" name="email" class="form-control" placeholder="nim@student.budiluhur.ac.id" value="<?= old('email') ?>" required>
             </div>
             <div class="col-12">
               <label class="form-label fw-medium">Password <span class="text-danger">*</span></label>

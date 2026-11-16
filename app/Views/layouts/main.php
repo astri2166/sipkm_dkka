@@ -109,8 +109,8 @@
       <a href="<?= base_url('/') ?>" class="nav-link text-warning">
         <i class="bi bi-globe"></i> Papan Lomba Publik
       </a>
-      <a href="<?= base_url('login') ?>" class="nav-link text-danger">
-        <i class="bi bi-box-arrow-left"></i> Keluar / Login
+      <a href="<?= base_url('logout') ?>" class="nav-link text-danger">
+        <i class="bi bi-box-arrow-left"></i> Keluar (Logout)
       </a>
     </div>
   </aside>
