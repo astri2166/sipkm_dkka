@@ -255,24 +255,155 @@ class PreviewController extends BaseController
     }
 
     // ====================================================================
-    // STUB / PLACEHOLDER UNTUK TAHAP SELANJUTNYA (TAHAP 4 - 5)
+    // TAHAP 4: FRONTEND UI/UX MODUL DOSEN PENINJAU
     // ====================================================================
 
-    // Tahap 4: Dosen Peninjau
+    private function getDosenMockData()
+    {
+        return [
+            'dosen' => [
+                'idDosen'   => 1,
+                'nipDosen'  => '0315088501',
+                'namaDosen' => 'Dr. Ahmad Fauzi, M.T.',
+                'email'     => 'ahmad.fauzi@budiluhur.ac.id',
+            ],
+            'masterTemplateUrl' => env('sipkm.templatePenilaianUrl', 'https://drive.google.com/drive/folders/MASTER_TEMPLATE_PENILAIAN_DKKA'),
+            'daftarTugas' => [
+                [
+                    'idPeninjauan'        => 1,
+                    'idProposal'          => 1,
+                    'judulProposal'       => 'Sistem Deteksi Dini Kualitas Udara Kampus Berbasis IoT dan Edge AI',
+                    'jenisPKM'            => 'PKM-KC',
+                    'namaKelompok'        => 'Tim Inovasi Smart Campus UBL',
+                    'nimKetua'            => '2412501001',
+                    'tahunPeriode'        => '2026',
+                    'tglPenugasan'        => '2026-11-11',
+                    'tglSelesaiTinjau'    => '2026-11-14',
+                    'statusPenugasan'     => 'Selesai',
+                    'statusProposal'      => 'Sudah Ditinjau',
+                    'tautanGoogleDocs'    => 'https://drive.google.com/drive/folders/1ContohFolderProposalTimUBL2026',
+                    'tautanRekapDrive'    => 'https://drive.google.com/drive/folders/1HasilRekapPenilaianDosenUBL2026',
+                    'catatanAdministrasi' => "1. Margin kiri sudah 4 cm, namun daftar pustaka belum menggunakan format Harvard secara konsisten.\n2. Perbaiki penomoran halaman romawi pada lembar pengesahan.",
+                    'catatanSubstansi'    => "1. Latar belakang masalah sangat kuat dan relevan dengan SDG 11.\n2. Metodologi kalibrasi sensor MQ-135 perlu diperjelas pada Bab 3.\n3. Perbaiki rincian anggaran biaya pos operasional agar tidak melebihi 25% dari total plafon pendanaan.",
+                ],
+                [
+                    'idPeninjauan'        => 2,
+                    'idProposal'          => 2,
+                    'judulProposal'       => 'Aplikasi Deteksi Dini Retinopati Diabetik Menggunakan Arsitektur ResNet-50',
+                    'jenisPKM'            => 'PKM-KC',
+                    'namaKelompok'        => 'Tim BioMedika UBL',
+                    'nimKetua'            => '2412501050',
+                    'tahunPeriode'        => '2026',
+                    'tglPenugasan'        => '2026-11-15',
+                    'tglSelesaiTinjau'    => null,
+                    'statusPenugasan'     => 'Belum Ditinjau',
+                    'statusProposal'      => 'Sedang Ditinjau',
+                    'tautanGoogleDocs'    => 'https://docs.google.com/document/d/1ContohRetinopati2026',
+                    'tautanRekapDrive'    => null,
+                    'catatanAdministrasi' => '',
+                    'catatanSubstansi'    => '',
+                ],
+                [
+                    'idPeninjauan'        => 3,
+                    'idProposal'          => 3,
+                    'judulProposal'       => 'Pemberdayaan UMKM Sentra Pengrajin Bambu Melalui Pemasaran Digital Omnichannel',
+                    'jenisPKM'            => 'PKM-PM',
+                    'namaKelompok'        => 'Tim Sinergi Pengabdian UBL',
+                    'nimKetua'            => '2412501088',
+                    'tahunPeriode'        => '2026',
+                    'tglPenugasan'        => '2026-11-12',
+                    'tglSelesaiTinjau'    => '2026-11-15',
+                    'statusPenugasan'     => 'Selesai',
+                    'statusProposal'      => 'Sudah Ditinjau',
+                    'tautanGoogleDocs'    => 'https://docs.google.com/document/d/1ContohUMKMBambu2026',
+                    'tautanRekapDrive'    => 'https://drive.google.com/drive/folders/1HasilRekapUMKM2026',
+                    'catatanAdministrasi' => "1. Format penomoran halaman dan margin sudah tepat 4-3-3-3.\n2. Surat kesediaan mitra pengabdian telah terlampir bermeterai 10.000.",
+                    'catatanSubstansi'    => "1. Solusi transfer teknologi dan pelatihan pemasaran tepat sasaran bagi mitra.\n2. Tolok ukur peningkatan omzet mitra perlu ditambahkan target persentase kenaikan penjualan.",
+                ],
+            ],
+        ];
+    }
+
     public function dosenDashboard()
     {
-        return $this->renderPlaceholder('Dashboard Dosen Peninjau', 'Dosen Peninjau', 'dashboard', 'Tahap 4');
+        $mock = $this->getDosenMockData();
+        $tugas = $mock['daftarTugas'];
+
+        $countBelum = count(array_filter($tugas, fn($t) => $t['statusPenugasan'] === 'Belum Ditinjau'));
+        $countSelesai = count(array_filter($tugas, fn($t) => $t['statusPenugasan'] === 'Selesai'));
+
+        $data = [
+            'title'             => 'Dashboard Dosen Peninjau | SIPKM-DKKA',
+            'pageHeader'        => 'Dashboard Dosen Peninjau',
+            'role'              => 'Dosen Peninjau',
+            'activeMenu'        => 'dashboard',
+            'userName'          => $mock['dosen']['namaDosen'],
+            'dosen'             => $mock['dosen'],
+            'masterTemplateUrl' => $mock['masterTemplateUrl'],
+            'daftarTugas'       => $tugas,
+            'countBelum'        => $countBelum,
+            'countSelesai'      => $countSelesai,
+        ];
+
+        return view('dosen/dashboard', $data);
     }
 
     public function dosenPeninjauan()
     {
-        return $this->renderPlaceholder('Peninjauan Proposal', 'Dosen Peninjau', 'peninjauan', 'Tahap 4');
+        $mock = $this->getDosenMockData();
+        $statusFilter = $this->request->getGet('status') ?? '';
+
+        $tugas = $mock['daftarTugas'];
+        if ($statusFilter !== '') {
+            $tugas = array_filter($tugas, fn($t) => $t['statusPenugasan'] === $statusFilter);
+        }
+
+        $data = [
+            'title'             => 'Peninjauan Proposal PKM | SIPKM-DKKA',
+            'pageHeader'        => 'Peninjauan Proposal PKM',
+            'role'              => 'Dosen Peninjau',
+            'activeMenu'        => 'peninjauan',
+            'userName'          => $mock['dosen']['namaDosen'],
+            'dosen'             => $mock['dosen'],
+            'masterTemplateUrl' => $mock['masterTemplateUrl'],
+            'daftarTugas'       => $tugas,
+            'statusFilter'      => $statusFilter,
+        ];
+
+        return view('dosen/peninjauan', $data);
     }
 
     public function dosenDetailPeninjauan($id = 1)
     {
-        return $this->renderPlaceholder("Detail Peninjauan Proposal #$id", 'Dosen Peninjau', 'peninjauan', 'Tahap 4');
+        $mock = $this->getDosenMockData();
+        $selected = null;
+        foreach ($mock['daftarTugas'] as $t) {
+            if ($t['idPeninjauan'] == $id || $t['idProposal'] == $id) {
+                $selected = $t;
+                break;
+            }
+        }
+        if (!$selected) {
+            $selected = $mock['daftarTugas'][0];
+        }
+
+        $data = [
+            'title'             => 'Evaluasi Proposal #' . $selected['idProposal'] . ' | SIPKM-DKKA',
+            'pageHeader'        => 'Detail Evaluasi Peninjauan',
+            'role'              => 'Dosen Peninjau',
+            'activeMenu'        => 'peninjauan',
+            'userName'          => $mock['dosen']['namaDosen'],
+            'dosen'             => $mock['dosen'],
+            'masterTemplateUrl' => $mock['masterTemplateUrl'],
+            'tugas'             => $selected,
+        ];
+
+        return view('dosen/detail_peninjauan', $data);
     }
+
+    // ====================================================================
+    // STUB / PLACEHOLDER UNTUK TAHAP SELANJUTNYA (TAHAP 5)
+    // ====================================================================
 
     // Tahap 5: Admin DKKA & Super Admin
     public function adminDashboard()
