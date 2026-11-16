@@ -402,75 +402,319 @@ class PreviewController extends BaseController
     }
 
     // ====================================================================
-    // STUB / PLACEHOLDER UNTUK TAHAP SELANJUTNYA (TAHAP 5)
+    // TAHAP 5: FRONTEND UI/UX MODUL ADMIN DKKA & SUPER ADMIN
     // ====================================================================
 
-    // Tahap 5: Admin DKKA & Super Admin
+    private function getAdminMockData()
+    {
+        return [
+            'stats' => [
+                'totalProposal'  => 12,
+                'proposalLayak'  => 4,
+                'totalKelompok'  => 15,
+                'totalMahasiswa' => 48,
+                'totalDosen'     => 6,
+                'needPlotting'   => 2,
+                'totalLomba'     => 3,
+            ],
+            'masterTemplateUrl' => env('sipkm.templatePenilaianUrl', 'https://drive.google.com/drive/folders/MASTER_TEMPLATE_PENILAIAN_DKKA'),
+            'daftarDosen' => [
+                [
+                    'idDosen'      => 1,
+                    'nipDosen'     => '0315088501',
+                    'namaDosen'    => 'Dr. Ahmad Fauzi, M.T.',
+                    'email'        => 'ahmad.fauzi@budiluhur.ac.id',
+                    'tugasSelesai' => 2,
+                    'tugasPending' => 1,
+                    'statusAkun'   => 'Aktif',
+                ],
+                [
+                    'idDosen'      => 2,
+                    'nipDosen'     => '0322118902',
+                    'namaDosen'    => 'Siti Rahmawati, S.Kom., M.Cs.',
+                    'email'        => 'siti.rahmawati@budiluhur.ac.id',
+                    'tugasSelesai' => 1,
+                    'tugasPending' => 2,
+                    'statusAkun'   => 'Aktif',
+                ],
+                [
+                    'idDosen'      => 3,
+                    'nipDosen'     => '0308048103',
+                    'namaDosen'    => 'Hendra Setiawan, Ph.D.',
+                    'email'        => 'hendra.setiawan@budiluhur.ac.id',
+                    'tugasSelesai' => 3,
+                    'tugasPending' => 0,
+                    'statusAkun'   => 'Aktif',
+                ],
+            ],
+            'daftarAdmin' => [
+                [
+                    'idAdmin'    => 1,
+                    'nipAdmin'   => '198801012015011001',
+                    'namaAdmin'  => 'Budi Santoso, M.Kom.',
+                    'jabatan'    => 'Super Admin',
+                    'username'   => 'superadmin',
+                    'email'      => 'superadmin.dkka@budiluhur.ac.id',
+                    'statusAkun' => 'Aktif',
+                ],
+                [
+                    'idAdmin'    => 2,
+                    'nipAdmin'   => '199205142018032002',
+                    'namaAdmin'  => 'Rina Kartika, S.E.',
+                    'jabatan'    => 'Admin DKKA',
+                    'username'   => 'rina_dkka',
+                    'email'      => 'rina.kartika@budiluhur.ac.id',
+                    'statusAkun' => 'Aktif',
+                ],
+            ],
+            'daftarKelompok' => [
+                [
+                    'idKelompok'    => 1,
+                    'namaKelompok'  => 'Tim Inovasi Smart Campus UBL',
+                    'tahunPeriode'  => '2026',
+                    'nimKetua'      => '2412501001',
+                    'namaKetua'     => 'Rizky Pratama',
+                    'jumlahAnggota' => 2,
+                    'jenisPKM'      => 'PKM-KC',
+                    'judulProposal' => 'Sistem Deteksi Dini Kualitas Udara Kampus Berbasis IoT dan Edge AI',
+                    'anggota'       => [
+                        ['nim' => '2412501001', 'namaMahasiswa' => 'Rizky Pratama', 'programStudi' => 'Sistem Informasi'],
+                        ['nim' => '2412501002', 'namaMahasiswa' => 'Nadia Putri', 'programStudi' => 'Teknik Informatika'],
+                    ],
+                ],
+                [
+                    'idKelompok'    => 2,
+                    'namaKelompok'  => 'Tim BioMedika UBL',
+                    'tahunPeriode'  => '2026',
+                    'nimKetua'      => '2412501050',
+                    'namaKetua'     => 'Farhan Ramadhan',
+                    'jumlahAnggota' => 3,
+                    'jenisPKM'      => 'PKM-KC',
+                    'judulProposal' => 'Aplikasi Deteksi Dini Retinopati Diabetik Menggunakan ResNet-50',
+                    'anggota'       => [
+                        ['nim' => '2412501050', 'namaMahasiswa' => 'Farhan Ramadhan', 'programStudi' => 'Teknik Informatika'],
+                        ['nim' => '2412501051', 'namaMahasiswa' => 'Gita Gutawa', 'programStudi' => 'Sistem Informasi'],
+                        ['nim' => '2412501052', 'namaMahasiswa' => 'Haikal Kamil', 'programStudi' => 'Teknik Informatika'],
+                    ],
+                ],
+                [
+                    'idKelompok'    => 3,
+                    'namaKelompok'  => 'Tim Sinergi Pengabdian UBL',
+                    'tahunPeriode'  => '2026',
+                    'nimKetua'      => '2412501088',
+                    'namaKetua'     => 'Ilham Saputra',
+                    'jumlahAnggota' => 3,
+                    'jenisPKM'      => 'PKM-PM',
+                    'judulProposal' => 'Pemberdayaan UMKM Sentra Pengrajin Bambu Melalui Pemasaran Digital Omnichannel',
+                    'anggota'       => [
+                        ['nim' => '2412501088', 'namaMahasiswa' => 'Ilham Saputra', 'programStudi' => 'Manajemen'],
+                        ['nim' => '2412501089', 'namaMahasiswa' => 'Joko Anwar', 'programStudi' => 'Sistem Informasi'],
+                        ['nim' => '2412501090', 'namaMahasiswa' => 'Kartika Sari', 'programStudi' => 'Ilmu Komunikasi'],
+                    ],
+                ],
+            ],
+            'daftarProposal' => [
+                [
+                    'idProposal'       => 1,
+                    'idKelompok'       => 1,
+                    'namaKelompok'     => 'Tim Inovasi Smart Campus UBL',
+                    'nimKetua'         => '2412501001',
+                    'judulProposal'    => 'Sistem Deteksi Dini Kualitas Udara Kampus Berbasis IoT dan Edge AI',
+                    'jenisPKM'         => 'PKM-KC',
+                    'tautanGoogleDocs' => 'https://drive.google.com/drive/folders/1ContohFolderProposalTimUBL2026',
+                    'statusProposal'   => 'Sudah Ditinjau',
+                    'tglUnggah'        => '2026-11-10',
+                    'idDosen'          => 1,
+                    'namaDosen'        => 'Dr. Ahmad Fauzi, M.T.',
+                    'nipDosen'         => '0315088501',
+                ],
+                [
+                    'idProposal'       => 2,
+                    'idKelompok'       => 2,
+                    'namaKelompok'     => 'Tim BioMedika UBL',
+                    'nimKetua'         => '2412501050',
+                    'judulProposal'    => 'Aplikasi Deteksi Dini Retinopati Diabetik Menggunakan ResNet-50',
+                    'jenisPKM'         => 'PKM-KC',
+                    'tautanGoogleDocs' => 'https://docs.google.com/document/d/1ContohRetinopati2026',
+                    'statusProposal'   => 'Sedang Ditinjau',
+                    'tglUnggah'        => '2026-11-12',
+                    'idDosen'          => 1,
+                    'namaDosen'        => 'Dr. Ahmad Fauzi, M.T.',
+                    'nipDosen'         => '0315088501',
+                ],
+                [
+                    'idProposal'       => 3,
+                    'idKelompok'       => 3,
+                    'namaKelompok'     => 'Tim Sinergi Pengabdian UBL',
+                    'nimKetua'         => '2412501088',
+                    'judulProposal'    => 'Pemberdayaan UMKM Sentra Pengrajin Bambu Melalui Pemasaran Digital Omnichannel',
+                    'jenisPKM'         => 'PKM-PM',
+                    'tautanGoogleDocs' => 'https://docs.google.com/document/d/1ContohUMKMBambu2026',
+                    'statusProposal'   => 'Layak',
+                    'tglUnggah'        => '2026-11-11',
+                    'idDosen'          => 2,
+                    'namaDosen'        => 'Siti Rahmawati, S.Kom., M.Cs.',
+                    'nipDosen'         => '0322118902',
+                ],
+                [
+                    'idProposal'       => 4,
+                    'idKelompok'       => 4,
+                    'namaKelompok'     => 'Tim AgriTech Future',
+                    'nimKetua'         => '2412501099',
+                    'judulProposal'    => 'Sistem Irigasi Cerdas Tanaman Hidroponik Berbasis Machine Learning',
+                    'jenisPKM'         => 'PKM-PI',
+                    'tautanGoogleDocs' => 'https://docs.google.com/document/d/1ContohAgriTech2026',
+                    'statusProposal'   => 'Diunggah',
+                    'tglUnggah'        => '2026-11-15',
+                    'idDosen'          => null,
+                    'namaDosen'        => null,
+                    'nipDosen'         => null,
+                ],
+            ],
+        ];
+    }
+
     public function adminDashboard()
     {
         $role = $this->request->getGet('role') ?? 'Admin';
-        return $this->renderPlaceholder('Dashboard Admin DKKA', $role, 'dashboard', 'Tahap 5');
+        $mock = $this->getAdminMockData();
+
+        $data = [
+            'title'             => 'Dashboard Administrator | SIPKM-DKKA',
+            'pageHeader'        => 'Dashboard ' . ($role === 'Super Admin' ? 'Super Admin' : 'Admin DKKA'),
+            'role'              => $role,
+            'activeMenu'        => 'dashboard',
+            'userName'          => ($role === 'Super Admin') ? 'Budi Santoso, M.Kom.' : 'Rina Kartika, S.E.',
+            'stats'             => $mock['stats'],
+            'masterTemplateUrl' => $mock['masterTemplateUrl'],
+        ];
+
+        return view('admin/dashboard', $data);
     }
 
     public function adminPengguna()
     {
+        $role = $this->request->getGet('role') ?? 'Admin';
         $tab = $this->request->getGet('tab') ?? 'dosen';
-        $role = ($tab === 'admin') ? 'Super Admin' : 'Admin';
-        return $this->renderPlaceholder('Kelola Pengguna & Dosen', $role, $tab, 'Tahap 5');
+        $mock = $this->getAdminMockData();
+
+        $data = [
+            'title'       => 'Kelola Pengguna Sistem | SIPKM-DKKA',
+            'pageHeader'  => 'Manajemen Pengguna Sistem',
+            'role'        => $role,
+            'activeMenu'  => ($tab === 'admin') ? 'pengguna' : 'dosen',
+            'activeTab'   => $tab,
+            'userName'    => ($role === 'Super Admin') ? 'Budi Santoso, M.Kom.' : 'Rina Kartika, S.E.',
+            'daftarDosen' => $mock['daftarDosen'],
+            'daftarAdmin' => $mock['daftarAdmin'],
+        ];
+
+        return view('admin/pengguna', $data);
     }
 
     public function adminDetailDosen($id = 1)
     {
-        return $this->renderPlaceholder("Detail Dosen Peninjau #$id", 'Admin', 'dosen', 'Tahap 5');
+        $role = $this->request->getGet('role') ?? 'Admin';
+        $mockDosen = $this->getDosenMockData();
+        $dosen = $mockDosen['dosen'];
+
+        $tugasAdminKeDosen = $mockDosen['daftarTugas'];
+        $hasilDosenKeAdmin = array_filter($tugasAdminKeDosen, fn($t) => $t['statusPenugasan'] === 'Selesai');
+
+        $data = [
+            'title'              => 'Histori Dosen: ' . $dosen['namaDosen'] . ' | SIPKM-DKKA',
+            'pageHeader'         => 'Detail & Histori Dosen Peninjau',
+            'role'               => $role,
+            'activeMenu'         => 'dosen',
+            'userName'           => ($role === 'Super Admin') ? 'Budi Santoso, M.Kom.' : 'Rina Kartika, S.E.',
+            'dosen'              => $dosen,
+            'tugasAdminKeDosen'  => $tugasAdminKeDosen,
+            'hasilDosenKeAdmin'  => $hasilDosenKeAdmin,
+        ];
+
+        return view('admin/detail_dosen', $data);
     }
 
     public function adminKelompok()
     {
-        return $this->renderPlaceholder('Kelola Kelompok PKM', 'Admin', 'kelompok', 'Tahap 5');
+        $role = $this->request->getGet('role') ?? 'Admin';
+        $mock = $this->getAdminMockData();
+
+        $data = [
+            'title'          => 'Kelola Kelompok PKM | SIPKM-DKKA',
+            'pageHeader'     => 'Pengelolaan Kelompok PKM Mahasiswa',
+            'role'           => $role,
+            'activeMenu'     => 'kelompok',
+            'userName'       => ($role === 'Super Admin') ? 'Budi Santoso, M.Kom.' : 'Rina Kartika, S.E.',
+            'daftarKelompok' => $mock['daftarKelompok'],
+        ];
+
+        return view('admin/kelompok', $data);
     }
 
     public function adminProposal()
     {
-        return $this->renderPlaceholder('Kelola Proposal & Plotting', 'Admin', 'proposal', 'Tahap 5');
+        $role = $this->request->getGet('role') ?? 'Admin';
+        $mock = $this->getAdminMockData();
+
+        $data = [
+            'title'             => 'Kelola Proposal & Plotting | SIPKM-DKKA',
+            'pageHeader'        => 'Pengelolaan Proposal & Sidang Pleno',
+            'role'              => $role,
+            'activeMenu'        => 'proposal',
+            'userName'          => ($role === 'Super Admin') ? 'Budi Santoso, M.Kom.' : 'Rina Kartika, S.E.',
+            'daftarProposal'    => $mock['daftarProposal'],
+            'daftarDosen'       => $mock['daftarDosen'],
+            'masterTemplateUrl' => $mock['masterTemplateUrl'],
+        ];
+
+        return view('admin/proposal', $data);
     }
 
     public function adminLomba()
     {
-        return $this->renderPlaceholder('Kelola Informasi Lomba', 'Admin', 'lomba', 'Tahap 5');
-    }
+        $role = $this->request->getGet('role') ?? 'Admin';
 
-    /**
-     * Helper render placeholder view agar navigasi preview tidak error
-     */
-    private function renderPlaceholder($title, $role, $menu, $tahap)
-    {
-        $roleParam = $this->request->getGet('role');
-        if ($roleParam) {
-            $role = $roleParam;
-        }
+        // Re-use data lomba dari landingLomba
+        $daftarLomba = [
+            [
+                'idLomba'         => 1,
+                'judulLomba'      => 'Program Kreativitas Mahasiswa (PKM) Internal UBL 2026',
+                'kategoriLomba'   => 'PKM & Karya Ilmiah',
+                'deskripsiLomba'  => "Seleksi pendanaan dan pembinaan proposal PKM 10 bidang tingkat Universitas Budi Luhur menuju PIMNAS 2026.\n\nKetentuan:\n1. Tim terdiri dari 3-5 mahasiswa aktif.\n2. Proposal diunggah dalam format tautan Google Drive/Docs.",
+                'timelineMulai'   => '2026-11-01',
+                'timelineSelesai' => '2026-12-15',
+                'posterBanner'    => 'poster-pkm-2026.jpg',
+            ],
+            [
+                'idLomba'         => 2,
+                'judulLomba'      => 'GEMASTIK XIX — Divisi Pengembangan Perangkat Lunak',
+                'kategoriLomba'   => 'Teknologi & IT',
+                'deskripsiLomba'  => "Pagelaran Mahasiswa Nasional Bidang Teknologi Informasi dan Komunikasi. Daftarkan tim terbaikmu melalui DKKA Universitas Budi Luhur.",
+                'timelineMulai'   => '2026-11-10',
+                'timelineSelesai' => '2026-12-20',
+                'posterBanner'    => 'poster-gemastik-2026.jpg',
+            ],
+            [
+                'idLomba'         => 3,
+                'judulLomba'      => 'Kompetisi Bisnis Mahasiswa Indonesia (KBMI) 2026',
+                'kategoriLomba'   => 'Kewirausahaan',
+                'deskripsiLomba'  => "Ajang hibah modal usaha dan pendampingan bisnis bagi mahasiswa aktif yang memiliki rintisan usaha inovatif.",
+                'timelineMulai'   => '2026-11-15',
+                'timelineSelesai' => '2027-01-10',
+                'posterBanner'    => 'poster-kbmi-2026.jpg',
+            ],
+        ];
 
-        $html = '<div class="sipkm-card p-4 text-center">' .
-            '<div class="mb-3 text-warning"><i class="bi bi-clock-history display-4"></i></div>' .
-            '<h4 class="fw-bold text-dark">' . esc($title) . '</h4>' .
-            '<p class="text-muted">Halaman ini adalah bagian dari <strong>' . esc($tahap) . '</strong> Frontend UI/UX SIPKM-DKKA.</p>' .
-            '<div class="alert alert-info d-inline-block text-start small">' .
-            '<i class="bi bi-info-circle me-1"></i> Saat ini <strong>Tahap 2 & Tahap 3 (Frontend Mahasiswa)</strong> telah selesai diimplementasikan.<br>' .
-            'Ketik atau konfirmasi <strong>"Lanjut ' . esc($tahap) . '"</strong> untuk men-generate tampilan antarmuka ini.' .
-            '</div>' .
-            '<div class="mt-3">' .
-            '<a href="' . base_url('mahasiswa/dashboard') . '" class="btn btn-outline-primary btn-sm me-2"><i class="bi bi-speedometer2 me-1"></i> Dashboard Mahasiswa</a>' .
-            '<a href="' . base_url('/') . '" class="btn btn-primary btn-sm"><i class="bi bi-globe me-1"></i> Papan Lomba Publik</a>' .
-            '</div>' .
-            '</div>';
+        $data = [
+            'title'       => 'Kelola Papan Informasi Lomba | SIPKM-DKKA',
+            'pageHeader'  => 'Manajemen Papan Informasi Lomba',
+            'role'        => $role,
+            'activeMenu'  => 'lomba',
+            'userName'    => ($role === 'Super Admin') ? 'Budi Santoso, M.Kom.' : 'Rina Kartika, S.E.',
+            'daftarLomba' => $daftarLomba,
+        ];
 
-        $content = view('layouts/main', [
-            'title'      => esc($title) . ' | SIPKM-DKKA Preview',
-            'pageHeader' => esc($title),
-            'role'       => $role,
-            'activeMenu' => $menu,
-            'userName'   => 'Pengguna Preview (' . esc($role) . ')',
-        ]);
-
-        return str_replace('<?= $this->renderSection(\'content\') ?>', $html, $content);
+        return view('admin/lomba', $data);
     }
 }
