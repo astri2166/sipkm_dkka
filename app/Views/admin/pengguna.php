@@ -2,6 +2,20 @@
 
 <?= $this->section('content') ?>
 <div class="container-fluid p-0">
+  <!-- Flash Messages -->
+  <?php if (session()->getFlashdata('success')): ?>
+    <div class="alert alert-success small py-2 px-3 mb-3 d-flex align-items-center gap-2">
+      <i class="bi bi-check-circle-fill flex-shrink-0"></i>
+      <div><?= session()->getFlashdata('success') ?></div>
+    </div>
+  <?php endif; ?>
+  <?php if (session()->getFlashdata('error')): ?>
+    <div class="alert alert-danger small py-2 px-3 mb-3 d-flex align-items-center gap-2">
+      <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+      <div><?= session()->getFlashdata('error') ?></div>
+    </div>
+  <?php endif; ?>
+
   <!-- Header & Tab Navigasi Pengguna -->
   <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
     <div>
@@ -87,13 +101,10 @@
                   </span>
                 </td>
                 <td class="text-center">
-                  <button class="btn btn-outline-secondary btn-sm py-0 px-2 me-1" onclick="showSipkmToast('Simulasi: Edit data Admin <?= esc($adm['namaAdmin']) ?>', 'info')">
-                    <i class="bi bi-pencil"></i>
-                  </button>
                   <?php if ($adm['jabatan'] !== 'Super Admin'): ?>
-                    <button class="btn btn-outline-danger btn-sm py-0 px-2" onclick="showSipkmToast('Simulasi: Nonaktifkan Admin <?= esc($adm['namaAdmin']) ?>', 'warning')">
-                      <i class="bi bi-trash"></i>
-                    </button>
+                    <a href="<?= base_url('admin/pengguna/toggle-status/' . $adm['idUser']) ?>" class="btn btn-outline-warning btn-sm py-0 px-2" title="Ubah Status Aktif/Nonaktif" onclick="return confirm('Apakah Anda yakin ingin mengubah status akun <?= esc($adm['namaAdmin']) ?>?');">
+                      <i class="bi bi-power"></i>
+                    </a>
                   <?php endif; ?>
                 </td>
               </tr>
@@ -113,19 +124,20 @@
             </h6>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <form class="sipkm-form" onsubmit="event.preventDefault(); showSipkmToast('Akun Admin DKKA baru berhasil didaftarkan!', 'success'); bootstrap.Modal.getInstance(document.getElementById('modalTambahAdmin')).hide();">
+          <form action="<?= base_url('admin/pengguna/tambah-admin') ?>" method="post" class="sipkm-form">
+            <?= csrf_field() ?>
             <div class="modal-body">
               <div class="mb-3">
                 <label class="form-label small fw-semibold">NIP Admin <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" placeholder="Contoh: 199205142018032002" required>
+                <input type="text" name="nipAdmin" class="form-control" placeholder="Contoh: 199205142018032002" required>
               </div>
               <div class="mb-3">
                 <label class="form-label small fw-semibold">Nama Lengkap & Gelar <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" placeholder="Contoh: Siti Rahma, S.Kom." required>
+                <input type="text" name="namaAdmin" class="form-control" placeholder="Contoh: Siti Rahma, S.Kom." required>
               </div>
               <div class="mb-3">
                 <label class="form-label small fw-semibold">Jabatan <span class="text-danger">*</span></label>
-                <select class="form-select" required>
+                <select name="jabatan" class="form-select" required>
                   <option value="Admin DKKA">Admin DKKA (Staf Pelaksana)</option>
                   <option value="Super Admin">Super Admin</option>
                 </select>
@@ -133,16 +145,16 @@
               <div class="row g-2 mb-3">
                 <div class="col-md-6">
                   <label class="form-label small fw-semibold">Username <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" placeholder="admin_dkka2" required>
+                  <input type="text" name="username" class="form-control" placeholder="admin_dkka2" required>
                 </div>
                 <div class="col-md-6">
                   <label class="form-label small fw-semibold">Email Resmi UBL <span class="text-danger">*</span></label>
-                  <input type="email" class="form-control" placeholder="admin@budiluhur.ac.id" required>
+                  <input type="email" name="email" class="form-control" placeholder="admin@budiluhur.ac.id" required>
                 </div>
               </div>
               <div class="mb-3">
                 <label class="form-label small fw-semibold">Password Default <span class="text-danger">*</span></label>
-                <input type="password" class="form-control" value="password" required>
+                <input type="password" name="password" class="form-control" value="password" required>
                 <div class="form-text">Pengguna wajib mengganti password saat login perdana.</div>
               </div>
             </div>
@@ -221,9 +233,9 @@
                   <a href="<?= base_url('admin/dosen/detail/' . $dos['idDosen']) ?>" class="btn btn-outline-primary btn-sm py-1 px-2" title="Lihat 2 Tab Histori Penugasan & Hasil">
                     <i class="bi bi-journal-text me-1"></i> Histori
                   </a>
-                  <button class="btn btn-outline-danger btn-sm py-1 px-2" onclick="showSipkmToast('Simulasi: Nonaktifkan dosen <?= esc($dos['namaDosen']) ?>', 'warning')">
-                    <i class="bi bi-trash"></i>
-                  </button>
+                  <a href="<?= base_url('admin/pengguna/toggle-status/' . $dos['idUser']) ?>" class="btn btn-outline-warning btn-sm py-1 px-2" title="Ubah Status Aktif/Nonaktif" onclick="return confirm('Apakah Anda yakin ingin mengubah status akun dosen <?= esc($dos['namaDosen']) ?>?');">
+                    <i class="bi bi-power"></i>
+                  </a>
                 </td>
               </tr>
             <?php endforeach; ?>
@@ -242,23 +254,24 @@
             </h6>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <form class="sipkm-form" onsubmit="event.preventDefault(); showSipkmToast('Dosen Peninjau baru berhasil didaftarkan!', 'success'); bootstrap.Modal.getInstance(document.getElementById('modalTambahDosen')).hide();">
+          <form action="<?= base_url('admin/pengguna/tambah-dosen') ?>" method="post" class="sipkm-form">
+            <?= csrf_field() ?>
             <div class="modal-body">
               <div class="mb-3">
                 <label class="form-label small fw-semibold">NIP / NIDN Dosen <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" placeholder="Contoh: 0315088501" required>
+                <input type="text" name="nipDosen" class="form-control" placeholder="Contoh: 0315088501" required>
               </div>
               <div class="mb-3">
                 <label class="form-label small fw-semibold">Nama Lengkap & Gelar <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" placeholder="Contoh: Dr. Ir. Hendra Wijaya, M.Sc." required>
+                <input type="text" name="namaDosen" class="form-control" placeholder="Contoh: Dr. Ir. Hendra Wijaya, M.Sc." required>
               </div>
               <div class="mb-3">
                 <label class="form-label small fw-semibold">Email Resmi Universitas <span class="text-danger">*</span></label>
-                <input type="email" class="form-control" placeholder="hendra.wijaya@budiluhur.ac.id" required>
+                <input type="email" name="email" class="form-control" placeholder="hendra.wijaya@budiluhur.ac.id" required>
               </div>
               <div class="mb-3">
                 <label class="form-label small fw-semibold">Password Default <span class="text-danger">*</span></label>
-                <input type="password" class="form-control" value="password" required>
+                <input type="password" name="password" class="form-control" value="password" required>
                 <div class="form-text">Dosen dapat masuk menggunakan email dan password default ini.</div>
               </div>
             </div>

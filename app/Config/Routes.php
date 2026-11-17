@@ -47,10 +47,20 @@ $routes->group('dosen', ['filter' => 'auth:Dosen Peninjau'], static function ($r
 // RUTE MODUL ADMIN DKKA & SUPER ADMIN (DIPROTEKSI AUTHFILTER)
 // ====================================================================
 $routes->group('admin', ['filter' => 'auth:Super Admin,Admin'], static function ($routes) {
-    $routes->get('dashboard', 'PreviewController::adminDashboard');
-    $routes->get('pengguna', 'PreviewController::adminPengguna');
-    $routes->get('dosen/detail/(:num)', 'PreviewController::adminDetailDosen/$1');
-    $routes->get('kelompok', 'PreviewController::adminKelompok');
-    $routes->get('proposal', 'PreviewController::adminProposal');
-    $routes->get('lomba', 'PreviewController::adminLomba');
+    $routes->get('dashboard', 'AdminController::dashboard');
+    $routes->get('pengguna', 'AdminController::pengguna');
+    $routes->post('pengguna/tambah-admin', 'AdminController::tambahAdmin');
+    $routes->post('pengguna/tambah-dosen', 'AdminController::tambahDosen');
+    $routes->get('pengguna/toggle-status/(:num)', 'AdminController::toggleStatusPengguna/$1');
+    $routes->get('dosen/detail/(:num)', 'AdminController::detailDosen/$1');
+    $routes->get('kelompok', 'AdminController::kelompok');
+    $routes->post('kelompok/tambah', 'AdminController::tambahKelompok');
+    $routes->get('kelompok/hapus/(:num)', 'AdminController::hapusKelompok/$1');
+    $routes->get('proposal', 'AdminController::proposal');
+    $routes->post('proposal/plotting', 'AdminController::plottingDosen');
+    $routes->post('proposal/bulk-plotting', 'AdminController::bulkPlottingDosen');
+    $routes->post('proposal/tetapkan-kelayakan', 'AdminController::tetapkanKelayakan');
+    $routes->get('lomba', 'AdminController::lomba');
+    $routes->post('lomba/tambah', 'AdminController::tambahLomba');
+    $routes->get('lomba/hapus/(:num)', 'AdminController::hapusLomba/$1');
 });

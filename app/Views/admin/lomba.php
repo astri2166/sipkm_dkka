@@ -2,6 +2,20 @@
 
 <?= $this->section('content') ?>
 <div class="container-fluid p-0">
+  <!-- Flash Messages -->
+  <?php if (session()->getFlashdata('success')): ?>
+    <div class="alert alert-success small py-2 px-3 mb-3 d-flex align-items-center gap-2">
+      <i class="bi bi-check-circle-fill flex-shrink-0"></i>
+      <div><?= session()->getFlashdata('success') ?></div>
+    </div>
+  <?php endif; ?>
+  <?php if (session()->getFlashdata('error')): ?>
+    <div class="alert alert-danger small py-2 px-3 mb-3 d-flex align-items-center gap-2">
+      <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+      <div><?= session()->getFlashdata('error') ?></div>
+    </div>
+  <?php endif; ?>
+
   <!-- Header & Tombol Tambah Lomba -->
   <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
     <div>
@@ -67,12 +81,9 @@
                 </span>
               </td>
               <td class="text-center">
-                <button class="btn btn-outline-secondary btn-sm py-1 px-2 me-1" onclick="showSipkmToast('Simulasi: Edit informasi lomba <?= esc($l['judulLomba']) ?>', 'info')">
-                  <i class="bi bi-pencil"></i>
-                </button>
-                <button class="btn btn-outline-danger btn-sm py-1 px-2" onclick="showSipkmToast('Simulasi: Hapus informasi lomba <?= esc($l['judulLomba']) ?>', 'warning')">
+                <a href="<?= base_url('admin/lomba/hapus/' . $l['idLomba']) ?>" class="btn btn-outline-danger btn-sm py-1 px-2" title="Hapus Informasi Lomba" onclick="return confirm('Apakah Anda yakin ingin menghapus informasi lomba <?= esc($l['judulLomba']) ?>?');">
                   <i class="bi bi-trash"></i>
-                </button>
+                </a>
               </td>
             </tr>
           <?php endforeach; ?>
@@ -91,16 +102,17 @@
           </h6>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <form class="sipkm-form" onsubmit="event.preventDefault(); showSipkmToast('Informasi lomba baru berhasil dipublikasikan ke Papan Pengumuman Publik!', 'success'); bootstrap.Modal.getInstance(document.getElementById('modalTambahLomba')).hide();">
+        <form action="<?= base_url('admin/lomba/tambah') ?>" method="post" enctype="multipart/form-data" class="sipkm-form">
+          <?= csrf_field() ?>
           <div class="modal-body">
             <div class="mb-3">
               <label class="form-label small fw-semibold">Judul Kegiatan / Lomba <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" placeholder="Contoh: Pagelaran Mahasiswa Nasional GEMASTIK XX 2027" required>
+              <input type="text" name="judulLomba" class="form-control" placeholder="Contoh: Pagelaran Mahasiswa Nasional GEMASTIK XX 2027" required>
             </div>
             <div class="row g-3 mb-3">
               <div class="col-md-6">
                 <label class="form-label small fw-semibold">Kategori Bidang <span class="text-danger">*</span></label>
-                <select class="form-select" required>
+                <select name="kategoriLomba" class="form-select" required>
                   <option value="PKM & Karya Ilmiah">PKM & Karya Ilmiah</option>
                   <option value="Teknologi & IT">Teknologi & IT</option>
                   <option value="Kewirausahaan">Kewirausahaan</option>
@@ -109,22 +121,22 @@
               </div>
               <div class="col-md-6">
                 <label class="form-label small fw-semibold">Poster Banner (JPG/PNG) <span class="text-danger">*</span></label>
-                <input type="file" class="form-control" accept="image/*" required>
+                <input type="file" name="poster" class="form-control" accept="image/*">
               </div>
             </div>
             <div class="row g-3 mb-3">
               <div class="col-md-6">
                 <label class="form-label small fw-semibold">Tanggal Mulai Pendaftaran <span class="text-danger">*</span></label>
-                <input type="date" class="form-control" required value="2026-11-20">
+                <input type="date" name="timelineMulai" class="form-control" required value="2026-11-20">
               </div>
               <div class="col-md-6">
                 <label class="form-label small fw-semibold">Batas Akhir Pendaftaran <span class="text-danger">*</span></label>
-                <input type="date" class="form-control" required value="2026-12-31">
+                <input type="date" name="timelineSelesai" class="form-control" required value="2026-12-31">
               </div>
             </div>
             <div class="mb-3">
               <label class="form-label small fw-semibold">Deskripsi & Syarat Pendaftaran <span class="text-danger">*</span></label>
-              <textarea class="form-control" rows="4" placeholder="Tuliskan syarat tim, tautan panduan teknis, dan tahapan seleksi..." required></textarea>
+              <textarea name="deskripsiLomba" class="form-control" rows="4" placeholder="Tuliskan syarat tim, tautan panduan teknis, dan tahapan seleksi..." required></textarea>
             </div>
           </div>
           <div class="modal-footer bg-light">

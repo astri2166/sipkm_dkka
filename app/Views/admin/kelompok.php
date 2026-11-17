@@ -2,6 +2,20 @@
 
 <?= $this->section('content') ?>
 <div class="container-fluid p-0">
+  <!-- Flash Messages -->
+  <?php if (session()->getFlashdata('success')): ?>
+    <div class="alert alert-success small py-2 px-3 mb-3 d-flex align-items-center gap-2">
+      <i class="bi bi-check-circle-fill flex-shrink-0"></i>
+      <div><?= session()->getFlashdata('success') ?></div>
+    </div>
+  <?php endif; ?>
+  <?php if (session()->getFlashdata('error')): ?>
+    <div class="alert alert-danger small py-2 px-3 mb-3 d-flex align-items-center gap-2">
+      <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+      <div><?= session()->getFlashdata('error') ?></div>
+    </div>
+  <?php endif; ?>
+
   <!-- Header & Aksi Cepat Tambah Kelompok -->
   <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
     <div>
@@ -95,12 +109,9 @@
                 <button class="btn btn-outline-primary btn-sm py-1 px-2 me-1" data-bs-toggle="modal" data-bs-target="#modalAnggota_<?= $k['idKelompok'] ?>" title="Lihat Anggota Tim">
                   <i class="bi bi-person-lines-fill"></i>
                 </button>
-                <button class="btn btn-outline-secondary btn-sm py-1 px-2 me-1" onclick="showSipkmToast('Simulasi: Edit data kelompok <?= esc($k['namaKelompok']) ?>', 'info')">
-                  <i class="bi bi-pencil"></i>
-                </button>
-                <button class="btn btn-outline-danger btn-sm py-1 px-2" onclick="showSipkmToast('Simulasi: Hapus kelompok <?= esc($k['namaKelompok']) ?>', 'warning')">
+                <a href="<?= base_url('admin/kelompok/hapus/' . $k['idKelompok']) ?>" class="btn btn-outline-danger btn-sm py-1 px-2" title="Bubarkan Kelompok" onclick="return confirm('Apakah Anda yakin ingin membubarkan kelompok <?= esc($k['namaKelompok']) ?>?');">
                   <i class="bi bi-trash"></i>
-                </button>
+                </a>
 
                 <!-- Modal Lihat Anggota Tim -->
                 <div class="modal fade" id="modalAnggota_<?= $k['idKelompok'] ?>" tabindex="-1" aria-hidden="true">
@@ -166,20 +177,28 @@
           </h6>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <form class="sipkm-form" onsubmit="event.preventDefault(); showSipkmToast('Kelompok PKM baru berhasil didaftarkan!', 'success'); bootstrap.Modal.getInstance(document.getElementById('modalTambahKelompok')).hide();">
+        <form action="<?= base_url('admin/kelompok/tambah') ?>" method="post" class="sipkm-form">
+          <?= csrf_field() ?>
           <div class="modal-body">
             <div class="mb-3">
               <label class="form-label small fw-semibold">Nama Kelompok PKM <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" placeholder="Contoh: Tim Inovasi AgroTek UBL" required>
+              <input type="text" name="namaKelompok" class="form-control" placeholder="Contoh: Tim Inovasi AgroTek UBL" required>
             </div>
             <div class="row g-2 mb-3">
               <div class="col-md-6">
                 <label class="form-label small fw-semibold">Tahun Periode <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" value="2026" readonly>
+                <input type="text" name="tahunPeriode" class="form-control" value="2026" required>
               </div>
               <div class="col-md-6">
-                <label class="form-label small fw-semibold">NIM Ketua Tim <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" placeholder="2412501001" required>
+                <label class="form-label small fw-semibold">Pilih Ketua Tim (Mahasiswa Bebas) <span class="text-danger">*</span></label>
+                <select name="nimKetua" class="form-select" required>
+                  <option value="">-- Pilih Mahasiswa Bebas --</option>
+                  <?php if (!empty($mahasiswaBebas)): foreach ($mahasiswaBebas as $mb): ?>
+                    <option value="<?= esc($mb['nim']) ?>"><?= esc($mb['nim']) ?> - <?= esc($mb['namaMahasiswa']) ?></option>
+                  <?php endforeach; else: ?>
+                    <option value="2412501001">2412501001 - Mahasiswa Terdaftar</option>
+                  <?php endif; ?>
+                </select>
               </div>
             </div>
             <div class="alert alert-info small mb-0">

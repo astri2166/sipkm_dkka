@@ -2,6 +2,20 @@
 
 <?= $this->section('content') ?>
 <div class="container-fluid p-0">
+  <!-- Flash Messages -->
+  <?php if (session()->getFlashdata('success')): ?>
+    <div class="alert alert-success small py-2 px-3 mb-3 d-flex align-items-center gap-2">
+      <i class="bi bi-check-circle-fill flex-shrink-0"></i>
+      <div><?= session()->getFlashdata('success') ?></div>
+    </div>
+  <?php endif; ?>
+  <?php if (session()->getFlashdata('error')): ?>
+    <div class="alert alert-danger small py-2 px-3 mb-3 d-flex align-items-center gap-2">
+      <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+      <div><?= session()->getFlashdata('error') ?></div>
+    </div>
+  <?php endif; ?>
+
   <!-- Header & Tab Navigasi Proposal -->
   <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
     <div>
@@ -136,7 +150,9 @@
                             </h6>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                           </div>
-                          <form class="sipkm-form" onsubmit="event.preventDefault(); showSipkmToast('Proposal #<?= $p['idProposal'] ?> berhasil di-plotting ke Dosen Peninjau! Status berubah menjadi: Sedang Ditinjau.', 'success'); bootstrap.Modal.getInstance(document.getElementById('modalPlottingSatuan_<?= $p['idProposal'] ?>')).hide();">
+                          <form action="<?= base_url('admin/proposal/plotting') ?>" method="post" class="sipkm-form">
+                            <?= csrf_field() ?>
+                            <input type="hidden" name="idProposal" value="<?= $p['idProposal'] ?>">
                             <div class="modal-body">
                               <div class="mb-2">
                                 <label class="small text-muted">Judul Proposal:</label>
@@ -144,7 +160,7 @@
                               </div>
                               <div class="mb-3">
                                 <label class="form-label small fw-semibold">Pilih Dosen Peninjau <span class="text-danger">*</span></label>
-                                <select class="form-select" required>
+                                <select name="idDosen" class="form-select" required>
                                   <option value="">-- Pilih Dosen Peninjau --</option>
                                   <?php foreach ($daftarDosen as $dos): ?>
                                     <option value="<?= esc($dos['idDosen']) ?>" <?= ($p['idDosen'] ?? 0) == $dos['idDosen'] ? 'selected' : '' ?>>
@@ -186,14 +202,16 @@
             </h6>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <form class="sipkm-form" onsubmit="event.preventDefault(); showSipkmToast('Proposal terpilih berhasil di-plotting massal! Status usulan telah diperbarui.', 'success'); bootstrap.Modal.getInstance(document.getElementById('modalBulkPlotting')).hide();">
+          <form action="<?= base_url('admin/proposal/bulk-plotting') ?>" method="post" class="sipkm-form">
+            <?= csrf_field() ?>
+            <input type="hidden" name="selectedProposals" id="bulkSelectedInput" value="">
             <div class="modal-body">
               <p class="small text-muted">
                 Anda memilih <strong id="modalSelectedCount">0</strong> proposal untuk ditugaskan secara serentak ke satu Dosen Peninjau.
               </p>
               <div class="mb-3">
                 <label class="form-label small fw-semibold">Pilih Dosen Peninjau <span class="text-danger">*</span></label>
-                <select class="form-select" required>
+                <select name="idDosen" class="form-select" required>
                   <option value="">-- Pilih Dosen Peninjau --</option>
                   <?php foreach ($daftarDosen as $dos): ?>
                     <option value="<?= esc($dos['idDosen']) ?>">
@@ -277,13 +295,23 @@
                     <?php endif; ?>
                   </td>
                   <td class="text-center">
-                    <div class="btn-group btn-group-sm">
-                      <button class="btn btn-success btn-sm" onclick="showSipkmToast('Proposal #<?= $prop['idProposal'] ?> ditetapkan: LAYAK DIDANAI!', 'success')">
-                        <i class="bi bi-check-lg me-1"></i> Layak
-                      </button>
-                      <button class="btn btn-outline-danger btn-sm" onclick="showSipkmToast('Proposal #<?= $prop['idProposal'] ?> ditetapkan: TIDAK LAYAK.', 'warning')">
-                        <i class="bi bi-x-lg me-1"></i> Tidak Layak
-                      </button>
+                    <div class="d-flex gap-1 justify-content-center">
+                      <form action="<?= base_url('admin/proposal/tetapkan-kelayakan') ?>" method="post" class="d-inline">
+                        <?= csrf_field() ?>
+                        <input type="hidden" name="idProposal" value="<?= $prop['idProposal'] ?>">
+                        <input type="hidden" name="statusProposal" value="Layak">
+                        <button type="submit" class="btn btn-success btn-sm py-1 px-2" onclick="return confirm('Tetapkan usulan proposal #<?= $prop['idProposal'] ?> sebagai LAYAK DIDANAI?');">
+                          <i class="bi bi-check-lg me-1"></i> Layak
+                        </button>
+                      </form>
+                      <form action="<?= base_url('admin/proposal/tetapkan-kelayakan') ?>" method="post" class="d-inline">
+                        <?= csrf_field() ?>
+                        <input type="hidden" name="idProposal" value="<?= $prop['idProposal'] ?>">
+                        <input type="hidden" name="statusProposal" value="Tidak Layak">
+                        <button type="submit" class="btn btn-outline-danger btn-sm py-1 px-2" onclick="return confirm('Tetapkan usulan proposal #<?= $prop['idProposal'] ?> sebagai TIDAK LAYAK?');">
+                          <i class="bi bi-x-lg me-1"></i> Tidak Layak
+                        </button>
+                      </form>
                     </div>
                   </td>
                 </tr>
@@ -298,9 +326,15 @@
 
 <script>
 function updateSelectedCount() {
-  const selected = document.querySelectorAll('.prop-checkbox:checked').length;
+  const checkedBoxes = document.querySelectorAll('.prop-checkbox:checked');
+  const selected = checkedBoxes.length;
   document.getElementById('selectedCount').innerText = selected;
   document.getElementById('modalSelectedCount').innerText = selected;
+  const ids = Array.from(checkedBoxes).map(cb => cb.value).join(',');
+  const hiddenInput = document.getElementById('bulkSelectedInput');
+  if (hiddenInput) {
+    hiddenInput.value = ids;
+  }
 }
 
 function toggleCheckAll(source) {

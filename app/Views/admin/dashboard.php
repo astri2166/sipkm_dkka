@@ -2,6 +2,20 @@
 
 <?= $this->section('content') ?>
 <div class="container-fluid p-0">
+  <!-- Flash Messages -->
+  <?php if (session()->getFlashdata('success')): ?>
+    <div class="alert alert-success small py-2 px-3 mb-3 d-flex align-items-center gap-2">
+      <i class="bi bi-check-circle-fill flex-shrink-0"></i>
+      <div><?= session()->getFlashdata('success') ?></div>
+    </div>
+  <?php endif; ?>
+  <?php if (session()->getFlashdata('error')): ?>
+    <div class="alert alert-danger small py-2 px-3 mb-3 d-flex align-items-center gap-2">
+      <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+      <div><?= session()->getFlashdata('error') ?></div>
+    </div>
+  <?php endif; ?>
+
   <!-- Banner Admin DKKA & Role Preview Switcher -->
   <div class="sipkm-card p-4 mb-4 border-0 shadow-sm" style="background: linear-gradient(135deg, #0f294a 0%, #1e3a8a 100%); color: #fff;">
     <div class="row align-items-center">
