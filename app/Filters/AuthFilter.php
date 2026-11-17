@@ -35,11 +35,24 @@ class AuthFilter implements FilterInterface
             $userRole = $session->get('role');
 
             if (! in_array($userRole, $arguments, true)) {
+                // Khusus jika user role 'Admin' mencoba membuka route khusus Super Admin
+                if ($userRole === 'Admin' && in_array('Super Admin', $arguments, true)) {
+                    $session->setFlashdata('error', 'Akses Ditolak: Halaman ini khusus Super Admin.');
+                    return redirect()->to(base_url('admin/dashboard'));
+                }
+
+                // Khusus jika user role 'Super Admin' mencoba membuka route operasional Admin
+                if ($userRole === 'Super Admin' && in_array('Admin', $arguments, true)) {
+                    $session->setFlashdata('error', 'Akses Ditolak: Anda tidak memiliki wewenang untuk membuka halaman tersebut.');
+                    return redirect()->to(base_url('superadmin/dashboard'));
+                }
+
                 $session->setFlashdata('error', 'Akses ditolak: Anda tidak memiliki wewenang untuk membuka halaman tersebut.');
 
                 // Arahkan kembali ke dashboard sesuai role yang sah
                 switch ($userRole) {
                     case 'Super Admin':
+                        return redirect()->to(base_url('superadmin/dashboard'));
                     case 'Admin':
                         return redirect()->to(base_url('admin/dashboard'));
                     case 'Dosen Peninjau':

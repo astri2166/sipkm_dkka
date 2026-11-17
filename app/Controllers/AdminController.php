@@ -35,7 +35,7 @@ class AdminController extends BaseController
     }
 
     /**
-     * Helper mendapatkan data administrator aktif dari sesi login
+     * Helper mendapatkan data Administrator DKKA aktif dari sesi login
      */
     private function getAdminAktif(): array
     {
@@ -43,13 +43,12 @@ class AdminController extends BaseController
         $admin  = $this->adminModel->findByUserId((int) $idUser);
 
         if (! $admin) {
-            $role = session()->get('role') ?? 'Admin';
             $admin = [
-                'idAdmin'   => 1,
-                'idUser'    => $idUser ?? 1,
-                'nipAdmin'  => '198801012015011001',
-                'namaAdmin' => ($role === 'Super Admin') ? 'Budi Santoso, M.Kom.' : 'Rina Kartika, S.E.',
-                'jabatan'   => ($role === 'Super Admin') ? 'Super Admin' : 'Admin DKKA',
+                'idAdmin'   => 2,
+                'idUser'    => $idUser ?? 2,
+                'nipAdmin'  => '199205142018032002',
+                'namaAdmin' => 'Rina Kartika, S.E.',
+                'jabatan'   => 'Admin DKKA',
             ];
         }
 
@@ -57,12 +56,11 @@ class AdminController extends BaseController
     }
 
     /**
-     * Dashboard Utama Administrator & Super Admin
+     * Dashboard Utama Administrator DKKA
      */
     public function dashboard()
     {
         $admin = $this->getAdminAktif();
-        $role  = session()->get('role') ?? 'Admin';
 
         // Agregasi statistik operasional aktual dari database
         $stats = [
@@ -78,9 +76,9 @@ class AdminController extends BaseController
         $masterTemplateUrl = env('sipkm.templatePenilaianUrl', 'https://drive.google.com/drive/folders/MASTER_TEMPLATE_PENILAIAN_DKKA');
 
         $data = [
-            'title'             => 'Dashboard Administrator | SIPKM-DKKA',
-            'pageHeader'        => 'Dashboard ' . ($role === 'Super Admin' ? 'Super Admin' : 'Admin DKKA'),
-            'role'              => $role,
+            'title'             => 'Dashboard Administrator DKKA | SIPKM-DKKA',
+            'pageHeader'        => 'Dashboard Admin DKKA',
+            'role'              => 'Admin',
             'activeMenu'        => 'dashboard',
             'userName'          => $admin['namaAdmin'],
             'stats'             => $stats,
@@ -91,83 +89,23 @@ class AdminController extends BaseController
     }
 
     /**
-     * Manajemen Pengguna Sistem (Dosen Peninjau & Admin DKKA)
+     * 1. Kelola Dosen Peninjau: Tampilkan Daftar Dosen & Beban Tugas
      */
-    public function pengguna()
+    public function dosen()
     {
         $admin = $this->getAdminAktif();
-        $role  = session()->get('role') ?? 'Admin';
-        $tab   = $this->request->getGet('tab') ?? 'dosen';
-
         $daftarDosen = $this->dosenModel->getDosenWithStats();
-        $daftarAdmin = $this->adminModel->getAdminWithUser();
 
         $data = [
-            'title'       => 'Kelola Pengguna Sistem | SIPKM-DKKA',
-            'pageHeader'  => 'Manajemen Pengguna Sistem',
-            'role'        => $role,
-            'activeMenu'  => ($tab === 'admin') ? 'pengguna' : 'dosen',
-            'activeTab'   => $tab,
+            'title'       => 'Kelola Dosen Peninjau | SIPKM-DKKA',
+            'pageHeader'  => 'Manajemen Dosen Peninjau PKM',
+            'role'        => 'Admin',
+            'activeMenu'  => 'dosen',
             'userName'    => $admin['namaAdmin'],
             'daftarDosen' => $daftarDosen,
-            'daftarAdmin' => $daftarAdmin,
         ];
 
-        return view('admin/pengguna', $data);
-    }
-
-    /**
-     * Tambah Akun Administrator DKKA Baru (Khusus Super Admin)
-     */
-    public function tambahAdmin()
-    {
-        $role = session()->get('role');
-        if ($role !== 'Super Admin') {
-            return redirect()->to(base_url('admin/pengguna?tab=admin'))->with('error', 'Akses ditolak: Hanya Super Admin yang berwenang menambah akun administrator.');
-        }
-
-        $rules = [
-            'nipAdmin'  => 'required|min_length[5]|max_length[30]|is_unique[admin.nipAdmin]',
-            'namaAdmin' => 'required|min_length[3]|max_length[100]',
-            'jabatan'   => 'required|in_list[Admin DKKA,Super Admin]',
-            'username'  => 'required|min_length[4]|max_length[50]|is_unique[user.username]',
-            'email'     => 'required|valid_email|max_length[100]|is_unique[user.email]',
-            'password'  => 'required|min_length[6]',
-        ];
-
-        if (! $this->validate($rules)) {
-            return redirect()->back()->withInput()->with('error', 'Mohon lengkapi seluruh kolom isian akun admin dengan benar.');
-        }
-
-        $db = \Config\Database::connect();
-        $db->transStart();
-
-        // 1. Insert ke tabel user
-        $this->userModel->insert([
-            'username'   => trim($this->request->getPost('username')),
-            'email'      => trim($this->request->getPost('email')),
-            'password'   => password_hash($this->request->getPost('password'), PASSWORD_BCRYPT),
-            'role'       => $this->request->getPost('jabatan'),
-            'statusAkun' => 'Aktif',
-        ]);
-        $idUser = $this->userModel->getInsertID();
-
-        // 2. Insert ke tabel admin
-        $this->adminModel->insert([
-            'idUser'    => $idUser,
-            'nipAdmin'  => trim($this->request->getPost('nipAdmin')),
-            'namaAdmin' => trim($this->request->getPost('namaAdmin')),
-            'jabatan'   => $this->request->getPost('jabatan'),
-        ]);
-
-        $db->transComplete();
-
-        if ($db->transStatus() === false) {
-            return redirect()->back()->withInput()->with('error', 'Gagal mendaftarkan admin baru ke sistem.');
-        }
-
-        return redirect()->to(base_url('admin/pengguna?tab=admin'))
-                         ->with('success', 'Akun Administrator ' . esc($this->request->getPost('namaAdmin')) . ' berhasil didaftarkan!');
+        return view('admin/dosen', $data);
     }
 
     /**
@@ -217,14 +155,72 @@ class AdminController extends BaseController
             return redirect()->back()->withInput()->with('error', 'Gagal mendaftarkan dosen baru ke sistem.');
         }
 
-        return redirect()->to(base_url('admin/pengguna?tab=dosen'))
-                         ->with('success', 'Dosen Peninjau ' . esc($namaDosen) . ' berhasil ditambahkan!');
+        return redirect()->to(base_url('admin/dosen'))
+                         ->with('success', 'Dosen Peninjau ' . esc($namaDosen) . ' berhasil didaftarkan!');
     }
 
     /**
-     * Mengubah Status Akun Pengguna (Aktif / Nonaktif)
+     * Edit Data Dosen Peninjau (Nama, NIP, Email, & Password Baru jika diisi)
      */
-    public function toggleStatusPengguna(int $idUser)
+    public function editDosen(int $idDosen)
+    {
+        $dosen = $this->dosenModel->find($idDosen);
+        if (! $dosen) {
+            return redirect()->back()->with('error', 'Data Dosen Peninjau tidak ditemukan.');
+        }
+
+        $user = $this->userModel->find($dosen['idUser']);
+        if (! $user) {
+            return redirect()->back()->with('error', 'Data user dosen tidak ditemukan.');
+        }
+
+        $rules = [
+            'nipDosen'  => "required|min_length[5]|max_length[30]|is_unique[dosen_peninjau.nipDosen,idDosen,{$idDosen}]",
+            'namaDosen' => 'required|min_length[3]|max_length[100]',
+            'email'     => "required|valid_email|max_length[100]|is_unique[dosen_peninjau.email,idDosen,{$idDosen}]|is_unique[user.email,idUser,{$user['idUser']}]",
+        ];
+
+        if (! $this->validate($rules)) {
+            return redirect()->back()->withInput()->with('error', 'Mohon periksa kembali kolom data dosen yang diubah.');
+        }
+
+        $nipDosen  = trim($this->request->getPost('nipDosen'));
+        $namaDosen = trim($this->request->getPost('namaDosen'));
+        $email     = trim($this->request->getPost('email'));
+
+        $db = \Config\Database::connect();
+        $db->transStart();
+
+        // Update data dosen
+        $this->dosenModel->update($idDosen, [
+            'nipDosen'  => $nipDosen,
+            'namaDosen' => $namaDosen,
+            'email'     => $email,
+        ]);
+
+        // Update data user
+        $userData = [
+            'username' => $nipDosen,
+            'email'    => $email,
+        ];
+
+        $passwordBaru = $this->request->getPost('password');
+        if (! empty($passwordBaru)) {
+            $userData['password'] = password_hash($passwordBaru, PASSWORD_BCRYPT);
+        }
+
+        $this->userModel->update($user['idUser'], $userData);
+
+        $db->transComplete();
+
+        return redirect()->to(base_url('admin/dosen'))
+                         ->with('success', 'Data Dosen Peninjau ' . esc($namaDosen) . ' berhasil diperbarui!');
+    }
+
+    /**
+     * Mengubah Status Akun Dosen (Aktif / Nonaktif)
+     */
+    public function toggleStatusDosen(int $idUser)
     {
         $user = $this->userModel->find($idUser);
         if (! $user) {
@@ -234,20 +230,20 @@ class AdminController extends BaseController
         $newStatus = ($user['statusAkun'] === 'Aktif') ? 'Nonaktif' : 'Aktif';
         $this->userModel->update($idUser, ['statusAkun' => $newStatus]);
 
-        return redirect()->back()->with('success', 'Status akun pengguna ' . esc($user['username']) . ' berhasil diubah menjadi: ' . $newStatus);
+        return redirect()->to(base_url('admin/dosen'))
+                         ->with('success', 'Status akun dosen ' . esc($user['username']) . ' berhasil diubah menjadi: ' . $newStatus);
     }
 
     /**
-     * Halaman Detail & Histori Dosen Peninjau (2 Tab: Penugasan & Hasil)
+     * Halaman Detail & Histori Dosen Peninjau (2 Tab: Pengajuan Peninjauan & Hasil Peninjauan)
      */
     public function detailDosen(int $idDosen)
     {
         $admin = $this->getAdminAktif();
-        $role  = session()->get('role') ?? 'Admin';
 
         $dosen = $this->dosenModel->find($idDosen);
         if (! $dosen) {
-            return redirect()->to(base_url('admin/pengguna?tab=dosen'))->with('error', 'Data Dosen Peninjau tidak ditemukan.');
+            return redirect()->to(base_url('admin/dosen'))->with('error', 'Data Dosen Peninjau tidak ditemukan.');
         }
 
         // Tab 1 & Tab 2 Query Penugasan
@@ -257,7 +253,7 @@ class AdminController extends BaseController
         $data = [
             'title'             => 'Histori Dosen: ' . $dosen['namaDosen'] . ' | SIPKM-DKKA',
             'pageHeader'        => 'Detail & Histori Dosen Peninjau',
-            'role'              => $role,
+            'role'              => 'Admin',
             'activeMenu'        => 'dosen',
             'userName'          => $admin['namaAdmin'],
             'dosen'             => $dosen,
@@ -269,13 +265,11 @@ class AdminController extends BaseController
     }
 
     /**
-     * Pengelolaan Kelompok PKM Mahasiswa
+     * 2. Kelola Kelompok PKM: Daftar Kelompok, Susunan Anggota, & Filter
      */
     public function kelompok()
     {
         $admin = $this->getAdminAktif();
-        $role  = session()->get('role') ?? 'Admin';
-
         $daftarKelompok = $this->kelompokModel->getKelompokWithDetails();
 
         // Ambil daftar anggota untuk modal rincian tiap kelompok
@@ -288,7 +282,7 @@ class AdminController extends BaseController
         $data = [
             'title'          => 'Kelola Kelompok PKM | SIPKM-DKKA',
             'pageHeader'     => 'Pengelolaan Kelompok PKM Mahasiswa',
-            'role'           => $role,
+            'role'           => 'Admin',
             'activeMenu'     => 'kelompok',
             'userName'       => $admin['namaAdmin'],
             'daftarKelompok' => $daftarKelompok,
@@ -376,12 +370,11 @@ class AdminController extends BaseController
     }
 
     /**
-     * Manajemen Proposal & Sidang Pleno Kelayakan DKKA
+     * 3. Kelola Proposal PKM & Sidang Pleno Penetapan Kelayakan
      */
     public function proposal()
     {
         $admin = $this->getAdminAktif();
-        $role  = session()->get('role') ?? 'Admin';
 
         $daftarProposal = $this->proposalModel->getProposalWithPlotting();
         $daftarDosen    = $this->dosenModel->findAll();
@@ -391,7 +384,7 @@ class AdminController extends BaseController
         $data = [
             'title'             => 'Kelola Proposal & Plotting | SIPKM-DKKA',
             'pageHeader'        => 'Pengelolaan Proposal & Sidang Pleno',
-            'role'              => $role,
+            'role'              => 'Admin',
             'activeMenu'        => 'proposal',
             'userName'          => $admin['namaAdmin'],
             'daftarProposal'    => $daftarProposal,
@@ -424,14 +417,12 @@ class AdminController extends BaseController
         $peninjauan = $this->peninjauanModel->findByProposalId($idProposal);
 
         if ($peninjauan) {
-            // Update dosen peninjau
             $this->peninjauanModel->update($peninjauan['idPeninjauan'], [
                 'idDosen'         => $idDosen,
                 'statusPenugasan' => 'Belum Ditinjau',
                 'tglPenugasan'    => date('Y-m-d'),
             ]);
         } else {
-            // Insert peninjauan baru
             $this->peninjauanModel->insert([
                 'idProposal'      => $idProposal,
                 'idDosen'         => $idDosen,
@@ -440,7 +431,6 @@ class AdminController extends BaseController
             ]);
         }
 
-        // Update status proposal mahasiswa menjadi 'Sedang Ditinjau' jika masih 'Diunggah'
         if ($proposal['statusProposal'] === 'Diunggah') {
             $this->proposalModel->update($idProposal, ['statusProposal' => 'Sedang Ditinjau']);
         }
@@ -455,7 +445,7 @@ class AdminController extends BaseController
     public function bulkPlottingDosen()
     {
         $idDosen = (int) $this->request->getPost('idDosen');
-        $selectedStr = $this->request->getPost('selectedProposals'); // Comma-separated atau array
+        $selectedStr = $this->request->getPost('selectedProposals');
         $proposals = is_array($selectedStr) ? $selectedStr : explode(',', (string) $selectedStr);
         $proposals = array_filter(array_map('intval', $proposals));
 
@@ -527,19 +517,17 @@ class AdminController extends BaseController
     }
 
     /**
-     * Halaman Manajemen Papan Informasi Lomba Publik
+     * 4. Kelola Papan Informasi Lomba Publik
      */
     public function lomba()
     {
         $admin = $this->getAdminAktif();
-        $role  = session()->get('role') ?? 'Admin';
-
         $daftarLomba = $this->lombaModel->getActiveLomba();
 
         $data = [
             'title'       => 'Kelola Papan Informasi Lomba | SIPKM-DKKA',
             'pageHeader'  => 'Manajemen Papan Informasi Lomba',
-            'role'        => $role,
+            'role'        => 'Admin',
             'activeMenu'  => 'lomba',
             'userName'    => $admin['namaAdmin'],
             'daftarLomba' => $daftarLomba,
@@ -567,7 +555,7 @@ class AdminController extends BaseController
             return redirect()->back()->withInput()->with('error', 'Mohon lengkapi formulir informasi lomba dengan benar.');
         }
 
-        $posterName = 'poster-pkm-2026.jpg'; // Default fallback
+        $posterName = 'poster-pkm-2026.jpg';
 
         $filePoster = $this->request->getFile('poster');
         if ($filePoster && $filePoster->isValid() && ! $filePoster->hasMoved()) {

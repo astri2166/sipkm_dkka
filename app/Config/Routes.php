@@ -44,14 +44,26 @@ $routes->group('dosen', ['filter' => 'auth:Dosen Peninjau'], static function ($r
 });
 
 // ====================================================================
-// RUTE MODUL ADMIN DKKA & SUPER ADMIN (DIPROTEKSI AUTHFILTER)
+// RUTE MODUL SUPER ADMIN (DIPROTEKSI ROLEFILTER / AUTHFILTER)
 // ====================================================================
-$routes->group('admin', ['filter' => 'auth:Super Admin,Admin'], static function ($routes) {
+$routes->group('superadmin', ['filter' => 'role:Super Admin'], static function ($routes) {
+    $routes->get('dashboard', 'SuperAdminController::dashboard');
+    $routes->get('kelola-admin', 'SuperAdminController::kelolaAdmin');
+    $routes->post('admin/tambah', 'SuperAdminController::tambahAdmin');
+    $routes->post('admin/edit/(:num)', 'SuperAdminController::editAdmin/$1');
+    $routes->get('admin/toggle-status/(:num)', 'SuperAdminController::toggleStatusAdmin/$1');
+    $routes->get('admin/hapus/(:num)', 'SuperAdminController::hapusAdmin/$1');
+});
+
+// ====================================================================
+// RUTE MODUL ADMIN DKKA (DIPROTEKSI ROLEFILTER / AUTHFILTER)
+// ====================================================================
+$routes->group('admin', ['filter' => 'role:Admin'], static function ($routes) {
     $routes->get('dashboard', 'AdminController::dashboard');
-    $routes->get('pengguna', 'AdminController::pengguna');
-    $routes->post('pengguna/tambah-admin', 'AdminController::tambahAdmin');
-    $routes->post('pengguna/tambah-dosen', 'AdminController::tambahDosen');
-    $routes->get('pengguna/toggle-status/(:num)', 'AdminController::toggleStatusPengguna/$1');
+    $routes->get('dosen', 'AdminController::dosen');
+    $routes->post('dosen/tambah', 'AdminController::tambahDosen');
+    $routes->post('dosen/edit/(:num)', 'AdminController::editDosen/$1');
+    $routes->get('dosen/toggle-status/(:num)', 'AdminController::toggleStatusDosen/$1');
     $routes->get('dosen/detail/(:num)', 'AdminController::detailDosen/$1');
     $routes->get('kelompok', 'AdminController::kelompok');
     $routes->post('kelompok/tambah', 'AdminController::tambahKelompok');

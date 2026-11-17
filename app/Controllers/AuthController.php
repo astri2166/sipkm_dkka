@@ -200,6 +200,7 @@ class AuthController extends BaseController
     {
         switch ($role) {
             case 'Super Admin':
+                return redirect()->to(base_url('superadmin/dashboard'));
             case 'Admin':
                 return redirect()->to(base_url('admin/dashboard'));
             case 'Dosen Peninjau':

@@ -32,21 +32,26 @@
       </div>
 
       <ul class="nav flex-column">
-        <?php if (in_array($activeRole, ['Super Admin', 'Admin'])): ?>
+        <?php if ($activeRole === 'Super Admin'): ?>
+          <li class="nav-item">
+            <a class="nav-link <?= $activeMenu === 'dashboard' ? 'active' : '' ?>" href="<?= base_url('superadmin/dashboard') ?>">
+              <i class="bi bi-speedometer2"></i> Dashboard Super Admin
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link <?= $activeMenu === 'admin' ? 'active' : '' ?>" href="<?= base_url('superadmin/kelola-admin') ?>">
+              <i class="bi bi-shield-lock"></i> Kelola Admin
+            </a>
+          </li>
+
+        <?php elseif ($activeRole === 'Admin'): ?>
           <li class="nav-item">
             <a class="nav-link <?= $activeMenu === 'dashboard' ? 'active' : '' ?>" href="<?= base_url('admin/dashboard') ?>">
               <i class="bi bi-speedometer2"></i> Dashboard Admin
             </a>
           </li>
-          <?php if ($activeRole === 'Super Admin'): ?>
           <li class="nav-item">
-            <a class="nav-link <?= $activeMenu === 'pengguna' ? 'active' : '' ?>" href="<?= base_url('admin/pengguna?tab=admin') ?>">
-              <i class="bi bi-shield-lock"></i> Kelola Admin DKKA
-            </a>
-          </li>
-          <?php endif; ?>
-          <li class="nav-item">
-            <a class="nav-link <?= $activeMenu === 'dosen' ? 'active' : '' ?>" href="<?= base_url('admin/pengguna?tab=dosen') ?>">
+            <a class="nav-link <?= $activeMenu === 'dosen' ? 'active' : '' ?>" href="<?= base_url('admin/dosen') ?>">
               <i class="bi bi-person-badge"></i> Kelola Dosen Peninjau
             </a>
           </li>
@@ -57,12 +62,12 @@
           </li>
           <li class="nav-item">
             <a class="nav-link <?= $activeMenu === 'proposal' ? 'active' : '' ?>" href="<?= base_url('admin/proposal') ?>">
-              <i class="bi bi-file-earmark-text"></i> Kelola Proposal & Plotting
+              <i class="bi bi-file-earmark-text"></i> Kelola Proposal PKM
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link <?= $activeMenu === 'lomba' ? 'active' : '' ?>" href="<?= base_url('admin/lomba') ?>">
-              <i class="bi bi-trophy"></i> Papan Informasi Lomba
+              <i class="bi bi-trophy"></i> Kelola Informasi Lomba
             </a>
           </li>
 
@@ -127,7 +132,7 @@
           <a href="<?= base_url('mahasiswa/dashboard?role=Anggota+Kelompok') ?>" class="btn btn-outline-secondary">Anggota</a>
           <a href="<?= base_url('dosen/dashboard') ?>" class="btn btn-outline-secondary">Dosen</a>
           <a href="<?= base_url('admin/dashboard?role=Admin') ?>" class="btn btn-outline-secondary">Admin</a>
-          <a href="<?= base_url('admin/dashboard?role=Super+Admin') ?>" class="btn btn-outline-secondary">Super Admin</a>
+          <a href="<?= base_url('superadmin/dashboard?role=Super+Admin') ?>" class="btn btn-outline-secondary">Super Admin</a>
         </div>
       </div>
     </header>
