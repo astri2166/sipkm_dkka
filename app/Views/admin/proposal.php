@@ -257,7 +257,9 @@
     </div>
   </div>
 </div>
+<?= $this->endSection() ?>
 
+<?= $this->section('modals') ?>
 <!-- ============================================================== -->
 <!-- MODAL-MODAL DITEMPATKAN DI ROOT CONTAINER (BEBAS STACKING BUG) -->
 <!-- ============================================================== -->

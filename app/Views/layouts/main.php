@@ -7,7 +7,29 @@
   <title><?= esc($title ?? 'SIPKM-DKKA | Universitas Budi Luhur') ?></title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-  <link href="<?= base_url('assets/css/sipkm-ui.css') ?>" rel="stylesheet">
+  <link href="<?= base_url('assets/css/sipkm-ui.css?v=' . time()) ?>" rel="stylesheet">
+  <style>
+    /* Jaminan Mutlak: Modal Selalu di Atas Backdrop & Interaktif */
+    .modal {
+      z-index: 1065 !important;
+    }
+    .modal-backdrop {
+      z-index: 1050 !important;
+    }
+    .modal-dialog {
+      z-index: 1066 !important;
+      pointer-events: auto !important;
+    }
+    .modal-content {
+      pointer-events: auto !important;
+    }
+    main {
+      transform: none !important;
+    }
+    body.modal-open main {
+      transform: none !important;
+    }
+  </style>
 </head>
 <body>
 <?php
@@ -137,13 +159,25 @@
       </div>
     </header>
 
-    <main class="p-4 flex-grow-1 animate-fade-up">
+    <main class="p-4 flex-grow-1">
       <?= $this->renderSection('content') ?>
     </main>
   </div>
 </div>
 
+<?= $this->renderSection('modals') ?>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="<?= base_url('assets/js/sipkm-ui.js') ?>"></script>
+<script src="<?= base_url('assets/js/sipkm-ui.js?v=' . time()) ?>"></script>
+<script>
+  // Pindahkan semua elemen modal langsung ke <body> agar terbebas 100% dari batasan CSS container manapun
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.modal').forEach(el => {
+      if (el.parentElement !== document.body) {
+        document.body.appendChild(el);
+      }
+    });
+  });
+</script>
 </body>
 </html>
