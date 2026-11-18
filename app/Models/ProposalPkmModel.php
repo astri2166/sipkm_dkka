@@ -47,6 +47,7 @@ class ProposalPkmModel extends Model
         return $this->select('proposal_pkm.*, kelompok_pkm.namaKelompok, kelompok_pkm.nimKetua,
                               peninjauan_proposal.idPeninjauan, peninjauan_proposal.idDosen,
                               peninjauan_proposal.statusPenugasan, peninjauan_proposal.tglPenugasan, peninjauan_proposal.tglSelesaiTinjau,
+                              peninjauan_proposal.catatanAdministrasi, peninjauan_proposal.catatanSubstansi, peninjauan_proposal.tautanRekapDrive,
                               dosen_peninjau.namaDosen, dosen_peninjau.nipDosen')
                     ->join('kelompok_pkm', 'kelompok_pkm.idKelompok = proposal_pkm.idKelompok')
                     ->join('peninjauan_proposal', 'peninjauan_proposal.idProposal = proposal_pkm.idProposal', 'left')

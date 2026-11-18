@@ -81,12 +81,26 @@ body {
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: none;
   }
 }
 
 .animate-fade-up {
   animation: fadeSlideUp 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Stacking Context & Bootstrap Modal Accessibility Fix */
+body.modal-open main,
+body.modal-open .animate-fade-up {
+  transform: none !important;
+}
+
+.modal {
+  z-index: 1060 !important;
+}
+
+.modal-backdrop {
+  z-index: 1050 !important;
 }
 
 /* 5. Skeleton Shimmer Loading */
