@@ -74,15 +74,17 @@ class AdminController extends BaseController
         ];
 
         $masterTemplateUrl = env('sipkm.templatePenilaianUrl', 'https://drive.google.com/drive/folders/MASTER_TEMPLATE_PENILAIAN_DKKA');
+        $daftarLombaTerbaru = $this->lombaModel->orderBy('idLomba', 'DESC')->findAll(3);
 
         $data = [
-            'title'             => 'Dashboard Administrator DKKA | SIPKM-DKKA',
-            'pageHeader'        => 'Dashboard Admin DKKA',
-            'role'              => 'Admin',
-            'activeMenu'        => 'dashboard',
-            'userName'          => $admin['namaAdmin'],
-            'stats'             => $stats,
-            'masterTemplateUrl' => $masterTemplateUrl,
+            'title'              => 'Dashboard Administrator DKKA | SIPKM-DKKA',
+            'pageHeader'         => 'Dashboard Admin DKKA',
+            'role'               => 'Admin',
+            'activeMenu'         => 'dashboard',
+            'userName'           => $admin['namaAdmin'],
+            'stats'              => $stats,
+            'masterTemplateUrl'  => $masterTemplateUrl,
+            'daftarLombaTerbaru' => $daftarLombaTerbaru,
         ];
 
         return view('admin/dashboard', $data);

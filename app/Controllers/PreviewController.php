@@ -10,35 +10,42 @@ class PreviewController extends BaseController
 
     public function landingLomba()
     {
-        $data['daftarLomba'] = [
-            [
-                'idLomba'         => 1,
-                'judulLomba'      => 'Program Kreativitas Mahasiswa (PKM) Internal UBL 2026',
-                'kategoriLomba'   => 'PKM & Karya Ilmiah',
-                'deskripsiLomba'  => "Seleksi pendanaan dan pembinaan proposal PKM 10 bidang tingkat Universitas Budi Luhur menuju PIMNAS 2026.\n\nKetentuan:\n1. Tim terdiri dari 3-5 mahasiswa aktif.\n2. Proposal diunggah dalam format tautan Google Drive/Docs.",
-                'timelineMulai'   => '2026-11-01',
-                'timelineSelesai' => '2026-12-15',
-                'posterBanner'    => 'poster-pkm-2026.jpg',
-            ],
-            [
-                'idLomba'         => 2,
-                'judulLomba'      => 'GEMASTIK XIX — Divisi Pengembangan Perangkat Lunak',
-                'kategoriLomba'   => 'Teknologi & IT',
-                'deskripsiLomba'  => "Pagelaran Mahasiswa Nasional Bidang Teknologi Informasi dan Komunikasi. Daftarkan tim terbaikmu melalui DKKA Universitas Budi Luhur.",
-                'timelineMulai'   => '2026-11-10',
-                'timelineSelesai' => '2026-12-20',
-                'posterBanner'    => 'poster-gemastik-2026.jpg',
-            ],
-            [
-                'idLomba'         => 3,
-                'judulLomba'      => 'Kompetisi Bisnis Mahasiswa Indonesia (KBMI) 2026',
-                'kategoriLomba'   => 'Kewirausahaan',
-                'deskripsiLomba'  => "Ajang hibah modal usaha dan pendampingan bisnis bagi mahasiswa aktif yang memiliki rintisan usaha inovatif.",
-                'timelineMulai'   => '2026-11-15',
-                'timelineSelesai' => '2027-01-10',
-                'posterBanner'    => 'poster-kbmi-2026.jpg',
-            ],
-        ];
+        $lombaModel = new \App\Models\InformasiLombaModel();
+        $daftarLomba = $lombaModel->orderBy('idLomba', 'DESC')->findAll();
+
+        if (empty($daftarLomba)) {
+            $daftarLomba = [
+                [
+                    'idLomba'         => 1,
+                    'judulLomba'      => 'Program Kreativitas Mahasiswa (PKM) Internal UBL 2026',
+                    'kategoriLomba'   => 'PKM & Karya Ilmiah',
+                    'deskripsiLomba'  => "Seleksi pendanaan dan pembinaan proposal PKM 10 bidang tingkat Universitas Budi Luhur menuju PIMNAS 2026.\n\nKetentuan:\n1. Tim terdiri dari 3-5 mahasiswa aktif.\n2. Proposal diunggah dalam format tautan Google Drive/Docs.",
+                    'timelineMulai'   => '2026-11-01',
+                    'timelineSelesai' => '2026-12-15',
+                    'posterBanner'    => 'poster-pkm-2026.jpg',
+                ],
+                [
+                    'idLomba'         => 2,
+                    'judulLomba'      => 'GEMASTIK XIX — Divisi Pengembangan Perangkat Lunak',
+                    'kategoriLomba'   => 'Teknologi & IT',
+                    'deskripsiLomba'  => "Pagelaran Mahasiswa Nasional Bidang Teknologi Informasi dan Komunikasi. Daftarkan tim terbaikmu melalui DKKA Universitas Budi Luhur.",
+                    'timelineMulai'   => '2026-11-10',
+                    'timelineSelesai' => '2026-12-20',
+                    'posterBanner'    => 'poster-gemastik-2026.jpg',
+                ],
+                [
+                    'idLomba'         => 3,
+                    'judulLomba'      => 'Kompetisi Bisnis Mahasiswa Indonesia (KBMI) 2026',
+                    'kategoriLomba'   => 'Kewirausahaan',
+                    'deskripsiLomba'  => "Ajang hibah modal usaha dan pendampingan bisnis bagi mahasiswa aktif yang memiliki rintisan usaha inovatif.",
+                    'timelineMulai'   => '2026-11-15',
+                    'timelineSelesai' => '2027-01-10',
+                    'posterBanner'    => 'poster-kbmi-2026.jpg',
+                ],
+            ];
+        }
+
+        $data['daftarLomba'] = $daftarLomba;
 
         return view('public/landing_lomba', $data);
     }

@@ -261,13 +261,36 @@
         </a>
       </div>
 
+      <!-- Widget Lomba Terbit Terkini -->
+      <div class="sipkm-card p-4 mb-4 shadow-sm">
+        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+          <h6 class="fw-bold text-dark mb-0">
+            <i class="bi bi-trophy-fill text-warning me-2"></i>Lomba Terbit di Papan Publik
+          </h6>
+          <a href="<?= base_url('admin/lomba') ?>" class="small text-primary text-decoration-none fw-semibold">Kelola &rarr;</a>
+        </div>
+        <div class="d-flex flex-column gap-2">
+          <?php if (!empty($daftarLombaTerbaru)): foreach ($daftarLombaTerbaru as $lt): ?>
+            <div class="d-flex align-items-center gap-2 p-2 rounded bg-light border border-light-subtle">
+              <img src="<?= base_url('assets/uploads/poster/' . esc($lt['posterBanner'])) ?>" alt="Poster" class="rounded shadow-sm" style="width: 52px; height: 35px; object-fit: cover;" onerror="this.src='https://placehold.co/80x50/0f294a/fff?text=Poster'">
+              <div class="overflow-hidden flex-grow-1">
+                <div class="fw-bold small text-dark text-truncate"><?= esc($lt['judulLomba']) ?></div>
+                <small class="text-muted" style="font-size: 11px;"><?= esc($lt['kategoriLomba']) ?> &bull; s/d <?= esc($lt['timelineSelesai']) ?></small>
+              </div>
+            </div>
+          <?php endforeach; else: ?>
+            <small class="text-muted">Belum ada lomba terbit.</small>
+          <?php endif; ?>
+        </div>
+      </div>
+
       <!-- Menu Pintasan Cepat Admin -->
       <div class="sipkm-card p-4 shadow-sm">
         <h6 class="fw-bold text-dark mb-3">
           <i class="bi bi-grid-fill text-primary me-2"></i>Pintasan Pengelolaan
         </h6>
         <div class="d-grid gap-2">
-          <a href="<?= base_url('admin/pengguna?tab=dosen') ?>" class="btn btn-outline-secondary btn-sm text-start py-2">
+          <a href="<?= base_url('admin/dosen') ?>" class="btn btn-outline-secondary btn-sm text-start py-2">
             <i class="bi bi-person-badge text-primary me-2"></i> Kelola Dosen Peninjau
           </a>
           <a href="<?= base_url('admin/kelompok') ?>" class="btn btn-outline-secondary btn-sm text-start py-2">
@@ -280,7 +303,7 @@
             <i class="bi bi-trophy text-success me-2"></i> Kelola Papan Informasi Lomba
           </a>
           <?php if ($role === 'Super Admin'): ?>
-            <a href="<?= base_url('admin/pengguna?tab=admin') ?>" class="btn btn-outline-danger btn-sm text-start py-2">
+            <a href="<?= base_url('superadmin/kelola-admin') ?>" class="btn btn-outline-danger btn-sm text-start py-2">
               <i class="bi bi-shield-lock-fill me-2"></i> Kelola Akun Admin DKKA
             </a>
           <?php endif; ?>

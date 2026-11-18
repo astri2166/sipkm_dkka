@@ -54,6 +54,7 @@
           <option value="PKM & Karya Ilmiah">PKM & Karya Ilmiah</option>
           <option value="Teknologi & IT">Teknologi & IT</option>
           <option value="Kewirausahaan">Kewirausahaan</option>
+          <option value="Seni & Humaniora">Seni & Humaniora</option>
         </select>
       </div>
       <div class="col-md-2 text-md-end">
