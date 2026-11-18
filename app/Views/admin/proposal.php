@@ -264,7 +264,7 @@
 
 <!-- 1. Modal Bulk Plotting Massal -->
 <div class="modal fade" id="modalBulkPlotting" tabindex="-1" aria-labelledby="modalBulkPlottingTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content border-0 shadow">
       <div class="modal-header bg-light">
         <h6 class="modal-title fw-bold text-dark" id="modalBulkPlottingTitle">
@@ -272,29 +272,55 @@
         </h6>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form action="<?= base_url('admin/proposal/bulk-plotting') ?>" method="post" class="sipkm-form">
+      <form action="<?= base_url('admin/proposal/bulk-plotting') ?>" method="post" class="sipkm-form" id="formBulkPlotting">
         <?= csrf_field() ?>
         <input type="hidden" name="selectedProposals" id="bulkSelectedInput" value="">
-        <div class="modal-body">
-          <!-- Peringatan Jika Belum Ada Proposal Yang Dipilih -->
-          <div id="bulkWarningNoSelect" class="alert alert-warning small d-flex align-items-center gap-2 mb-3">
-            <i class="bi bi-exclamation-triangle-fill flex-shrink-0 fs-5"></i>
-            <div>
-              <strong>Perhatian:</strong> Anda belum memilih proposal. Silakan centang kotak checklist proposal pada tabel terlebih dahulu sebelum menjalankan penugasan massal.
-            </div>
-          </div>
-
-          <!-- Informasi Proposal Terpilih -->
-          <div id="bulkInfoSelected" class="alert alert-info small d-none mb-3">
-            <div class="d-flex align-items-center gap-2 mb-1">
-              <i class="bi bi-check-circle-fill flex-shrink-0 text-success"></i>
-              <div>Anda memilih <strong id="modalSelectedCount">0</strong> berkas proposal:</div>
-            </div>
-            <ul class="mb-0 ps-3 small text-muted" id="selectedProposalList" style="max-height: 120px; overflow-y: auto;"></ul>
-          </div>
-
+        <div class="modal-body p-4">
+          <!-- 1. PILIH PROPOSAL LANGSUNG DI DALAM MODAL -->
           <div class="mb-3">
-            <label class="form-label small fw-semibold">Pilih Dosen Peninjau <span class="text-danger">*</span></label>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <label class="form-label small fw-bold text-dark mb-0">
+                <i class="bi bi-file-earmark-check text-primary me-1"></i> 1. Pilih Proposal yang Ingin Ditugaskan:
+              </label>
+              <div class="form-check form-check-inline small mb-0">
+                <input class="form-check-input" type="checkbox" id="modalCheckAll" onchange="toggleModalCheckAll(this)">
+                <label class="form-check-label fw-semibold text-primary" for="modalCheckAll" style="cursor: pointer;">
+                  Pilih Semua Proposal (<?= count($daftarProposal) ?>)
+                </label>
+              </div>
+            </div>
+
+            <div class="border rounded-3 p-2 bg-light" style="max-height: 180px; overflow-y: auto;" id="modalProposalBox">
+              <?php foreach ($daftarProposal as $p): ?>
+                <div class="form-check p-2 rounded mb-1 bg-white border border-light-subtle d-flex align-items-start gap-2 hover-shadow-sm">
+                  <input class="form-check-input modal-prop-check mt-1" type="checkbox" value="<?= $p['idProposal'] ?>" id="modal_p_<?= $p['idProposal'] ?>" onchange="syncFromModalCheck(this)">
+                  <label class="form-check-label small flex-grow-1" for="modal_p_<?= $p['idProposal'] ?>" style="cursor: pointer;">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                      <span class="badge bg-primary-subtle text-primary"><?= esc($p['jenisPKM']) ?> &bull; #<?= esc($p['idProposal']) ?></span>
+                      <?php
+                        $bMap = [
+                          'Diunggah'        => 'bg-info-subtle text-info-emphasis border-info-subtle',
+                          'Sedang Ditinjau' => 'bg-warning-subtle text-warning-emphasis border-warning-subtle',
+                          'Sudah Ditinjau'  => 'bg-primary-subtle text-primary border-primary-subtle',
+                          'Layak'           => 'bg-success-subtle text-success border-success-subtle',
+                          'Tidak Layak'     => 'bg-danger-subtle text-danger border-danger-subtle',
+                        ];
+                      ?>
+                      <span class="badge <?= $bMap[$p['statusProposal']] ?? 'bg-secondary' ?> border small"><?= esc($p['statusProposal']) ?></span>
+                    </div>
+                    <div class="fw-bold text-dark"><?= esc($p['judulProposal']) ?></div>
+                    <div class="text-muted small">Kelompok: <?= esc($p['namaKelompok']) ?> &bull; Ketua: <?= esc($p['nimKetua']) ?></div>
+                  </label>
+                </div>
+              <?php endforeach; ?>
+            </div>
+          </div>
+
+          <!-- 2. PILIH DOSEN PENINJAU -->
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-dark">
+              <i class="bi bi-person-badge text-primary me-1"></i> 2. Pilih Dosen Peninjau Penerima Penugasan <span class="text-danger">*</span>
+            </label>
             <select name="idDosen" id="bulkSelectDosen" class="form-select" required>
               <option value="">-- Pilih Dosen Peninjau --</option>
               <?php foreach ($daftarDosen as $dos): ?>
@@ -304,8 +330,11 @@
               <?php endforeach; ?>
             </select>
           </div>
-          <div class="alert alert-light border small text-muted mb-0">
-            <i class="bi bi-info-circle me-1 text-primary"></i> Seluruh proposal yang dicentang akan otomatis diperbarui statusnya menjadi <strong>Sedang Ditinjau</strong> dan terhubung ke Dosen Peninjau yang dipilih.
+
+          <!-- 3. STATUS BAR REAL-TIME -->
+          <div id="bulkStatusBar" class="alert alert-light border py-2 px-3 small d-flex align-items-center gap-2 mb-0">
+            <i class="bi bi-info-circle text-primary fs-6 flex-shrink-0" id="bulkStatusIcon"></i>
+            <div id="bulkStatusText">Centang minimal 1 proposal pada daftar di atas untuk mengaktifkan tombol penugasan massal.</div>
           </div>
         </div>
         <div class="modal-footer bg-light">
@@ -418,51 +447,97 @@
 <?php endforeach; ?>
 
 <script>
+// Fungsi Sinkronisasi Checkbox Utama & Modal
 function updateSelectedCount() {
-  const checkedBoxes = document.querySelectorAll('.prop-checkbox:checked');
-  const selected = checkedBoxes.length;
+  const checkedTableBoxes = document.querySelectorAll('.prop-checkbox:checked');
+  const selectedIds = Array.from(checkedTableBoxes).map(cb => cb.value);
+  const selected = selectedIds.length;
   
-  // Update toolbar badge
+  // 1. Update toolbar badge counter
   const selectedCountEl = document.getElementById('selectedCount');
   if (selectedCountEl) selectedCountEl.innerText = selected;
   
-  // Update modal count & input
-  const modalSelectedCountEl = document.getElementById('modalSelectedCount');
-  if (modalSelectedCountEl) modalSelectedCountEl.innerText = selected;
-  
-  const ids = Array.from(checkedBoxes).map(cb => cb.value).join(',');
+  // 2. Update hidden input untuk POST form
   const hiddenInput = document.getElementById('bulkSelectedInput');
-  if (hiddenInput) hiddenInput.value = ids;
+  if (hiddenInput) hiddenInput.value = selectedIds.join(',');
 
-  // Toggle modal state based on selection
-  const warningEl = document.getElementById('bulkWarningNoSelect');
-  const infoEl = document.getElementById('bulkInfoSelected');
+  // 3. Sinkronisasi state checkbox di dalam modal
+  document.querySelectorAll('.modal-prop-check').forEach(mcb => {
+    mcb.checked = selectedIds.includes(mcb.value);
+  });
+
+  // 4. Update status master checkbox "Pilih Semua" di modal & tabel
+  const allTableBoxes = document.querySelectorAll('.prop-checkbox');
+  const checkAllTable = document.getElementById('checkAll');
+  if (checkAllTable) {
+    checkAllTable.checked = (allTableBoxes.length > 0 && selected === allTableBoxes.length);
+  }
+  const modalCheckAll = document.getElementById('modalCheckAll');
+  if (modalCheckAll) {
+    modalCheckAll.checked = (allTableBoxes.length > 0 && selected === allTableBoxes.length);
+  }
+
+  // 5. Update Status Bar & Tombol Submit di dalam Modal
+  const statusBar = document.getElementById('bulkStatusBar');
+  const statusIcon = document.getElementById('bulkStatusIcon');
+  const statusText = document.getElementById('bulkStatusText');
   const submitBtn = document.getElementById('btnSubmitBulk');
-  const listEl = document.getElementById('selectedProposalList');
 
   if (selected > 0) {
-    if (warningEl) warningEl.classList.add('d-none');
-    if (infoEl) infoEl.classList.remove('d-none');
-    if (submitBtn) submitBtn.removeAttribute('disabled');
-
-    if (listEl) {
-      listEl.innerHTML = '';
-      checkedBoxes.forEach(cb => {
-        const row = cb.closest('tr');
-        const judul = row ? row.dataset.judul : `Proposal #${cb.value}`;
-        const li = document.createElement('li');
-        li.innerText = judul;
-        listEl.appendChild(li);
-      });
+    if (statusBar) {
+      statusBar.className = 'alert alert-success-subtle border border-success-subtle py-2 px-3 small text-success-emphasis d-flex align-items-center gap-2 mb-0';
+    }
+    if (statusIcon) {
+      statusIcon.className = 'bi bi-check-circle-fill text-success fs-6 flex-shrink-0';
+    }
+    if (statusText) {
+      statusText.innerHTML = `Siap menugaskan <strong>${selected} berkas proposal</strong> ke Dosen Peninjau terpilih.`;
+    }
+    if (submitBtn) {
+      submitBtn.removeAttribute('disabled');
     }
   } else {
-    if (warningEl) warningEl.classList.remove('d-none');
-    if (infoEl) infoEl.classList.add('d-none');
-    if (submitBtn) submitBtn.setAttribute('disabled', 'disabled');
-    if (listEl) listEl.innerHTML = '';
+    if (statusBar) {
+      statusBar.className = 'alert alert-light border py-2 px-3 small text-muted d-flex align-items-center gap-2 mb-0';
+    }
+    if (statusIcon) {
+      statusIcon.className = 'bi bi-info-circle text-primary fs-6 flex-shrink-0';
+    }
+    if (statusText) {
+      statusText.innerText = 'Centang minimal 1 proposal pada daftar di atas untuk mengaktifkan tombol penugasan massal.';
+    }
+    if (submitBtn) {
+      submitBtn.setAttribute('disabled', 'disabled');
+    }
   }
 }
 
+// Handler saat checkbox di dalam modal diklik
+function syncFromModalCheck(source) {
+  const tableBox = document.querySelector(`.prop-checkbox[value="${source.value}"]`);
+  if (tableBox) {
+    tableBox.checked = source.checked;
+  }
+  updateSelectedCount();
+}
+
+// Handler toggle "Pilih Semua" dari dalam modal
+function toggleModalCheckAll(source) {
+  document.querySelectorAll('.prop-checkbox').forEach(cb => {
+    cb.checked = source.checked;
+  });
+  updateSelectedCount();
+}
+
+// Handler toggle "Pilih Semua" dari tabel
+function toggleCheckAll(source) {
+  document.querySelectorAll('.prop-checkbox').forEach(cb => {
+    cb.checked = source.checked;
+  });
+  updateSelectedCount();
+}
+
+// Buka Modal Plotting Massal
 function openBulkPlottingModal() {
   updateSelectedCount();
   const modalEl = document.getElementById('modalBulkPlotting');
@@ -472,13 +547,7 @@ function openBulkPlottingModal() {
   }
 }
 
-function toggleCheckAll(source) {
-  document.querySelectorAll('.prop-checkbox').forEach(cb => {
-    cb.checked = source.checked;
-  });
-  updateSelectedCount();
-}
-
+// Filter tabel proposal
 function filterProposal() {
   const q = document.getElementById('searchProp').value.toLowerCase().trim();
   const st = document.getElementById('filterStatusProp').value;
@@ -499,7 +568,7 @@ function filterProposal() {
   }
 }
 
-// Ensure state sync on DOM ready
+// Inisialisasi awal saat halaman dimuat
 document.addEventListener('DOMContentLoaded', () => {
   updateSelectedCount();
 });
