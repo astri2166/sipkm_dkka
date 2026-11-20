@@ -3,34 +3,42 @@
 namespace App\Controllers;
 
 use App\Models\UserModel;
-use App\Models\AdminModel;
 
 class SuperAdminController extends BaseController
 {
     protected UserModel $userModel;
-    protected AdminModel $adminModel;
 
     public function __construct()
     {
-        $this->userModel  = new UserModel();
-        $this->adminModel = new AdminModel();
+        $this->userModel = new UserModel();
     }
 
     /**
-     * Helper mendapatkan data Super Admin aktif dari sesi login
+     * Helper mendapatkan data Super Admin aktif dari sesi login / database
      */
     private function getSuperAdminAktif(): array
     {
-        $idUser = session()->get('idUser');
-        $admin  = $this->adminModel->findByUserId((int) $idUser);
+        $idUser = session()->get('id_user') ?? session()->get('idUser');
+        $admin = null;
+
+        if ($idUser) {
+            $admin = $this->userModel->findByUserId((int) $idUser);
+        }
+
+        if (! $admin) {
+            $admin = $this->userModel->where('role', 'SuperAdmin')->first();
+            $admin = $this->userModel->formatUserAliases($admin);
+        }
 
         if (! $admin) {
             $admin = [
                 'idAdmin'   => 1,
-                'idUser'    => $idUser ?? 1,
+                'idUser'    => 1,
+                'id_user'   => 1,
                 'nipAdmin'  => '198801012015011001',
                 'namaAdmin' => 'Budi Santoso, M.Kom.',
                 'jabatan'   => 'Super Admin',
+                'role'      => 'SuperAdmin',
             ];
         }
 
@@ -43,10 +51,10 @@ class SuperAdminController extends BaseController
     public function dashboard()
     {
         $superAdmin  = $this->getSuperAdminAktif();
-        $daftarAdmin = $this->adminModel->getAdminWithUser();
+        $daftarAdmin = $this->userModel->getAdminUsers();
 
-        $countAktif    = count(array_filter($daftarAdmin, fn($a) => $a['statusAkun'] === 'Aktif'));
-        $countNonaktif = count(array_filter($daftarAdmin, fn($a) => $a['statusAkun'] !== 'Aktif'));
+        $countAktif    = count(array_filter($daftarAdmin, fn($a) => ($a['status_akun'] ?? $a['statusAkun']) === 'Aktif'));
+        $countNonaktif = count(array_filter($daftarAdmin, fn($a) => ($a['status_akun'] ?? $a['statusAkun']) !== 'Aktif'));
 
         $data = [
             'title'         => 'Dashboard Super Admin | SIPKM-DKKA',
@@ -70,7 +78,7 @@ class SuperAdminController extends BaseController
     public function kelolaAdmin()
     {
         $superAdmin  = $this->getSuperAdminAktif();
-        $daftarAdmin = $this->adminModel->getAdminWithUser();
+        $daftarAdmin = $this->userModel->getAdminUsers();
 
         $data = [
             'title'       => 'Kelola Akun Admin | SIPKM-DKKA',
@@ -85,16 +93,16 @@ class SuperAdminController extends BaseController
     }
 
     /**
-     * Tambah Akun Administrator DKKA Baru
+     * Tambah Akun Administrator Baru (1x INSERT langsung ke tabel users)
      */
     public function tambahAdmin()
     {
         $rules = [
-            'nipAdmin'  => 'required|min_length[5]|max_length[30]|is_unique[admin.nipAdmin]',
+            'nipAdmin'  => 'required|min_length[5]|max_length[30]|is_unique[users.nip]',
             'namaAdmin' => 'required|min_length[3]|max_length[100]',
-            'jabatan'   => 'required|in_list[Admin DKKA,Super Admin]',
-            'username'  => 'required|min_length[4]|max_length[50]|is_unique[user.username]',
-            'email'     => 'required|valid_email|max_length[100]|is_unique[user.email]',
+            'jabatan'   => 'required',
+            'username'  => 'required|min_length[4]|max_length[50]|is_unique[users.username]',
+            'email'     => 'required|valid_email|max_length[100]|is_unique[users.email]',
             'password'  => 'required|min_length[6]',
         ];
 
@@ -102,30 +110,26 @@ class SuperAdminController extends BaseController
             return redirect()->back()->withInput()->with('error', 'Mohon lengkapi seluruh kolom formulir tambah admin dengan benar.');
         }
 
-        $db = \Config\Database::connect();
-        $db->transStart();
+        $jabatan = trim($this->request->getPost('jabatan'));
+        $roleBaru = (stripos($jabatan, 'super') !== false) ? 'SuperAdmin' : 'Admin';
 
-        // 1. Insert ke tabel user
-        $this->userModel->insert([
-            'username'   => trim($this->request->getPost('username')),
-            'email'      => trim($this->request->getPost('email')),
-            'password'   => password_hash($this->request->getPost('password'), PASSWORD_BCRYPT),
-            'role'       => $this->request->getPost('jabatan'),
-            'statusAkun' => 'Aktif',
-        ]);
-        $idUser = $this->userModel->getInsertID();
+        $userData = [
+            'id_kelompok'   => null,
+            'username'      => trim($this->request->getPost('username')),
+            'email'         => trim($this->request->getPost('email')),
+            'password'      => password_hash($this->request->getPost('password'), PASSWORD_BCRYPT),
+            'nama_lengkap'  => trim($this->request->getPost('namaAdmin')),
+            'role'          => $roleBaru,
+            'nip'           => trim($this->request->getPost('nipAdmin')),
+            'nim'           => null,
+            'program_studi' => null,
+            'jabatan'       => $jabatan,
+            'status_akun'   => 'Aktif',
+        ];
 
-        // 2. Insert ke tabel admin
-        $this->adminModel->insert([
-            'idUser'    => $idUser,
-            'nipAdmin'  => trim($this->request->getPost('nipAdmin')),
-            'namaAdmin' => trim($this->request->getPost('namaAdmin')),
-            'jabatan'   => $this->request->getPost('jabatan'),
-        ]);
+        $inserted = $this->userModel->insert($userData);
 
-        $db->transComplete();
-
-        if ($db->transStatus() === false) {
+        if (! $inserted) {
             return redirect()->back()->withInput()->with('error', 'Gagal mendaftarkan administrator baru.');
         }
 
@@ -134,47 +138,37 @@ class SuperAdminController extends BaseController
     }
 
     /**
-     * Edit Data Akun Administrator
+     * Edit Data Akun Administrator langsung ke tabel users
      */
     public function editAdmin(int $idAdmin)
     {
-        $admin = $this->adminModel->find($idAdmin);
-        if (! $admin) {
+        $user = $this->userModel->find($idAdmin);
+        if (! $user) {
             return redirect()->back()->with('error', 'Data administrator tidak ditemukan.');
         }
 
-        $user = $this->userModel->find($admin['idUser']);
-        if (! $user) {
-            return redirect()->back()->with('error', 'Data akun user tidak ditemukan.');
-        }
-
         $rules = [
-            'nipAdmin'  => "required|min_length[5]|max_length[30]|is_unique[admin.nipAdmin,idAdmin,{$idAdmin}]",
+            'nipAdmin'  => "required|min_length[5]|max_length[30]|is_unique[users.nip,id_user,{$idAdmin}]",
             'namaAdmin' => 'required|min_length[3]|max_length[100]',
-            'jabatan'   => 'required|in_list[Admin DKKA,Super Admin]',
-            'username'  => "required|min_length[4]|max_length[50]|is_unique[user.username,idUser,{$user['idUser']}]",
-            'email'     => "required|valid_email|max_length[100]|is_unique[user.email,idUser,{$user['idUser']}]",
+            'jabatan'   => 'required',
+            'username'  => "required|min_length[4]|max_length[50]|is_unique[users.username,id_user,{$idAdmin}]",
+            'email'     => "required|valid_email|max_length[100]|is_unique[users.email,id_user,{$idAdmin}]",
         ];
 
         if (! $this->validate($rules)) {
             return redirect()->back()->withInput()->with('error', 'Mohon periksa kembali kolom data admin yang diubah.');
         }
 
-        $db = \Config\Database::connect();
-        $db->transStart();
+        $jabatan = trim($this->request->getPost('jabatan'));
+        $roleBaru = (stripos($jabatan, 'super') !== false) ? 'SuperAdmin' : 'Admin';
 
-        // Update data admin
-        $this->adminModel->update($idAdmin, [
-            'nipAdmin'  => trim($this->request->getPost('nipAdmin')),
-            'namaAdmin' => trim($this->request->getPost('namaAdmin')),
-            'jabatan'   => $this->request->getPost('jabatan'),
-        ]);
-
-        // Update data user
         $userData = [
-            'username' => trim($this->request->getPost('username')),
-            'email'    => trim($this->request->getPost('email')),
-            'role'     => $this->request->getPost('jabatan'),
+            'username'     => trim($this->request->getPost('username')),
+            'email'        => trim($this->request->getPost('email')),
+            'nama_lengkap' => trim($this->request->getPost('namaAdmin')),
+            'nip'          => trim($this->request->getPost('nipAdmin')),
+            'jabatan'      => $jabatan,
+            'role'         => $roleBaru,
         ];
 
         $passwordBaru = $this->request->getPost('password');
@@ -182,9 +176,7 @@ class SuperAdminController extends BaseController
             $userData['password'] = password_hash($passwordBaru, PASSWORD_BCRYPT);
         }
 
-        $this->userModel->update($user['idUser'], $userData);
-
-        $db->transComplete();
+        $this->userModel->update($idAdmin, $userData);
 
         return redirect()->to(base_url('superadmin/kelola-admin'))
                          ->with('success', 'Data Administrator ' . esc($this->request->getPost('namaAdmin')) . ' berhasil diperbarui!');
@@ -195,7 +187,7 @@ class SuperAdminController extends BaseController
      */
     public function toggleStatusAdmin(int $idUser)
     {
-        $currentIdUser = session()->get('idUser');
+        $currentIdUser = session()->get('id_user') ?? session()->get('idUser');
         if ((int) $idUser === (int) $currentIdUser) {
             return redirect()->back()->with('error', 'Anda tidak dapat menonaktifkan akun Anda sendiri yang sedang aktif.');
         }
@@ -205,37 +197,32 @@ class SuperAdminController extends BaseController
             return redirect()->back()->with('error', 'Pengguna tidak ditemukan.');
         }
 
-        $newStatus = ($user['statusAkun'] === 'Aktif') ? 'Nonaktif' : 'Aktif';
-        $this->userModel->update($idUser, ['statusAkun' => $newStatus]);
+        $currentStatus = $user['status_akun'] ?? $user['statusAkun'] ?? 'Aktif';
+        $newStatus = ($currentStatus === 'Aktif') ? 'Nonaktif' : 'Aktif';
+        $this->userModel->update($idUser, ['status_akun' => $newStatus]);
 
         return redirect()->to(base_url('superadmin/kelola-admin'))
                          ->with('success', 'Status akun ' . esc($user['username']) . ' berhasil diubah menjadi: ' . $newStatus);
     }
 
     /**
-     * Hapus Akun Administrator dari Tabel user & admin
+     * Hapus Akun Administrator langsung dari tabel users
      */
     public function hapusAdmin(int $idAdmin)
     {
-        $admin = $this->adminModel->find($idAdmin);
-        if (! $admin) {
+        $user = $this->userModel->find($idAdmin);
+        if (! $user) {
             return redirect()->back()->with('error', 'Administrator tidak ditemukan.');
         }
 
-        $currentIdUser = session()->get('idUser');
-        if ((int) $admin['idUser'] === (int) $currentIdUser) {
+        $currentIdUser = session()->get('id_user') ?? session()->get('idUser');
+        if ((int) $user['id_user'] === (int) $currentIdUser) {
             return redirect()->back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
         }
 
-        $db = \Config\Database::connect();
-        $db->transStart();
-
-        $this->adminModel->delete($idAdmin);
-        $this->userModel->delete($admin['idUser']);
-
-        $db->transComplete();
+        $this->userModel->delete($idAdmin);
 
         return redirect()->to(base_url('superadmin/kelola-admin'))
-                         ->with('success', 'Akun Administrator ' . esc($admin['namaAdmin']) . ' berhasil dihapus secara permanen.');
+                         ->with('success', 'Akun Administrator ' . esc($user['nama_lengkap']) . ' berhasil dihapus secara permanen.');
     }
 }

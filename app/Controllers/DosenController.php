@@ -3,7 +3,6 @@
 namespace App\Controllers;
 
 use App\Models\UserModel;
-use App\Models\DosenPeninjauModel;
 use App\Models\ProposalPkmModel;
 use App\Models\PeninjauanProposalModel;
 use App\Models\KelompokPkmModel;
@@ -11,7 +10,6 @@ use App\Models\KelompokPkmModel;
 class DosenController extends BaseController
 {
     protected UserModel $userModel;
-    protected DosenPeninjauModel $dosenModel;
     protected ProposalPkmModel $proposalModel;
     protected PeninjauanProposalModel $peninjauanModel;
     protected KelompokPkmModel $kelompokModel;
@@ -19,28 +17,37 @@ class DosenController extends BaseController
     public function __construct()
     {
         $this->userModel       = new UserModel();
-        $this->dosenModel      = new DosenPeninjauModel();
         $this->proposalModel   = new ProposalPkmModel();
         $this->peninjauanModel = new PeninjauanProposalModel();
         $this->kelompokModel   = new KelompokPkmModel();
     }
 
     /**
-     * Helper untuk mengambil data dosen peninjau aktif dari sesi login
+     * Helper untuk mengambil data Dosen Peninjau aktif dari sesi login / database
      */
     private function getDosenAktif(): array
     {
-        $idUser = session()->get('idUser');
-        $dosen = $this->dosenModel->findByUserId((int) $idUser);
+        $idUser = session()->get('id_user') ?? session()->get('idUser');
+        $dosen = null;
+
+        if ($idUser) {
+            $dosen = $this->userModel->findByUserId((int) $idUser);
+        }
 
         if (! $dosen) {
-            // Fallback default jika pengujian sesi preview
-            $dosen = $this->dosenModel->first() ?? [
-                'idDosen'   => 1,
-                'idUser'    => $idUser ?? 3,
+            $dosen = $this->userModel->where('role', 'Dosen')->first();
+            $dosen = $this->userModel->formatUserAliases($dosen);
+        }
+
+        if (! $dosen) {
+            $dosen = [
+                'idDosen'   => 3,
+                'idUser'    => 3,
+                'id_user'   => 3,
                 'nipDosen'  => '0315088501',
                 'namaDosen' => 'Dr. Ahmad Fauzi, M.T.',
                 'email'     => 'ahmad.fauzi@budiluhur.ac.id',
+                'role'      => 'Dosen',
             ];
         }
 
@@ -53,9 +60,8 @@ class DosenController extends BaseController
     public function dashboard()
     {
         $dosen = $this->getDosenAktif();
-        $role = session()->get('role') ?? 'Dosen Peninjau';
 
-        $daftarTugas = $this->peninjauanModel->getTugasByDosen((int) $dosen['idDosen']);
+        $daftarTugas  = $this->peninjauanModel->getTugasByDosen((int) $dosen['id_user']);
         $countBelum   = count(array_filter($daftarTugas, fn($t) => $t['statusPenugasan'] === 'Belum Ditinjau'));
         $countSelesai = count(array_filter($daftarTugas, fn($t) => $t['statusPenugasan'] === 'Selesai'));
 
@@ -64,7 +70,7 @@ class DosenController extends BaseController
         $data = [
             'title'             => 'Dashboard Dosen Peninjau | SIPKM-DKKA',
             'pageHeader'        => 'Dashboard Dosen Peninjau',
-            'role'              => $role,
+            'role'              => 'Dosen Peninjau',
             'activeMenu'        => 'dashboard',
             'userName'          => $dosen['namaDosen'],
             'dosen'             => $dosen,
@@ -83,13 +89,12 @@ class DosenController extends BaseController
     public function peninjauan()
     {
         $dosen = $this->getDosenAktif();
-        $role = session()->get('role') ?? 'Dosen Peninjau';
 
         $statusFilter = $this->request->getGet('status') ?? '';
         $skemaFilter  = $this->request->getGet('skema') ?? '';
-        $search       = strtolower(trim($this->request->getGet('search') ?? ''));
+        $search       = strtolower(trim((string) ($this->request->getGet('search') ?? '')));
 
-        $daftarTugas = $this->peninjauanModel->getTugasByDosen((int) $dosen['idDosen']);
+        $daftarTugas = $this->peninjauanModel->getTugasByDosen((int) $dosen['id_user']);
 
         // Filter status jika parameter disertakan
         if ($statusFilter !== '') {
@@ -114,7 +119,7 @@ class DosenController extends BaseController
         $data = [
             'title'             => 'Peninjauan Proposal PKM | SIPKM-DKKA',
             'pageHeader'        => 'Peninjauan Proposal PKM',
-            'role'              => $role,
+            'role'              => 'Dosen Peninjau',
             'activeMenu'        => 'peninjauan',
             'userName'          => $dosen['namaDosen'],
             'dosen'             => $dosen,
@@ -134,7 +139,6 @@ class DosenController extends BaseController
     public function detailPeninjauan(int $idPeninjauan)
     {
         $dosen = $this->getDosenAktif();
-        $role = session()->get('role') ?? 'Dosen Peninjau';
 
         $tugas = $this->peninjauanModel->getDetailPeninjauan($idPeninjauan);
 
@@ -142,8 +146,9 @@ class DosenController extends BaseController
             return redirect()->to(base_url('dosen/peninjauan'))->with('error', 'Penugasan proposal tidak ditemukan dalam sistem.');
         }
 
-        // Hak akses verifikasi: tugas harus milik dosen yang bersangkutan
-        if ((int) $tugas['idDosen'] !== (int) $dosen['idDosen'] && ! in_array($role, ['Super Admin', 'Admin'], true)) {
+        // Hak akses verifikasi: tugas harus milik dosen yang bersangkutan (id_user)
+        $sessionRole = session()->get('role');
+        if ((int) $tugas['id_user'] !== (int) $dosen['id_user'] && ! in_array($sessionRole, ['SuperAdmin', 'Super Admin', 'Admin'], true)) {
             return redirect()->to(base_url('dosen/peninjauan'))->with('error', 'Akses ditolak: Proposal ini tidak ditugaskan kepada Anda.');
         }
 
@@ -152,7 +157,7 @@ class DosenController extends BaseController
         $data = [
             'title'             => 'Evaluasi Proposal #' . $tugas['idProposal'] . ' | SIPKM-DKKA',
             'pageHeader'        => 'Detail Evaluasi Peninjauan',
-            'role'              => $role,
+            'role'              => 'Dosen Peninjau',
             'activeMenu'        => 'peninjauan',
             'userName'          => $dosen['namaDosen'],
             'dosen'             => $dosen,
@@ -164,7 +169,7 @@ class DosenController extends BaseController
     }
 
     /**
-     * Tahap 1: Menyimpan Catatan Review Evaluasi Administrasi (Card 1) & Substansi (Card 2)
+     * Menyimpan Catatan Review Evaluasi Administrasi (Card 1) & Substansi (Card 2)
      */
     public function simpanCatatanCard(int $idPeninjauan)
     {
@@ -175,7 +180,8 @@ class DosenController extends BaseController
             return redirect()->to(base_url('dosen/peninjauan'))->with('error', 'Data penugasan proposal tidak ditemukan.');
         }
 
-        if ((int) $tugas['idDosen'] !== (int) $dosen['idDosen'] && ! in_array(session()->get('role'), ['Super Admin', 'Admin'], true)) {
+        $sessionRole = session()->get('role');
+        if ((int) $tugas['id_user'] !== (int) $dosen['id_user'] && ! in_array($sessionRole, ['SuperAdmin', 'Super Admin', 'Admin'], true)) {
             return redirect()->to(base_url('dosen/peninjauan'))->with('error', 'Akses ditolak: Anda tidak memiliki wewenang untuk menilai proposal ini.');
         }
 
@@ -197,20 +203,20 @@ class DosenController extends BaseController
             'catatanSubstansi'    => $catatanSubstansi,
         ]);
 
-        // Perbarui status proposal mahasiswa menjadi 'Sudah Ditinjau' jika sebelumnya 'Diunggah'
+        // Perbarui status proposal mahasiswa menjadi 'Sudah Ditinjau' jika sebelumnya 'Diunggah' atau 'Sedang Ditinjau'
         $proposal = $this->proposalModel->find($tugas['idProposal']);
-        if ($proposal && $proposal['statusProposal'] === 'Diunggah') {
+        if ($proposal && in_array($proposal['statusProposal'], ['Diunggah', 'Sedang Ditinjau'], true)) {
             $this->proposalModel->update($proposal['idProposal'], [
                 'statusProposal' => 'Sudah Ditinjau',
             ]);
         }
 
         return redirect()->to(base_url('dosen/peninjauan/detail/' . $idPeninjauan))
-                         ->with('success', 'Tahap 1 Berhasil: Catatan Card 1 (Administrasi) & Card 2 (Substansi) tersimpan! Status proposal mahasiswa kini: Sudah Ditinjau.');
+                         ->with('success', 'Catatan Card 1 (Administrasi) & Card 2 (Substansi) berhasil tersimpan!');
     }
 
     /**
-     * Tahap 2: Mengirimkan Tautan Rekapitulasi Penilaian Google Drive ke Admin DKKA
+     * Mengirimkan Tautan Rekapitulasi Penilaian Google Drive ke Admin DKKA
      */
     public function kirimRekapPenilaian(int $idPeninjauan)
     {
@@ -221,7 +227,8 @@ class DosenController extends BaseController
             return redirect()->to(base_url('dosen/peninjauan'))->with('error', 'Data penugasan proposal tidak ditemukan.');
         }
 
-        if ((int) $tugas['idDosen'] !== (int) $dosen['idDosen'] && ! in_array(session()->get('role'), ['Super Admin', 'Admin'], true)) {
+        $sessionRole = session()->get('role');
+        if ((int) $tugas['id_user'] !== (int) $dosen['id_user'] && ! in_array($sessionRole, ['SuperAdmin', 'Super Admin', 'Admin'], true)) {
             return redirect()->to(base_url('dosen/peninjauan'))->with('error', 'Akses ditolak: Anda tidak memiliki wewenang untuk mengirimkan rekap proposal ini.');
         }
 
@@ -235,7 +242,6 @@ class DosenController extends BaseController
 
         $tautanRekapDrive = trim($this->request->getPost('tautanRekapDrive'));
 
-        // Validasi format tautan wajib Google Drive / Docs
         if (! preg_match('/^https:\/\/(docs|drive)\.google\.com\/.+/i', $tautanRekapDrive)) {
             return redirect()->back()->withInput()->with('error', 'Tautan rekapitulasi penilaian wajib berupa tautan Google Drive / Docs resmi (diawali https://drive.google.com/ atau https://docs.google.com/).');
         }
@@ -256,6 +262,6 @@ class DosenController extends BaseController
         }
 
         return redirect()->to(base_url('dosen/peninjauan/detail/' . $idPeninjauan))
-                         ->with('success', 'Tahap 2 Berhasil: Tautan rekapitulasi penilaian Google Drive berhasil diserahkan ke DKKA. Status penugasan Anda kini: Selesai.');
+                         ->with('success', 'Tautan rekapitulasi penilaian Google Drive berhasil diserahkan ke DKKA. Status penugasan Anda kini: Selesai.');
     }
 }

@@ -3,53 +3,71 @@
 namespace App\Controllers;
 
 use App\Models\UserModel;
-use App\Models\MahasiswaModel;
 use App\Models\KelompokPkmModel;
 use App\Models\ProposalPkmModel;
 use App\Models\PeninjauanProposalModel;
-use App\Models\DosenPeninjauModel;
 
 class MahasiswaController extends BaseController
 {
     protected UserModel $userModel;
-    protected MahasiswaModel $mahasiswaModel;
     protected KelompokPkmModel $kelompokModel;
     protected ProposalPkmModel $proposalModel;
     protected PeninjauanProposalModel $peninjauanModel;
-    protected DosenPeninjauModel $dosenModel;
 
     public function __construct()
     {
         $this->userModel       = new UserModel();
-        $this->mahasiswaModel  = new MahasiswaModel();
         $this->kelompokModel   = new KelompokPkmModel();
         $this->proposalModel   = new ProposalPkmModel();
         $this->peninjauanModel = new PeninjauanProposalModel();
-        $this->dosenModel      = new DosenPeninjauModel();
     }
 
     /**
-     * Mengambil data mahasiswa aktif yang sedang login dari database
+     * Helper mendapatkan data Mahasiswa aktif dari sesi login / tabel users
      */
     private function getMahasiswaAktif(): array
     {
-        $idUser = session()->get('idUser');
-        $mhs = $this->mahasiswaModel->findByUserId((int) $idUser);
+        $idUser = session()->get('id_user') ?? session()->get('idUser');
+        $mhs = null;
+
+        if ($idUser) {
+            $mhs = $this->userModel->findByUserId((int) $idUser);
+        }
 
         if (! $mhs) {
-            // Fallback jika login via preview atau akun dummy
+            // Coba ambil mahasiswa ketua atau member pertama dari database
+            $mhs = $this->userModel->whereIn('role', ['Ketua', 'Member'])->first();
+            $mhs = $this->userModel->formatUserAliases($mhs);
+        }
+
+        if (! $mhs) {
             $mhs = [
-                'idMahasiswa'   => 1,
-                'idUser'        => $idUser ?? 5,
+                'idMahasiswa'   => 5,
+                'idUser'        => 5,
+                'id_user'       => 5,
                 'idKelompok'    => 1,
+                'id_kelompok'   => 1,
                 'nim'           => '2412501001',
                 'namaMahasiswa' => 'Rizky Pratama',
+                'nama_lengkap'  => 'Rizky Pratama',
                 'programStudi'  => 'Sistem Informasi',
-                'noWhatsapp'    => '081234567801',
+                'program_studi' => 'Sistem Informasi',
+                'role'          => 'Ketua',
             ];
         }
 
         return $mhs;
+    }
+
+    /**
+     * Helper memetakan role ENUM DB ke label tampilan view (Frontend Compatibility)
+     */
+    private function getRoleViewLabel(string $role): string
+    {
+        if ($role === 'Ketua' || $role === 'Ketua Kelompok') {
+            return 'Ketua Kelompok';
+        }
+        return 'Anggota Kelompok';
     }
 
     /**
@@ -58,27 +76,28 @@ class MahasiswaController extends BaseController
     public function dashboard()
     {
         $mhs = $this->getMahasiswaAktif();
-        $role = session()->get('role') ?? 'Ketua Kelompok';
+        $rawRole = session()->get('role') ?? $mhs['role'] ?? 'Ketua';
+        $roleView = $this->getRoleViewLabel($rawRole);
 
-        // Query data kelompok aktual dari database
-        $kelompok = null;
+        $idKelompok = $mhs['id_kelompok'] ?? $mhs['idKelompok'];
+        $hasKelompok = ! empty($idKelompok);
+
+        $kelompok      = null;
         $daftarAnggota = [];
-        $proposal = null;
-        $dosen = null;
-        $hasKelompok = ! empty($mhs['idKelompok']);
-        $hasProposal = false;
+        $proposal      = null;
+        $dosen         = null;
+        $hasProposal   = false;
 
         if ($hasKelompok) {
-            $kelompok = $this->kelompokModel->find($mhs['idKelompok']);
-            $daftarAnggota = $this->mahasiswaModel->getAnggotaByKelompok($mhs['idKelompok']);
-            $proposal = $this->proposalModel->findByKelompokId($mhs['idKelompok']);
+            $kelompok      = $this->kelompokModel->find($idKelompok);
+            $daftarAnggota = $this->userModel->getAnggotaByKelompok((int) $idKelompok);
+            $proposal      = $this->proposalModel->findByKelompokId((int) $idKelompok);
 
             if ($proposal) {
                 $hasProposal = true;
-                // Cek peninjauan proposal
-                $peninjauan = $this->peninjauanModel->findByProposalId($proposal['idProposal']);
-                if ($peninjauan && ! empty($peninjauan['idDosen'])) {
-                    $dosen = $this->dosenModel->find($peninjauan['idDosen']);
+                $peninjauan  = $this->peninjauanModel->findByProposalId((int) $proposal['idProposal']);
+                if ($peninjauan && ! empty($peninjauan['id_user'])) {
+                    $dosen = $this->userModel->findByUserId((int) $peninjauan['id_user']);
                 }
             }
         }
@@ -86,7 +105,7 @@ class MahasiswaController extends BaseController
         $data = [
             'title'         => 'Dashboard Mahasiswa | SIPKM-DKKA',
             'pageHeader'    => 'Dashboard Mahasiswa',
-            'role'          => $role,
+            'role'          => $roleView,
             'activeMenu'    => 'dashboard',
             'userName'      => $mhs['namaMahasiswa'],
             'mahasiswa'     => $mhs,
@@ -107,26 +126,29 @@ class MahasiswaController extends BaseController
     public function kelompok()
     {
         $mhs = $this->getMahasiswaAktif();
-        $role = session()->get('role') ?? 'Ketua Kelompok';
-        $hasKelompok = ! empty($mhs['idKelompok']);
+        $rawRole = session()->get('role') ?? $mhs['role'] ?? 'Ketua';
+        $roleView = $this->getRoleViewLabel($rawRole);
 
-        $kelompok = null;
+        $idKelompok = $mhs['id_kelompok'] ?? $mhs['idKelompok'];
+        $hasKelompok = ! empty($idKelompok);
+
+        $kelompok      = null;
         $daftarAnggota = [];
-        $kodeKelompok = 'PKM-UBL-2026-X89';
+        $kodeKelompok  = 'PKM-UBL-2026-X89';
 
         if ($hasKelompok) {
-            $kelompok = $this->kelompokModel->find($mhs['idKelompok']);
-            $daftarAnggota = $this->mahasiswaModel->getAnggotaByKelompok($mhs['idKelompok']);
-            $kodeKelompok = 'PKM-UBL-' . ($kelompok['tahunPeriode'] ?? '2026') . '-K' . $kelompok['idKelompok'];
+            $kelompok      = $this->kelompokModel->find($idKelompok);
+            $daftarAnggota = $this->userModel->getAnggotaByKelompok((int) $idKelompok);
+            $kodeKelompok  = 'PKM-UBL-' . ($kelompok['tahunPeriode'] ?? '2026') . '-K' . $kelompok['idKelompok'];
         }
 
-        // Ambil daftar mahasiswa yang belum punya kelompok (idKelompok IS NULL) untuk opsi invite
-        $mahasiswaBebas = $this->mahasiswaModel->getMahasiswaBebas();
+        // Ambil mahasiswa yang belum punya kelompok (id_kelompok IS NULL) untuk opsi invite
+        $mahasiswaBebas = $this->userModel->getMahasiswaBebas();
 
         $data = [
             'title'          => 'Data Kelompok PKM | SIPKM-DKKA',
             'pageHeader'     => 'Data Kelompok PKM',
-            'role'           => $role,
+            'role'           => $roleView,
             'activeMenu'     => 'kelompok',
             'userName'       => $mhs['namaMahasiswa'],
             'mahasiswa'      => $mhs,
@@ -141,14 +163,14 @@ class MahasiswaController extends BaseController
     }
 
     /**
-     * Proses Pembentukan Kelompok Baru (Method Wajib: + buatKelompok())
+     * Proses Pembentukan Kelompok Baru (Method: buatKelompok())
      */
     public function buatKelompok()
     {
         $mhs = $this->getMahasiswaAktif();
+        $idKelompok = $mhs['id_kelompok'] ?? $mhs['idKelompok'];
 
-        // Validasi: mahasiswa tidak boleh sudah punya kelompok
-        if (! empty($mhs['idKelompok'])) {
+        if (! empty($idKelompok)) {
             return redirect()->to(base_url('mahasiswa/kelompok'))->with('error', 'Anda sudah tergabung dalam suatu kelompok PKM.');
         }
 
@@ -161,43 +183,44 @@ class MahasiswaController extends BaseController
             return redirect()->back()->withInput()->with('error', 'Mohon isi nama kelompok dengan benar.');
         }
 
-        $namaKelompok   = $this->request->getPost('namaKelompok');
-        $tahunPeriode   = $this->request->getPost('tahunPeriode') ?? '2026';
-        $anggotaDipilih = $this->request->getPost('anggota') ?? []; // Array of NIMs
+        $namaKelompok   = trim($this->request->getPost('namaKelompok'));
+        $tahunPeriode   = trim($this->request->getPost('tahunPeriode') ?? '2026');
+        $anggotaDipilih = $this->request->getPost('anggota') ?? [];
 
-        // Validasi ketersediaan anggota yang dipilih (WHERE idKelompok IS NULL)
+        // Validasi ketersediaan anggota yang dipilih dari tabel users
         $nimValid = [];
         foreach ($anggotaDipilih as $nim) {
-            $calon = $this->mahasiswaModel->findByNim($nim);
-            if ($calon && empty($calon['idKelompok']) && $calon['nim'] !== $mhs['nim']) {
+            $calon = $this->userModel->findByNim($nim);
+            if ($calon && empty($calon['id_kelompok']) && $calon['nim'] !== $mhs['nim']) {
                 $nimValid[] = $calon;
             }
         }
 
-        // Total anggota = Ketua + Anggota dipilih
         $totalAnggota = 1 + count($nimValid);
 
-        // Database Transaction
         $db = \Config\Database::connect();
         $db->transStart();
 
         // 1. Simpan kelompok baru
-        $kelompokData = [
+        $this->kelompokModel->insert([
             'namaKelompok'  => $namaKelompok,
             'tahunPeriode'  => $tahunPeriode,
             'nimKetua'      => $mhs['nim'],
             'jumlahAnggota' => $totalAnggota,
-        ];
-        $this->kelompokModel->insert($kelompokData);
-        $idKelompok = $this->kelompokModel->getInsertID();
+        ]);
+        $newIdKelompok = $this->kelompokModel->getInsertID();
 
-        // 2. Update ketua kelompok: isi idKelompok & ubah role menjadi 'Ketua Kelompok'
-        $this->mahasiswaModel->update($mhs['idMahasiswa'], ['idKelompok' => $idKelompok]);
-        $this->userModel->update($mhs['idUser'], ['role' => 'Ketua Kelompok']);
+        // 2. Update ketua kelompok di tabel users: isi id_kelompok & ubah role menjadi 'Ketua'
+        $this->userModel->update($mhs['id_user'], [
+            'id_kelompok' => $newIdKelompok,
+            'role'        => 'Ketua',
+        ]);
 
-        // 3. Update anggota yang dipilih: isi idKelompok
+        // 3. Update seluruh anggota yang dipilih di tabel users: isi id_kelompok
         foreach ($nimValid as $calon) {
-            $this->mahasiswaModel->update($calon['idMahasiswa'], ['idKelompok' => $idKelompok]);
+            $this->userModel->update($calon['id_user'], [
+                'id_kelompok' => $newIdKelompok,
+            ]);
         }
 
         $db->transComplete();
@@ -208,47 +231,49 @@ class MahasiswaController extends BaseController
 
         // Perbarui sesi aktif
         session()->set([
-            'role'       => 'Ketua Kelompok',
-            'idKelompok' => $idKelompok,
+            'role'        => 'Ketua',
+            'id_kelompok' => $newIdKelompok,
+            'idKelompok'  => $newIdKelompok,
         ]);
 
         return redirect()->to(base_url('mahasiswa/kelompok'))->with('success', 'Kelompok PKM berhasil dibentuk! Status Anda kini adalah Ketua Kelompok.');
     }
 
     /**
-     * Menambahkan Anggota Baru ke Kelompok (Method Wajib: + validasiAnggota())
+     * Menambahkan Anggota Baru ke Kelompok (Method: tambahAnggota())
      */
     public function tambahAnggota()
     {
         $mhs = $this->getMahasiswaAktif();
-        $role = session()->get('role');
+        $rawRole = session()->get('role') ?? $mhs['role'];
+        $idKelompok = $mhs['id_kelompok'] ?? $mhs['idKelompok'];
 
-        if ($role !== 'Ketua Kelompok' || empty($mhs['idKelompok'])) {
+        if (! in_array($rawRole, ['Ketua', 'Ketua Kelompok'], true) || empty($idKelompok)) {
             return redirect()->to(base_url('mahasiswa/kelompok'))->with('error', 'Hanya Ketua Kelompok yang berwenang menambahkan anggota.');
         }
 
-        $nim = $this->request->getPost('nim');
+        $nim = trim((string) $this->request->getPost('nim'));
         if (empty($nim)) {
             return redirect()->back()->with('error', 'Silakan pilih mahasiswa yang akan diundang.');
         }
 
-        // Validasi anggota belum punya kelompok
-        $calon = $this->mahasiswaModel->findByNim($nim);
-        if (! $calon || ! empty($calon['idKelompok'])) {
+        $calon = $this->userModel->findByNim($nim);
+        if (! $calon || ! empty($calon['id_kelompok'])) {
             return redirect()->back()->with('error', 'Mahasiswa dengan NIM tersebut sudah memiliki kelompok atau tidak terdaftar.');
         }
 
-        // Cek kuota anggota (maksimal 5 orang)
-        $currentAnggota = $this->mahasiswaModel->getAnggotaByKelompok($mhs['idKelompok']);
+        $currentAnggota = $this->userModel->getAnggotaByKelompok($idKelompok);
         if (count($currentAnggota) >= 5) {
             return redirect()->back()->with('error', 'Kelompok sudah mencapai batas maksimal 5 mahasiswa.');
         }
 
-        // Update mahasiswa
-        $this->mahasiswaModel->update($calon['idMahasiswa'], ['idKelompok' => $mhs['idKelompok']]);
+        // Update mahasiswa di tabel users
+        $this->userModel->update($calon['id_user'], [
+            'id_kelompok' => $idKelompok,
+        ]);
 
         // Update jumlah anggota di tabel kelompok_pkm
-        $this->kelompokModel->update($mhs['idKelompok'], [
+        $this->kelompokModel->update($idKelompok, [
             'jumlahAnggota' => count($currentAnggota) + 1,
         ]);
 
@@ -256,20 +281,22 @@ class MahasiswaController extends BaseController
     }
 
     /**
-     * Formulir Input Proposal PKM (Method Wajib: + inputProposal())
+     * Formulir Input Proposal PKM
      */
     public function proposal()
     {
         $mhs = $this->getMahasiswaAktif();
-        $role = session()->get('role') ?? 'Ketua Kelompok';
+        $rawRole = session()->get('role') ?? $mhs['role'] ?? 'Ketua';
+        $roleView = $this->getRoleViewLabel($rawRole);
+        $idKelompok = $mhs['id_kelompok'] ?? $mhs['idKelompok'];
 
-        $kelompok = null;
-        $proposal = null;
+        $kelompok    = null;
+        $proposal    = null;
         $hasProposal = false;
 
-        if (! empty($mhs['idKelompok'])) {
-            $kelompok = $this->kelompokModel->find($mhs['idKelompok']);
-            $proposal = $this->proposalModel->findByKelompokId($mhs['idKelompok']);
+        if (! empty($idKelompok)) {
+            $kelompok = $this->kelompokModel->find($idKelompok);
+            $proposal = $this->proposalModel->findByKelompokId((int) $idKelompok);
             if ($proposal) {
                 $hasProposal = true;
             }
@@ -278,7 +305,7 @@ class MahasiswaController extends BaseController
         $data = [
             'title'       => 'Input Proposal PKM | SIPKM-DKKA',
             'pageHeader'  => 'Input Proposal PKM',
-            'role'        => $role,
+            'role'        => $roleView,
             'activeMenu'  => 'proposal',
             'userName'    => $mhs['namaMahasiswa'],
             'mahasiswa'   => $mhs,
@@ -291,14 +318,15 @@ class MahasiswaController extends BaseController
     }
 
     /**
-     * Memproses Pengajuan Proposal (Method Wajib: + kirimProposal() & + validasiTautan())
+     * Memproses Pengajuan Proposal
      */
     public function kirimProposal()
     {
         $mhs = $this->getMahasiswaAktif();
-        $role = session()->get('role');
+        $rawRole = session()->get('role') ?? $mhs['role'];
+        $idKelompok = $mhs['id_kelompok'] ?? $mhs['idKelompok'];
 
-        if ($role !== 'Ketua Kelompok' || empty($mhs['idKelompok'])) {
+        if (! in_array($rawRole, ['Ketua', 'Ketua Kelompok'], true) || empty($idKelompok)) {
             return redirect()->to(base_url('mahasiswa/proposal'))->with('error', 'Hanya Ketua Kelompok yang dapat mengajukan atau memperbarui proposal.');
         }
 
@@ -314,28 +342,25 @@ class MahasiswaController extends BaseController
 
         $tautanGoogleDocs = trim($this->request->getPost('tautanGoogleDocs'));
 
-        // Validasi tautan Google Drive / Google Docs (Method Wajib: + validasiTautan())
         if (! $this->validasiTautan($tautanGoogleDocs)) {
             return redirect()->back()->withInput()->with('error', 'Tautan berkas wajib diawali dengan https://docs.google.com/ atau https://drive.google.com/.');
         }
 
-        $proposalLama = $this->proposalModel->findByKelompokId($mhs['idKelompok']);
+        $proposalLama = $this->proposalModel->findByKelompokId((int) $idKelompok);
 
         $proposalData = [
-            'idKelompok'       => $mhs['idKelompok'],
-            'judulProposal'    => $this->request->getPost('judulProposal'),
-            'jenisPKM'         => $this->request->getPost('jenisPKM'),
+            'idKelompok'       => (int) $idKelompok,
+            'judulProposal'    => trim($this->request->getPost('judulProposal')),
+            'jenisPKM'         => trim($this->request->getPost('jenisPKM')),
             'tautanGoogleDocs' => $tautanGoogleDocs,
             'statusProposal'   => 'Diunggah',
             'tglUnggah'        => date('Y-m-d'),
         ];
 
         if ($proposalLama) {
-            // Update jika proposal sudah pernah dibuat
             $this->proposalModel->update($proposalLama['idProposal'], $proposalData);
             $msg = 'Berkas proposal berhasil diperbarui!';
         } else {
-            // Insert baru
             $this->proposalModel->insert($proposalData);
             $msg = 'Proposal PKM berhasil diajukan! Status usulan: Diunggah.';
         }
@@ -343,45 +368,42 @@ class MahasiswaController extends BaseController
         return redirect()->to(base_url('mahasiswa/tracking'))->with('success', $msg);
     }
 
-    /**
-     * Validasi Format Tautan Google Drive / Docs (Method Wajib: + validasiTautan())
-     */
     protected function validasiTautan(string $url): bool
     {
         return (bool) preg_match('/^https:\/\/(docs|drive)\.google\.com\/.+/i', $url);
     }
 
     /**
-     * Halaman Tracking Status Proposal & 2 Card Catatan (Method Wajib: + lihatTrackingProposal())
+     * Halaman Tracking Status Proposal & 2 Card Catatan
      */
     public function tracking()
     {
         $mhs = $this->getMahasiswaAktif();
-        $role = session()->get('role') ?? 'Ketua Kelompok';
+        $rawRole = session()->get('role') ?? $mhs['role'] ?? 'Ketua';
+        $roleView = $this->getRoleViewLabel($rawRole);
+        $idKelompok = $mhs['id_kelompok'] ?? $mhs['idKelompok'];
 
-        $kelompok = null;
-        $proposal = null;
-        $peninjauan = null;
-        $dosen = null;
+        $kelompok       = null;
+        $proposal       = null;
+        $peninjauan     = null;
+        $dosen          = null;
         $statusProposal = 'Diunggah';
 
-        if (! empty($mhs['idKelompok'])) {
-            $kelompok = $this->kelompokModel->find($mhs['idKelompok']);
-            $proposal = $this->proposalModel->findByKelompokId($mhs['idKelompok']);
+        if (! empty($idKelompok)) {
+            $kelompok = $this->kelompokModel->find($idKelompok);
+            $proposal = $this->proposalModel->findByKelompokId((int) $idKelompok);
 
             if ($proposal) {
-                // Status aktual dari database (atau simulasi jika ada query param ?status=)
                 $statusParam = $this->request->getGet('status');
                 $statusProposal = ! empty($statusParam) ? $statusParam : $proposal['statusProposal'];
 
-                $peninjauan = $this->peninjauanModel->findByProposalId($proposal['idProposal']);
-                if ($peninjauan && ! empty($peninjauan['idDosen'])) {
-                    $dosen = $this->dosenModel->find($peninjauan['idDosen']);
+                $peninjauan = $this->peninjauanModel->findByProposalId((int) $proposal['idProposal']);
+                if ($peninjauan && ! empty($peninjauan['id_user'])) {
+                    $dosen = $this->userModel->findByUserId((int) $peninjauan['id_user']);
                 }
             }
         }
 
-        // Default fallback peninjauan jika belum ada record
         if (! $peninjauan) {
             $peninjauan = [
                 'idPeninjauan'        => null,
@@ -393,7 +415,6 @@ class MahasiswaController extends BaseController
             ];
         }
 
-        // Default fallback dosen jika belum di-plotting
         if (! $dosen) {
             $dosen = [
                 'namaDosen' => 'Belum Diplotting DKKA',
@@ -404,7 +425,7 @@ class MahasiswaController extends BaseController
         $data = [
             'title'          => 'Tracking Status Proposal | SIPKM-DKKA',
             'pageHeader'     => 'Tracking Status Proposal',
-            'role'           => $role,
+            'role'           => $roleView,
             'activeMenu'     => 'tracking',
             'userName'       => $mhs['namaMahasiswa'],
             'mahasiswa'      => $mhs,

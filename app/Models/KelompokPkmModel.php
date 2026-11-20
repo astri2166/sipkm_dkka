@@ -35,8 +35,8 @@ class KelompokPkmModel extends Model
      */
     public function getKelompokWithDetails(string $periode = ''): array
     {
-        $builder = $this->select('kelompok_pkm.*, mahasiswa.namaMahasiswa as namaKetua, proposal_pkm.idProposal, proposal_pkm.judulProposal, proposal_pkm.jenisPKM, proposal_pkm.statusProposal')
-                        ->join('mahasiswa', 'mahasiswa.nim = kelompok_pkm.nimKetua', 'left')
+        $builder = $this->select('kelompok_pkm.*, users.nama_lengkap as namaKetua, proposal_pkm.idProposal, proposal_pkm.judulProposal, proposal_pkm.jenisPKM, proposal_pkm.statusProposal')
+                        ->join('users', 'users.nim = kelompok_pkm.nimKetua', 'left')
                         ->join('proposal_pkm', 'proposal_pkm.idKelompok = kelompok_pkm.idKelompok', 'left');
 
         if (!empty($periode)) {

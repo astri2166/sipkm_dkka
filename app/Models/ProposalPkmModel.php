@@ -45,13 +45,13 @@ class ProposalPkmModel extends Model
     public function getProposalWithPlotting(): array
     {
         return $this->select('proposal_pkm.*, kelompok_pkm.namaKelompok, kelompok_pkm.nimKetua,
-                              peninjauan_proposal.idPeninjauan, peninjauan_proposal.idDosen,
+                              peninjauan_proposal.idPeninjauan, peninjauan_proposal.id_user as idDosen, peninjauan_proposal.id_user,
                               peninjauan_proposal.statusPenugasan, peninjauan_proposal.tglPenugasan, peninjauan_proposal.tglSelesaiTinjau,
                               peninjauan_proposal.catatanAdministrasi, peninjauan_proposal.catatanSubstansi, peninjauan_proposal.tautanRekapDrive,
-                              dosen_peninjau.namaDosen, dosen_peninjau.nipDosen')
+                              users.nama_lengkap as namaDosen, users.nip as nipDosen')
                     ->join('kelompok_pkm', 'kelompok_pkm.idKelompok = proposal_pkm.idKelompok')
                     ->join('peninjauan_proposal', 'peninjauan_proposal.idProposal = proposal_pkm.idProposal', 'left')
-                    ->join('dosen_peninjau', 'dosen_peninjau.idDosen = peninjauan_proposal.idDosen', 'left')
+                    ->join('users', "users.id_user = peninjauan_proposal.id_user AND users.role = 'Dosen'", 'left')
                     ->findAll();
     }
 }

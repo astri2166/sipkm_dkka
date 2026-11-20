@@ -13,7 +13,7 @@ class InformasiLombaModel extends Model
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
-        'idAdmin',
+        'id_user',
         'judulLomba',
         'kategoriLomba',
         'deskripsiLomba',
@@ -27,7 +27,7 @@ class InformasiLombaModel extends Model
     protected $useTimestamps = false;
 
     protected $validationRules = [
-        'idAdmin'         => 'required|is_natural_no_zero',
+        'id_user'         => 'required|is_natural_no_zero',
         'judulLomba'      => 'required|max_length[200]',
         'kategoriLomba'   => 'required|max_length[100]',
         'deskripsiLomba'  => 'required',
@@ -41,6 +41,9 @@ class InformasiLombaModel extends Model
      */
     public function getActiveLomba(): array
     {
-        return $this->orderBy('timelineMulai', 'DESC')->findAll();
+        return $this->select('informasi_lomba.*, informasi_lomba.id_user as idAdmin, users.nama_lengkap as namaAdmin')
+                    ->join('users', 'users.id_user = informasi_lomba.id_user', 'left')
+                    ->orderBy('timelineMulai', 'DESC')
+                    ->findAll();
     }
 }

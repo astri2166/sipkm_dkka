@@ -20,9 +20,9 @@ $routes->post('register', 'AuthController::prosesRegister');
 $routes->get('logout', 'AuthController::logout');
 
 // ====================================================================
-// RUTE MODUL MAHASISWA (DIPROTEKSI AUTHFILTER PER ROLE)
+// RUTE MODUL MAHASISWA (DIPROTEKSI AUTHFILTER PER ROLE: Ketua & Member)
 // ====================================================================
-$routes->group('mahasiswa', ['filter' => 'auth:Ketua Kelompok,Anggota Kelompok'], static function ($routes) {
+$routes->group('mahasiswa', ['filter' => 'role:Ketua,Member'], static function ($routes) {
     $routes->get('dashboard', 'MahasiswaController::dashboard');
     $routes->get('kelompok', 'MahasiswaController::kelompok');
     $routes->post('kelompok/buat', 'MahasiswaController::buatKelompok');
@@ -33,9 +33,9 @@ $routes->group('mahasiswa', ['filter' => 'auth:Ketua Kelompok,Anggota Kelompok']
 });
 
 // ====================================================================
-// RUTE MODUL DOSEN PENINJAU (DIPROTEKSI AUTHFILTER)
+// RUTE MODUL DOSEN PENINJAU (DIPROTEKSI AUTHFILTER: Dosen)
 // ====================================================================
-$routes->group('dosen', ['filter' => 'auth:Dosen Peninjau'], static function ($routes) {
+$routes->group('dosen', ['filter' => 'role:Dosen'], static function ($routes) {
     $routes->get('dashboard', 'DosenController::dashboard');
     $routes->get('peninjauan', 'DosenController::peninjauan');
     $routes->get('peninjauan/detail/(:num)', 'DosenController::detailPeninjauan/$1');
@@ -44,9 +44,9 @@ $routes->group('dosen', ['filter' => 'auth:Dosen Peninjau'], static function ($r
 });
 
 // ====================================================================
-// RUTE MODUL SUPER ADMIN (DIPROTEKSI ROLEFILTER / AUTHFILTER)
+// RUTE MODUL SUPER ADMIN (DIPROTEKSI ROLEFILTER: SuperAdmin)
 // ====================================================================
-$routes->group('superadmin', ['filter' => 'role:Super Admin'], static function ($routes) {
+$routes->group('superadmin', ['filter' => 'role:SuperAdmin'], static function ($routes) {
     $routes->get('dashboard', 'SuperAdminController::dashboard');
     $routes->get('kelola-admin', 'SuperAdminController::kelolaAdmin');
     $routes->post('admin/tambah', 'SuperAdminController::tambahAdmin');
@@ -56,7 +56,7 @@ $routes->group('superadmin', ['filter' => 'role:Super Admin'], static function (
 });
 
 // ====================================================================
-// RUTE MODUL ADMIN DKKA (DIPROTEKSI ROLEFILTER / AUTHFILTER)
+// RUTE MODUL ADMIN DKKA (DIPROTEKSI ROLEFILTER: Admin)
 // ====================================================================
 $routes->group('admin', ['filter' => 'role:Admin'], static function ($routes) {
     $routes->get('dashboard', 'AdminController::dashboard');
