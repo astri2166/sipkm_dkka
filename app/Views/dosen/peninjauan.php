@@ -51,10 +51,16 @@
       <div class="col-md-3">
         <select id="filterSkema" class="form-select form-select-sm" onchange="filterTugasTable()">
           <option value="">-- Semua Skema PKM --</option>
-          <option value="PKM-KC">PKM-KC (Karsa Cipta)</option>
           <option value="PKM-RE">PKM-RE (Riset Eksakta)</option>
+          <option value="PKM-RSH">PKM-RSH (Riset Sosial Humaniora)</option>
+          <option value="PKM-PM">PKM-PM (Pengabdian kepada Masyarakat)</option>
+          <option value="PKM-PI">PKM-PI (Penerapan IPTEK)</option>
           <option value="PKM-K">PKM-K (Kewirausahaan)</option>
-          <option value="PKM-PM">PKM-PM (Pengabdian)</option>
+          <option value="PKM-KC">PKM-KC (Karsa Cipta)</option>
+          <option value="PKM-KI">PKM-KI (Karya Inovatif)</option>
+          <option value="PKM-VGK">PKM-VGK (Video Gagasan Konstruktif)</option>
+          <option value="PKM-AI">PKM-AI (Artikel Ilmiah)</option>
+          <option value="PKM-GFT">PKM-GFT (Gagasan Futuristik Tertulis)</option>
         </select>
       </div>
     </div>

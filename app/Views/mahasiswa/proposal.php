@@ -99,14 +99,14 @@
                 <option value="">-- Pilih 1 dari 10 Skema PKM Belmawa --</option>
                 <option value="PKM-RE" <?= ($proposal['jenisPKM'] ?? '') === 'PKM-RE' ? 'selected' : '' ?>>PKM-RE (Riset Eksakta)</option>
                 <option value="PKM-RSH" <?= ($proposal['jenisPKM'] ?? '') === 'PKM-RSH' ? 'selected' : '' ?>>PKM-RSH (Riset Sosial Humaniora)</option>
+                <option value="PKM-PM" <?= ($proposal['jenisPKM'] ?? '') === 'PKM-PM' ? 'selected' : '' ?>>PKM-PM (Pengabdian kepada Masyarakat)</option>
+                <option value="PKM-PI" <?= ($proposal['jenisPKM'] ?? '') === 'PKM-PI' ? 'selected' : '' ?>>PKM-PI (Penerapan IPTEK)</option>
                 <option value="PKM-K" <?= ($proposal['jenisPKM'] ?? '') === 'PKM-K' ? 'selected' : '' ?>>PKM-K (Kewirausahaan)</option>
-                <option value="PKM-PM" <?= ($proposal['jenisPKM'] ?? '') === 'PKM-PM' ? 'selected' : '' ?>>PKM-PM (Pengabdian Kepada Masyarakat)</option>
-                <option value="PKM-PI" <?= ($proposal['jenisPKM'] ?? '') === 'PKM-PI' ? 'selected' : '' ?>>PKM-PI (Penerapan Iptek)</option>
                 <option value="PKM-KC" <?= ($proposal['jenisPKM'] ?? 'PKM-KC') === 'PKM-KC' ? 'selected' : '' ?>>PKM-KC (Karsa Cipta)</option>
                 <option value="PKM-KI" <?= ($proposal['jenisPKM'] ?? '') === 'PKM-KI' ? 'selected' : '' ?>>PKM-KI (Karya Inovatif)</option>
                 <option value="PKM-VGK" <?= ($proposal['jenisPKM'] ?? '') === 'PKM-VGK' ? 'selected' : '' ?>>PKM-VGK (Video Gagasan Konstruktif)</option>
-                <option value="PKM-GFT" <?= ($proposal['jenisPKM'] ?? '') === 'PKM-GFT' ? 'selected' : '' ?>>PKM-GFT (Gagasan Futuristik Tertulis)</option>
                 <option value="PKM-AI" <?= ($proposal['jenisPKM'] ?? '') === 'PKM-AI' ? 'selected' : '' ?>>PKM-AI (Artikel Ilmiah)</option>
+                <option value="PKM-GFT" <?= ($proposal['jenisPKM'] ?? '') === 'PKM-GFT' ? 'selected' : '' ?>>PKM-GFT (Gagasan Futuristik Tertulis)</option>
               </select>
             </div>
 

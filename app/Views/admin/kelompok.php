@@ -16,16 +16,11 @@
     </div>
   <?php endif; ?>
 
-  <!-- Header & Aksi Cepat Tambah Kelompok -->
+  <!-- Header Pengelolaan Kelompok -->
   <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
     <div>
       <h4 class="fw-bold text-dark mb-1">Pengelolaan Kelompok PKM</h4>
       <p class="text-muted small mb-0">Pantau dan kelola seluruh tim mahasiswa yang terdaftar pada program PKM Universitas Budi Luhur.</p>
-    </div>
-    <div>
-      <button class="btn btn-primary-sipkm btn-sm" data-bs-toggle="modal" data-bs-target="#modalTambahKelompok">
-        <i class="bi bi-people-fill me-1"></i> Daftarkan Kelompok Manual
-      </button>
     </div>
   </div>
 
@@ -38,19 +33,26 @@
           <input type="text" id="searchKelompok" class="form-control" placeholder="Cari nama kelompok, NIM ketua, atau prodi..." onkeyup="filterKelompok()">
         </div>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-3">
         <select id="filterPeriode" class="form-select form-select-sm" onchange="filterKelompok()">
           <option value="">-- Semua Periode --</option>
           <option value="2026" selected>Tahun Akademik 2026</option>
           <option value="2025">Tahun Akademik 2025</option>
         </select>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-4">
         <select id="filterSkemaKelompok" class="form-select form-select-sm" onchange="filterKelompok()">
           <option value="">-- Semua Skema PKM --</option>
-          <option value="PKM-KC">PKM-KC</option>
-          <option value="PKM-PM">PKM-PM</option>
-          <option value="PKM-RE">PKM-RE</option>
+          <option value="PKM-RE">PKM-RE (Riset Eksakta)</option>
+          <option value="PKM-RSH">PKM-RSH (Riset Sosial Humaniora)</option>
+          <option value="PKM-PM">PKM-PM (Pengabdian kepada Masyarakat)</option>
+          <option value="PKM-PI">PKM-PI (Penerapan IPTEK)</option>
+          <option value="PKM-K">PKM-K (Kewirausahaan)</option>
+          <option value="PKM-KC">PKM-KC (Karsa Cipta)</option>
+          <option value="PKM-KI">PKM-KI (Karya Inovatif)</option>
+          <option value="PKM-VGK">PKM-VGK (Video Gagasan Konstruktif)</option>
+          <option value="PKM-AI">PKM-AI (Artikel Ilmiah)</option>
+          <option value="PKM-GFT">PKM-GFT (Gagasan Futuristik Tertulis)</option>
         </select>
       </div>
     </div>
@@ -78,7 +80,7 @@
         </thead>
         <tbody class="small" id="tbodyKelompok">
           <?php $no = 1; foreach ($daftarKelompok as $k): ?>
-            <tr class="item-kelompok" data-periode="<?= esc($k['tahunPeriode']) ?>" data-text="<?= esc(strtolower($k['namaKelompok'] . ' ' . $k['nimKetua'] . ' ' . $k['namaKetua'])) ?>">
+            <tr class="item-kelompok" data-periode="<?= esc($k['tahunPeriode']) ?>" data-skema="<?= esc($k['jenisPKM'] ?? '') ?>" data-text="<?= esc(strtolower($k['namaKelompok'] . ' ' . $k['nimKetua'] . ' ' . $k['namaKetua'])) ?>">
               <td class="text-center"><?= $no++ ?></td>
               <td>
                 <div class="fw-bold text-dark"><?= esc($k['namaKelompok']) ?></div>
@@ -166,68 +168,21 @@
       </table>
     </div>
   </div>
-
-  <!-- Modal Tambah Kelompok Manual -->
-  <div class="modal fade" id="modalTambahKelompok" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content border-0 shadow">
-        <div class="modal-header bg-light">
-          <h6 class="modal-title fw-bold text-dark">
-            <i class="bi bi-people text-primary me-2"></i>Daftarkan Kelompok Baru
-          </h6>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <form action="<?= base_url('admin/kelompok/tambah') ?>" method="post" class="sipkm-form">
-          <?= csrf_field() ?>
-          <div class="modal-body">
-            <div class="mb-3">
-              <label class="form-label small fw-semibold">Nama Kelompok PKM <span class="text-danger">*</span></label>
-              <input type="text" name="namaKelompok" class="form-control" placeholder="Contoh: Tim Inovasi AgroTek UBL" required>
-            </div>
-            <div class="row g-2 mb-3">
-              <div class="col-md-6">
-                <label class="form-label small fw-semibold">Tahun Periode <span class="text-danger">*</span></label>
-                <input type="text" name="tahunPeriode" class="form-control" value="2026" required>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label small fw-semibold">Pilih Ketua Tim (Mahasiswa Bebas) <span class="text-danger">*</span></label>
-                <select name="nimKetua" class="form-select" required>
-                  <option value="">-- Pilih Mahasiswa Bebas --</option>
-                  <?php if (!empty($mahasiswaBebas)): foreach ($mahasiswaBebas as $mb): ?>
-                    <option value="<?= esc($mb['nim']) ?>"><?= esc($mb['nim']) ?> - <?= esc($mb['namaMahasiswa']) ?></option>
-                  <?php endforeach; else: ?>
-                    <option value="2412501001">2412501001 - Mahasiswa Terdaftar</option>
-                  <?php endif; ?>
-                </select>
-              </div>
-            </div>
-            <div class="alert alert-info small mb-0">
-              <i class="bi bi-info-circle me-1"></i> Setelah kelompok didaftarkan, Ketua Tim dapat login untuk menambahkan anggota dan mengunggah berkas proposal.
-            </div>
-          </div>
-          <div class="modal-footer bg-light">
-            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
-            <button type="submit" class="btn btn-primary-sipkm btn-sm" data-loading-text="Menyimpan...">
-              <i class="bi bi-save me-1"></i> Daftarkan Kelompok
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
 </div>
 
 <script>
 function filterKelompok() {
   const query = document.getElementById('searchKelompok').value.toLowerCase().trim();
   const periode = document.getElementById('filterPeriode').value;
+  const skema = document.getElementById('filterSkemaKelompok').value;
   const rows = document.querySelectorAll('#tbodyKelompok tr.item-kelompok');
   let count = 0;
 
   rows.forEach(r => {
     const matchText = !query || r.dataset.text.includes(query);
     const matchPeriode = !periode || r.dataset.periode === periode;
-    const show = matchText && matchPeriode;
+    const matchSkema = !skema || r.dataset.skema === skema;
+    const show = matchText && matchPeriode && matchSkema;
     r.classList.toggle('d-none', !show);
     if (show) count++;
   });

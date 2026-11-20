@@ -257,8 +257,6 @@ class AdminController extends BaseController
             $k['anggota'] = $this->userModel->getAnggotaByKelompok((int) $k['idKelompok']);
         }
 
-        $mahasiswaBebas = $this->userModel->getMahasiswaBebas();
-
         $data = [
             'title'          => 'Kelola Kelompok PKM | SIPKM-DKKA',
             'pageHeader'     => 'Pengelolaan Kelompok PKM Mahasiswa',
@@ -266,54 +264,9 @@ class AdminController extends BaseController
             'activeMenu'     => 'kelompok',
             'userName'       => $admin['namaAdmin'],
             'daftarKelompok' => $daftarKelompok,
-            'mahasiswaBebas' => $mahasiswaBebas,
         ];
 
         return view('admin/kelompok', $data);
-    }
-
-    /**
-     * Tambah Kelompok Manual oleh Admin DKKA
-     */
-    public function tambahKelompok()
-    {
-        $rules = [
-            'namaKelompok' => 'required|min_length[3]|max_length[100]',
-            'tahunPeriode' => 'required',
-            'nimKetua'     => 'required',
-        ];
-
-        if (! $this->validate($rules)) {
-            return redirect()->back()->withInput()->with('error', 'Mohon lengkapi data kelompok dengan benar.');
-        }
-
-        $nimKetua = $this->request->getPost('nimKetua');
-        $ketua = $this->userModel->findByNim($nimKetua);
-
-        if (! $ketua || ! empty($ketua['id_kelompok'])) {
-            return redirect()->back()->with('error', 'Mahasiswa tersebut sudah memiliki kelompok atau tidak terdaftar.');
-        }
-
-        $db = \Config\Database::connect();
-        $db->transStart();
-
-        $this->kelompokModel->insert([
-            'namaKelompok'  => trim($this->request->getPost('namaKelompok')),
-            'tahunPeriode'  => trim($this->request->getPost('tahunPeriode')),
-            'nimKetua'      => $nimKetua,
-            'jumlahAnggota' => 1,
-        ]);
-        $idKelompok = $this->kelompokModel->getInsertID();
-
-        // Update mahasiswa ketua di tabel users: isi id_kelompok & ubah role menjadi 'Ketua'
-        $this->userModel->update($ketua['id_user'], [
-            'id_kelompok' => $idKelompok,
-            'role'        => 'Ketua',
-        ]);
-
-        $db->transComplete();
-
-        return redirect()->to(base_url('admin/kelompok'))->with('success', 'Kelompok PKM baru berhasil didaftarkan secara manual!');
     }
 
     /**

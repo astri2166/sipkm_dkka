@@ -66,7 +66,6 @@ $routes->group('admin', ['filter' => 'role:Admin'], static function ($routes) {
     $routes->get('dosen/toggle-status/(:num)', 'AdminController::toggleStatusDosen/$1');
     $routes->get('dosen/detail/(:num)', 'AdminController::detailDosen/$1');
     $routes->get('kelompok', 'AdminController::kelompok');
-    $routes->post('kelompok/tambah', 'AdminController::tambahKelompok');
     $routes->get('kelompok/hapus/(:num)', 'AdminController::hapusKelompok/$1');
     $routes->get('proposal', 'AdminController::proposal');
     $routes->post('proposal/plotting', 'AdminController::plottingDosen');
