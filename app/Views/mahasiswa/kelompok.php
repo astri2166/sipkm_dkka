@@ -182,9 +182,11 @@
                 <label class="form-label small fw-semibold">Pilih Mahasiswa Bebas:</label>
                 <select name="nim" class="form-select" required>
                   <option value="">-- Pilih Mahasiswa --</option>
-                  <?php foreach ($mahasiswaBebas as $mb): ?>
-                    <option value="<?= esc($mb['nim']) ?>">
-                      <?= esc($mb['nim']) ?> - <?= esc($mb['namaMahasiswa']) ?> (<?= esc($mb['programStudi']) ?>)
+                  <?php foreach ($mahasiswaBebas as $mb): 
+                    $isKetua = ($mb['role'] === 'Ketua' || $mb['role'] === 'Ketua Kelompok');
+                  ?>
+                    <option value="<?= esc($mb['nim']) ?>" <?= $isKetua ? 'disabled class="text-muted"' : '' ?>>
+                      <?= esc($mb['nim']) ?> - <?= esc($mb['namaMahasiswa']) ?> (<?= esc($mb['programStudi']) ?>) <?= $isKetua ? '— [Akun Ketua - Tidak Dapat Dipilih]' : '' ?>
                     </option>
                   <?php endforeach; ?>
                 </select>
@@ -250,12 +252,19 @@
               <div class="border rounded-3 p-3 bg-light">
                 <p class="small text-muted mb-2">Centang mahasiswa yang ingin diikutsertakan dalam kelompok:</p>
                 <?php if (!empty($mahasiswaBebas)): ?>
-                  <?php foreach ($mahasiswaBebas as $mb): if ($mb['nim'] !== $mahasiswa['nim']): ?>
-                    <div class="form-check mb-2">
-                      <input class="form-check-input" type="checkbox" name="anggota[]" value="<?= esc($mb['nim']) ?>" id="mhs_<?= esc($mb['nim']) ?>">
-                      <label class="form-check-label small" for="mhs_<?= esc($mb['nim']) ?>">
+                  <?php foreach ($mahasiswaBebas as $mb): if ($mb['nim'] !== $mahasiswa['nim']): 
+                    $isKetua = ($mb['role'] === 'Ketua' || $mb['role'] === 'Ketua Kelompok');
+                  ?>
+                    <div class="form-check mb-2 d-flex align-items-center flex-wrap">
+                      <input class="form-check-input me-2" type="checkbox" name="anggota[]" value="<?= esc($mb['nim']) ?>" id="mhs_<?= esc($mb['nim']) ?>" <?= $isKetua ? 'disabled' : '' ?>>
+                      <label class="form-check-label small <?= $isKetua ? 'text-muted' : '' ?>" for="mhs_<?= esc($mb['nim']) ?>">
                         <strong><?= esc($mb['namaMahasiswa']) ?></strong> (NIM: <?= esc($mb['nim']) ?>) &bull; <?= esc($mb['programStudi']) ?>
                       </label>
+                      <?php if ($isKetua): ?>
+                        <span class="badge bg-warning-subtle text-warning-emphasis border border-warning ms-2 py-1 px-2">
+                          <i class="bi bi-lock-fill me-1"></i>Akun Ketua (Tidak Dapat Dipilih)
+                        </span>
+                      <?php endif; ?>
                     </div>
                   <?php endif; endforeach; ?>
                 <?php else: ?>

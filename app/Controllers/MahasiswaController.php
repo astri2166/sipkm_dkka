@@ -187,11 +187,11 @@ class MahasiswaController extends BaseController
         $tahunPeriode   = trim($this->request->getPost('tahunPeriode') ?? '2026');
         $anggotaDipilih = $this->request->getPost('anggota') ?? [];
 
-        // Validasi ketersediaan anggota yang dipilih dari tabel users
+        // Validasi ketersediaan anggota yang dipilih dari tabel users (khusus role Member, bukan sesama Ketua)
         $nimValid = [];
         foreach ($anggotaDipilih as $nim) {
             $calon = $this->userModel->findByNim($nim);
-            if ($calon && empty($calon['id_kelompok']) && $calon['nim'] !== $mhs['nim']) {
+            if ($calon && empty($calon['id_kelompok']) && $calon['nim'] !== $mhs['nim'] && $calon['role'] !== 'Ketua') {
                 $nimValid[] = $calon;
             }
         }
@@ -258,8 +258,8 @@ class MahasiswaController extends BaseController
         }
 
         $calon = $this->userModel->findByNim($nim);
-        if (! $calon || ! empty($calon['id_kelompok'])) {
-            return redirect()->back()->with('error', 'Mahasiswa dengan NIM tersebut sudah memiliki kelompok atau tidak terdaftar.');
+        if (! $calon || ! empty($calon['id_kelompok']) || $calon['role'] === 'Ketua') {
+            return redirect()->back()->with('error', 'Mahasiswa tersebut tidak dapat ditambahkan sebagai anggota (sudah memiliki kelompok, tidak terdaftar, atau terdaftar sebagai Ketua).');
         }
 
         $currentAnggota = $this->userModel->getAnggotaByKelompok($idKelompok);
