@@ -92,6 +92,7 @@ class UserModel extends Model
             'programStudi'  => $prodi,
             'statusAkun'    => $status,
             'idKelompok'    => $idKelompok,
+            'noWhatsapp'    => $user['no_whatsapp'] ?? $user['noWhatsapp'] ?? '-',
         ]);
     }
 

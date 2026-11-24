@@ -231,9 +231,14 @@
                       <?php endif; ?>
                     </td>
                     <td>
-                      <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $m['noWhatsapp']) ?>" target="_blank" class="text-success text-decoration-none">
-                        <i class="bi bi-whatsapp me-1"></i><?= esc($m['noWhatsapp']) ?>
-                      </a>
+                      <?php $wa = $m['noWhatsapp'] ?? $m['no_whatsapp'] ?? '-'; ?>
+                      <?php if (! empty($wa) && $wa !== '-'): ?>
+                        <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', (string)$wa) ?>" target="_blank" class="text-success text-decoration-none">
+                          <i class="bi bi-whatsapp me-1"></i><?= esc($wa) ?>
+                        </a>
+                      <?php else: ?>
+                        <span class="text-muted small">-</span>
+                      <?php endif; ?>
                     </td>
                   </tr>
                 <?php endforeach; ?>
