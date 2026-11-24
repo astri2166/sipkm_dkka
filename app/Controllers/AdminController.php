@@ -80,6 +80,47 @@ class AdminController extends BaseController
         $daftarProposalPlotting = $this->proposalModel->getProposalDashboard(10);
         $daftarDosen            = $this->userModel->getAllDosen();
 
+        // Hitung sebaran aktual seluruh 10 Bidang PKM Belmawa
+        $sebaranRaw = $this->proposalModel->select('jenisPKM, COUNT(*) as total')
+                                          ->groupBy('jenisPKM')
+                                          ->findAll();
+        $sebaranMap = [];
+        foreach ($sebaranRaw as $sr) {
+            $sebaranMap[strtoupper(trim($sr['jenisPKM']))] = (int) $sr['total'];
+        }
+
+        $daftar10Skema = [
+            'PKM-RE'  => ['nama' => 'Riset Eksakta', 'color' => '#0284c7'],
+            'PKM-RSH' => ['nama' => 'Riset Sosial Humaniora', 'color' => '#2563eb'],
+            'PKM-K'   => ['nama' => 'Kewirausahaan', 'color' => '#d97706'],
+            'PKM-PM'  => ['nama' => 'Pengabdian kepada Masyarakat', 'color' => '#16a34a'],
+            'PKM-PI'  => ['nama' => 'Penerapan IPTEK', 'color' => '#0d9488'],
+            'PKM-KC'  => ['nama' => 'Karsa Cipta', 'color' => '#7c3aed'],
+            'PKM-KI'  => ['nama' => 'Karya Inovatif', 'color' => '#dc2626'],
+            'PKM-VGK' => ['nama' => 'Video Gagasan Konstruktif', 'color' => '#9333ea'],
+            'PKM-GFT' => ['nama' => 'Gagasan Futuristik Tertulis', 'color' => '#db2777'],
+            'PKM-AI'  => ['nama' => 'Artikel Ilmiah', 'color' => '#475569'],
+        ];
+
+        $totalProp = (int) ($stats['totalProposal'] ?? 0);
+        $sebaran10Bidang = [];
+        foreach ($daftar10Skema as $kode => $info) {
+            $cnt = 0;
+            foreach ($sebaranMap as $dbKode => $val) {
+                if ($dbKode === $kode || strpos($dbKode, $kode) !== false) {
+                    $cnt += $val;
+                }
+            }
+            $pct = $totalProp > 0 ? round(($cnt / $totalProp) * 100, 1) : 0;
+            $sebaran10Bidang[] = [
+                'kode'       => $kode,
+                'nama'       => $info['nama'],
+                'color'      => $info['color'],
+                'total'      => $cnt,
+                'persentase' => $pct,
+            ];
+        }
+
         $data = [
             'title'                  => 'Dashboard Administrator DKKA | SIPKM-DKKA',
             'pageHeader'             => 'Dashboard Admin DKKA',
@@ -91,6 +132,7 @@ class AdminController extends BaseController
             'daftarLombaTerbaru'     => $daftarLombaTerbaru,
             'daftarProposalPlotting' => $daftarProposalPlotting,
             'daftarDosen'            => $daftarDosen,
+            'sebaran10Bidang'        => $sebaran10Bidang,
         ];
 
         return view('admin/dashboard', $data);

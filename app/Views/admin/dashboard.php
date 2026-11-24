@@ -202,59 +202,42 @@
 
       <!-- Ringkasan Sebaran 10 Bidang PKM Belmawa -->
       <div class="sipkm-card p-4 shadow-sm">
-        <h5 class="fw-bold text-dark mb-3 pb-2 border-bottom">
-          <i class="bi bi-pie-chart-fill text-primary me-2"></i>Sebaran Usulan 10 Bidang PKM 2026
-        </h5>
+        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom flex-wrap gap-2">
+          <h5 class="fw-bold text-dark mb-0">
+            <i class="bi bi-pie-chart-fill text-primary me-2"></i>Sebaran Usulan 10 Bidang PKM 2026
+          </h5>
+          <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
+            Total: <?= (int)($stats['totalProposal'] ?? 0) ?> Usulan Masuk
+          </span>
+        </div>
         <div class="row g-3 small">
+          <?php
+            $sebaranList = $sebaran10Bidang ?? [];
+            $half = ceil(count($sebaranList) / 2);
+            $leftCol = array_slice($sebaranList, 0, $half);
+            $rightCol = array_slice($sebaranList, $half);
+          ?>
           <div class="col-md-6">
-            <div class="d-flex justify-content-between mb-1">
-              <span>PKM-KC (Karsa Cipta)</span>
-              <strong>5 Usulan (42%)</strong>
-            </div>
-            <div class="progress mb-3" style="height: 8px;">
-              <div class="progress-bar bg-primary" style="width: 42%;"></div>
-            </div>
-
-            <div class="d-flex justify-content-between mb-1">
-              <span>PKM-PM (Pengabdian Masyarakat)</span>
-              <strong>3 Usulan (25%)</strong>
-            </div>
-            <div class="progress mb-3" style="height: 8px;">
-              <div class="progress-bar bg-success" style="width: 25%;"></div>
-            </div>
-
-            <div class="d-flex justify-content-between mb-1">
-              <span>PKM-RE (Riset Eksakta)</span>
-              <strong>2 Usulan (17%)</strong>
-            </div>
-            <div class="progress mb-3" style="height: 8px;">
-              <div class="progress-bar bg-info" style="width: 17%;"></div>
-            </div>
+            <?php foreach ($leftCol as $item): ?>
+              <div class="d-flex justify-content-between mb-1">
+                <span><strong><?= esc($item['kode']) ?></strong> <span class="text-muted">(<?= esc($item['nama']) ?>)</span></span>
+                <strong><?= $item['total'] ?> Usulan (<?= $item['persentase'] ?>%)</strong>
+              </div>
+              <div class="progress mb-3" style="height: 8px;">
+                <div class="progress-bar" style="width: <?= $item['persentase'] ?>%; background-color: <?= esc($item['color']) ?>;"></div>
+              </div>
+            <?php endforeach; ?>
           </div>
           <div class="col-md-6">
-            <div class="d-flex justify-content-between mb-1">
-              <span>PKM-K (Kewirausahaan)</span>
-              <strong>1 Usulan (8%)</strong>
-            </div>
-            <div class="progress mb-3" style="height: 8px;">
-              <div class="progress-bar bg-warning" style="width: 8%;"></div>
-            </div>
-
-            <div class="d-flex justify-content-between mb-1">
-              <span>PKM-RSH (Sosial Humaniora)</span>
-              <strong>1 Usulan (8%)</strong>
-            </div>
-            <div class="progress mb-3" style="height: 8px;">
-              <div class="progress-bar bg-secondary" style="width: 8%;"></div>
-            </div>
-
-            <div class="d-flex justify-content-between mb-1">
-              <span>Bidang Lainnya (VGK, GFT, AI)</span>
-              <strong>0 Usulan</strong>
-            </div>
-            <div class="progress mb-0" style="height: 8px;">
-              <div class="progress-bar bg-light" style="width: 0%;"></div>
-            </div>
+            <?php foreach ($rightCol as $item): ?>
+              <div class="d-flex justify-content-between mb-1">
+                <span><strong><?= esc($item['kode']) ?></strong> <span class="text-muted">(<?= esc($item['nama']) ?>)</span></span>
+                <strong><?= $item['total'] ?> Usulan (<?= $item['persentase'] ?>%)</strong>
+              </div>
+              <div class="progress mb-3" style="height: 8px;">
+                <div class="progress-bar" style="width: <?= $item['persentase'] ?>%; background-color: <?= esc($item['color']) ?>;"></div>
+              </div>
+            <?php endforeach; ?>
           </div>
         </div>
       </div>
