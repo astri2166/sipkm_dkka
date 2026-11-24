@@ -54,4 +54,23 @@ class ProposalPkmModel extends Model
                     ->join('users', "users.id_user = peninjauan_proposal.id_user AND users.role = 'Dosen'", 'left')
                     ->findAll();
     }
+
+    /**
+     * Dapatkan daftar proposal untuk dashboard admin (maks. 10 usulan, diutamakan yang perlu plotting)
+     */
+    public function getProposalDashboard(int $limit = 10): array
+    {
+        return $this->select('proposal_pkm.*, kelompok_pkm.namaKelompok, kelompok_pkm.nimKetua,
+                              users_ketua.nama_lengkap as namaKetua,
+                              peninjauan_proposal.idPeninjauan, peninjauan_proposal.id_user as idDosen,
+                              peninjauan_proposal.statusPenugasan,
+                              dosen.nama_lengkap as namaDosen, dosen.nip as nipDosen')
+                    ->join('kelompok_pkm', 'kelompok_pkm.idKelompok = proposal_pkm.idKelompok')
+                    ->join('users as users_ketua', 'users_ketua.nim = kelompok_pkm.nimKetua', 'left')
+                    ->join('peninjauan_proposal', 'peninjauan_proposal.idProposal = proposal_pkm.idProposal', 'left')
+                    ->join('users as dosen', "dosen.id_user = peninjauan_proposal.id_user AND dosen.role = 'Dosen'", 'left')
+                    ->orderBy("CASE WHEN proposal_pkm.statusProposal = 'Diunggah' THEN 0 ELSE 1 END", 'ASC', false)
+                    ->orderBy('proposal_pkm.idProposal', 'DESC')
+                    ->findAll($limit);
+    }
 }

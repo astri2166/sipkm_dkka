@@ -75,18 +75,22 @@ class AdminController extends BaseController
             'totalLomba'     => $this->lombaModel->countAllResults(),
         ];
 
-        $masterTemplateUrl  = env('sipkm.templatePenilaianUrl', 'https://drive.google.com/drive/folders/MASTER_TEMPLATE_PENILAIAN_DKKA');
-        $daftarLombaTerbaru = $this->lombaModel->orderBy('idLomba', 'DESC')->findAll(3);
+        $masterTemplateUrl      = env('sipkm.templatePenilaianUrl', 'https://drive.google.com/drive/folders/MASTER_TEMPLATE_PENILAIAN_DKKA');
+        $daftarLombaTerbaru     = $this->lombaModel->orderBy('idLomba', 'DESC')->findAll(3);
+        $daftarProposalPlotting = $this->proposalModel->getProposalDashboard(10);
+        $daftarDosen            = $this->userModel->getAllDosen();
 
         $data = [
-            'title'              => 'Dashboard Administrator DKKA | SIPKM-DKKA',
-            'pageHeader'         => 'Dashboard Admin DKKA',
-            'role'               => 'Admin',
-            'activeMenu'         => 'dashboard',
-            'userName'           => $admin['namaAdmin'],
-            'stats'              => $stats,
-            'masterTemplateUrl'  => $masterTemplateUrl,
-            'daftarLombaTerbaru' => $daftarLombaTerbaru,
+            'title'                  => 'Dashboard Administrator DKKA | SIPKM-DKKA',
+            'pageHeader'             => 'Dashboard Admin DKKA',
+            'role'                   => 'Admin',
+            'activeMenu'             => 'dashboard',
+            'userName'               => $admin['namaAdmin'],
+            'stats'                  => $stats,
+            'masterTemplateUrl'      => $masterTemplateUrl,
+            'daftarLombaTerbaru'     => $daftarLombaTerbaru,
+            'daftarProposalPlotting' => $daftarProposalPlotting,
+            'daftarDosen'            => $daftarDosen,
         ];
 
         return view('admin/dashboard', $data);
@@ -372,7 +376,10 @@ class AdminController extends BaseController
             $this->proposalModel->update($idProposal, ['statusProposal' => 'Sedang Ditinjau']);
         }
 
-        return redirect()->to(base_url('admin/proposal'))
+        $redirectTo = trim((string) $this->request->getPost('redirect_to'));
+        $targetUrl  = ! empty($redirectTo) ? $redirectTo : base_url('admin/proposal');
+
+        return redirect()->to($targetUrl)
                          ->with('success', 'Proposal #' . $idProposal . ' berhasil ditugaskan ke Dosen Peninjau: ' . esc($dosen['namaDosen']));
     }
 

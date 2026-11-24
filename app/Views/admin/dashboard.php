@@ -113,64 +113,88 @@
     <!-- Kolom Kiri: Proposal Butuh Plotting Dosen Segera -->
     <div class="col-lg-8">
       <div class="sipkm-card p-4 shadow-sm mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom flex-wrap gap-2">
           <div>
             <h5 class="fw-bold text-dark mb-0">
               <i class="bi bi-exclamation-diamond-fill text-warning me-2"></i>Usulan Proposal Perlu Plotting Dosen
             </h5>
-            <small class="text-muted">Proposal baru diunggah mahasiswa dan belum memiliki Dosen Peninjau</small>
+            <small class="text-muted">Daftar usulan proposal mahasiswa (maksimal 10 usulan) &bull; Prioritas butuh plotting Dosen Peninjau</small>
           </div>
           <a href="<?= base_url('admin/proposal') ?>" class="btn btn-primary-sipkm btn-sm">
             <i class="bi bi-person-plus-fill me-1"></i> Plotting Massal
           </a>
         </div>
 
+        <!-- Kolom Pencarian Cepat Proposal -->
+        <div class="row g-2 mb-3 align-items-center">
+          <div class="col-sm-7 col-md-8">
+            <div class="input-group input-group-sm">
+              <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
+              <input type="text" id="searchProposalDashboard" class="form-control" placeholder="Cari judul proposal, kelompok, NIM ketua, atau skema..." onkeyup="filterProposalDashboard()">
+            </div>
+          </div>
+          <div class="col-sm-5 col-md-4 text-sm-end">
+            <span class="small text-muted" id="countProposalDashboard">
+              Menampilkan <strong><?= count($daftarProposalPlotting ?? []) ?></strong> usulan
+            </span>
+          </div>
+        </div>
+
         <div class="table-responsive">
-          <table class="table table-hover align-middle mb-0">
+          <table class="table table-hover align-middle mb-0" id="tableProposalDashboard">
             <thead class="table-light small">
               <tr>
-                <th>No</th>
+                <th style="width: 45px;">No</th>
                 <th>Skema & Judul Usulan</th>
-                <th>Kelompok</th>
+                <th>Kelompok Pengusul</th>
                 <th>Tgl Unggah</th>
-                <th class="text-center">Aksi Cepat</th>
+                <th class="text-center" style="width: 130px;">Aksi Cepat</th>
               </tr>
             </thead>
-            <tbody class="small">
-              <tr>
-                <td>1</td>
-                <td>
-                  <span class="badge bg-primary-subtle text-primary mb-1">PKM-KC</span>
-                  <div class="fw-bold text-dark">Sistem Deteksi Dini Kualitas Udara Kampus Berbasis IoT dan Edge AI</div>
-                </td>
-                <td>
-                  <div class="fw-semibold">Tim Inovasi Smart Campus</div>
-                  <small class="text-muted">Ketua: 2412501001</small>
-                </td>
-                <td>2026-11-10</td>
-                <td class="text-center">
-                  <a href="<?= base_url('admin/proposal') ?>" class="btn btn-outline-primary btn-sm py-1">
-                    <i class="bi bi-person-plus me-1"></i> Plotting
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>
-                  <span class="badge bg-primary-subtle text-primary mb-1">PKM-KC</span>
-                  <div class="fw-bold text-dark">Aplikasi Deteksi Dini Retinopati Diabetik Menggunakan ResNet-50</div>
-                </td>
-                <td>
-                  <div class="fw-semibold">Tim BioMedika UBL</div>
-                  <small class="text-muted">Ketua: 2412501050</small>
-                </td>
-                <td>2026-11-12</td>
-                <td class="text-center">
-                  <a href="<?= base_url('admin/proposal') ?>" class="btn btn-outline-primary btn-sm py-1">
-                    <i class="bi bi-person-plus me-1"></i> Plotting
-                  </a>
-                </td>
-              </tr>
+            <tbody class="small" id="tbodyProposalDashboard">
+              <?php if (! empty($daftarProposalPlotting)): ?>
+                <?php $no = 1; foreach ($daftarProposalPlotting as $p): ?>
+                  <?php
+                    $isDiunggah = ($p['statusProposal'] === 'Diunggah' || empty($p['idDosen']));
+                    $searchData = strtolower($p['judulProposal'] . ' ' . $p['namaKelompok'] . ' ' . $p['nimKetua'] . ' ' . ($p['namaKetua'] ?? '') . ' ' . $p['jenisPKM']);
+                  ?>
+                  <tr class="item-proposal-dashboard" data-text="<?= esc($searchData) ?>">
+                    <td><?= $no++ ?></td>
+                    <td>
+                      <span class="badge bg-primary-subtle text-primary mb-1"><?= esc($p['jenisPKM']) ?></span>
+                      <div class="fw-bold text-dark lh-sm"><?= esc($p['judulProposal']) ?></div>
+                      <small class="text-muted font-monospace">ID: #<?= esc($p['idProposal']) ?></small>
+                    </td>
+                    <td>
+                      <div class="fw-semibold text-dark"><?= esc($p['namaKelompok']) ?></div>
+                      <small class="text-muted">Ketua: <?= esc($p['nimKetua']) ?><?= !empty($p['namaKetua']) ? ' (' . esc($p['namaKetua']) . ')' : '' ?></small>
+                    </td>
+                    <td><?= esc($p['tglUnggah']) ?></td>
+                    <td class="text-center">
+                      <?php if ($isDiunggah): ?>
+                        <button type="button" class="btn btn-outline-primary btn-sm py-1 px-2" data-bs-toggle="modal" data-bs-target="#modalPlottingDash_<?= $p['idProposal'] ?>" title="Tugaskan Dosen Peninjau">
+                          <i class="bi bi-person-plus me-1"></i> Plotting
+                        </button>
+                      <?php else: ?>
+                        <span class="badge bg-success-subtle text-success border border-success-subtle d-inline-block py-1 px-2">
+                          <i class="bi bi-check-circle me-1"></i><?= esc($p['namaDosen'] ?? 'Sudah Diplotting') ?>
+                        </span>
+                      <?php endif; ?>
+                    </td>
+                  </tr>
+                <?php endforeach; ?>
+                <tr id="noMatchProposalDashboard" style="display: none;">
+                  <td colspan="5" class="text-center py-4 text-muted">
+                    <i class="bi bi-search me-1"></i> Tidak ditemukan proposal yang cocok dengan kata kunci pencarian.
+                  </td>
+                </tr>
+              <?php else: ?>
+                <tr>
+                  <td colspan="5" class="text-center py-4 text-muted">
+                    Belum ada kelompok yang mengajukan usulan proposal PKM.
+                  </td>
+                </tr>
+              <?php endif; ?>
             </tbody>
           </table>
         </div>
@@ -302,4 +326,82 @@
     </div>
   </div>
 </div>
+
+<!-- Modal Plotting Dosen Satuan dari Dashboard -->
+<?php if (! empty($daftarProposalPlotting)): ?>
+  <?php foreach ($daftarProposalPlotting as $p): ?>
+    <div class="modal fade text-start" id="modalPlottingDash_<?= $p['idProposal'] ?>" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+          <div class="modal-header bg-light">
+            <h6 class="modal-title fw-bold text-dark">
+              <i class="bi bi-person-workspace text-primary me-2"></i>Tugaskan Dosen Peninjau
+            </h6>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form action="<?= base_url('admin/proposal/plotting') ?>" method="post" class="sipkm-form">
+            <?= csrf_field() ?>
+            <input type="hidden" name="idProposal" value="<?= $p['idProposal'] ?>">
+            <input type="hidden" name="redirect_to" value="<?= base_url('admin/dashboard') ?>">
+            <div class="modal-body">
+              <div class="mb-2">
+                <label class="small text-muted mb-0">Judul Usulan Proposal:</label>
+                <div class="fw-bold small text-dark"><?= esc($p['judulProposal']) ?></div>
+                <small class="text-muted">Skema: <?= esc($p['jenisPKM']) ?> &bull; Kelompok: <?= esc($p['namaKelompok']) ?></small>
+              </div>
+              <div class="mb-3 mt-2">
+                <label class="form-label small fw-semibold">Pilih Dosen Peninjau <span class="text-danger">*</span></label>
+                <select name="idDosen" class="form-select" required>
+                  <option value="">-- Pilih Dosen Peninjau --</option>
+                  <?php foreach ($daftarDosen as $dos): ?>
+                    <option value="<?= esc($dos['idDosen']) ?>" <?= ($p['idDosen'] ?? 0) == $dos['idDosen'] ? 'selected' : '' ?>>
+                      <?= esc($dos['namaDosen']) ?> (<?= esc($dos['nipDosen']) ?>)
+                    </option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+              <div class="alert alert-info small mb-0">
+                <i class="bi bi-info-circle me-1"></i> Setelah disimpan, data penugasan akan masuk ke sistem peninjauan dan status usulan otomatis menjadi <strong>Sedang Ditinjau</strong>.
+              </div>
+            </div>
+            <div class="modal-footer bg-light">
+              <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
+              <button type="submit" class="btn btn-primary-sipkm btn-sm" data-loading-text="Menugaskan...">
+                <i class="bi bi-check2-circle me-1"></i> Simpan Penugasan
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  <?php endforeach; ?>
+<?php endif; ?>
+
+<script>
+function filterProposalDashboard() {
+  const query = document.getElementById('searchProposalDashboard').value.toLowerCase().trim();
+  const rows = document.querySelectorAll('#tbodyProposalDashboard tr.item-proposal-dashboard');
+  let visibleCount = 0;
+
+  rows.forEach(row => {
+    const text = row.getAttribute('data-text') || '';
+    if (!query || text.includes(query)) {
+      row.style.display = '';
+      visibleCount++;
+    } else {
+      row.style.display = 'none';
+    }
+  });
+
+  const noMatch = document.getElementById('noMatchProposalDashboard');
+  if (noMatch) {
+    noMatch.style.display = (visibleCount === 0 && rows.length > 0) ? '' : 'none';
+  }
+
+  const countEl = document.getElementById('countProposalDashboard');
+  if (countEl) {
+    countEl.innerHTML = `Menampilkan <strong>${visibleCount}</strong> dari ${rows.length} usulan`;
+  }
+}
+</script>
 <?= $this->endSection() ?>
