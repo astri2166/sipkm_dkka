@@ -119,7 +119,8 @@ SET FOREIGN_KEY_CHECKS = 1;
 INSERT INTO `kelompok_pkm` (`idKelompok`, `namaKelompok`, `tahunPeriode`, `nimKetua`, `jumlahAnggota`) VALUES
 (1, 'Tim Inovasi Smart Campus UBL', '2026', '2412501001', 2),
 (2, 'Tim GreenTech UBL', '2026', '2412501873', 1),
-(3, 'Tim Edukasi Inklusif UBL', '2026', '2474294831', 1);
+(3, 'Tim EduKarsa Kreatif', '2026', '2474294831', 1),
+(4, 'TIM MBANAU', '2026', '2846846373', 4);
 
 -- 2. Data Pengguna (users: SuperAdmin, Admin, Dosen, Ketua, Member)
 INSERT INTO `users` (`id_user`, `id_kelompok`, `username`, `email`, `password`, `nama_lengkap`, `role`, `nim`, `nip`, `program_studi`, `jabatan`, `status_akun`) VALUES
@@ -135,20 +136,35 @@ INSERT INTO `users` (`id_user`, `id_kelompok`, `username`, `email`, `password`, 
 -- Mahasiswa Member Kelompok 1
 (6, 1, 'anggota_pkm1', '2412501002@student.budiluhur.ac.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Nadia Putri', 'Member', '2412501002', NULL, 'Teknik Informatika', NULL, 'Aktif'),
 -- Mahasiswa Bebas (Belum punya kelompok)
-(7, NULL, 'mhs_bebas1', '2412501872@student.budiluhur.ac.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Mahasiswa Bebas 1', 'Member', '2412501872', NULL, 'Sistem Informasi', NULL, 'Aktif'),
+(7, NULL, 'mhs_bebas1', '2412501872@student.budiluhur.ac.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'mhs_bebas1', 'Member', NULL, NULL, NULL, NULL, 'Aktif'),
 -- Mahasiswa Ketua Kelompok 2
 (8, 2, 'mhs_bebas2', '2412501873@student.budiluhur.ac.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Dimas Aditya Saputra', 'Ketua', '2412501873', NULL, 'Sistem Komputer', NULL, 'Aktif'),
 -- Mahasiswa Ketua Kelompok 3
-(9, 3, 'astriananta', '2474294831@student.budiluhur.ac.id', '$2y$10$3us4e9DCHKCo0EmubyG29e.71hVwE4iNNJ6G6h9LOJGZKqhE7T8su', 'Astri Ananta Kartini', 'Ketua', '2474294831', NULL, 'Sistem Informasi', NULL, 'Aktif');
+(9, 3, 'astriananta', '2474294831@student.budiluhur.ac.id', '$2y$10$3us4e9DCHKCo0EmubyG29e.71hVwE4iNNJ6G6h9LOJGZKqhE7T8su', 'Astri Ananta Kartini', 'Ketua', '2474294831', NULL, 'Sistem Informasi', NULL, 'Aktif'),
+-- Dosen Peninjau Tambahan
+(10, NULL, '3642847', 'astri@budiluhur.ac.id', '$2y$10$Kd4/2u0SE3oqX98LyLZn3.t9MtnOcy7NJ0yQlrgSDKFDw5VSCR9qu', 'astri', 'Dosen', NULL, '3642847', NULL, NULL, 'Aktif'),
+-- Mahasiswa Tambahan
+(11, NULL, 'ananta', 'ananta@student.budiluhur.ac.id', '$2y$10$kS.Kb.t6zy5bFOnR3xexKe0ILz1n61ZeVyQyngf23G./zMhFHZXgO', 'Ananta', 'Member', '1234567899', NULL, 'Manajemen Bencana', NULL, 'Aktif'),
+(12, NULL, 'kartini', 'kartini@student.budiluhur.ac.id', '$2y$10$fVuZyUGHbZTyOISdUwR0n.5fYDawTtbuVaFNU2KGXBz/UJY/6qKNu', 'Kartini', 'Ketua', '3742686323', NULL, 'Design Komunikasi Visual', NULL, 'Aktif'),
+-- Mahasiswa Ketua & Anggota TIM MBANAU (Kelompok 4)
+(13, 4, 'naufa', 'naufa@student.budiluhur.ac.id', '$2y$10$GEqxtIDFEmV02xLFgN.U7uQBP4qM3CWCpI6JhKr66f0xHFtnQvDTm', 'naufa', 'Ketua', '2846846373', NULL, 'Teknik Informatika', NULL, 'Aktif'),
+(14, NULL, 'inaya', 'inaya@student.budiluhur.ac.id', '$2y$10$1A.c6pHZF7fBW.gE/sRY0.hsKz5tPO8lh6SUpBI7cqXv.MeaTPpjW', 'inaya', 'Ketua', '3428436458', NULL, 'International Program', NULL, 'Aktif'),
+(15, 4, 'aulia', 'aulia@student.budiluhur.ac.id', '$2y$10$XDB1imCQMQj3xNGHEFtF4uGAehu2DUCiHRC.VgCheqdKju5InEy9m', 'aulia', 'Member', '2856864839', NULL, 'Manajemen', NULL, 'Aktif'),
+(16, 4, 'sabila', 'sabila@student.budiluhur.ac.id', '$2y$10$LIYx9mK4/3tIVIKmlIt0ce0Ft1hP7EfSr9SCryqkTnES7.7sxpyIa', 'sabila', 'Member', '8256356874', NULL, 'Teknik Elektro', NULL, 'Aktif'),
+(17, 4, 'azzahra', 'azzahra@student.budiluhur.ac.id', '$2y$10$q4UURdAZHifrMmzIeSYWmubgqgoE/ZO0BL9qW0.OllQ6A8IiuH6ze', 'azzahra', 'Member', '2374672365', NULL, 'Pariwisata', NULL, 'Aktif');
 
 -- 3. Data Proposal PKM
 INSERT INTO `proposal_pkm` (`idProposal`, `idKelompok`, `judulProposal`, `jenisPKM`, `tautanGoogleDocs`, `statusProposal`, `tglUnggah`) VALUES
-(1, 1, 'Sistem Deteksi Dini Kualitas Udara Kampus Berbasis IoT dan Edge AI', 'PKM-KC', 'https://docs.google.com/document/d/1ExampleSmartCampusUBL2026/edit', 'Sudah Ditinjau', '2026-11-10'),
-(2, 2, 'Rancang Bangun Prototipe Pengering Sampah Otomatis Berbasis Panel Surya', 'PKM-PI', 'https://docs.google.com/document/d/2ExampleSolarDryerUBL2026/edit', 'Diunggah', '2026-11-12');
+(1, 1, 'Sistem Deteksi Dini Kualitas Udara Kampus Berbasis IoT dan Edge AI', 'PKM-KC', 'https://drive.google.com/drive/folders/1ContohFolderProposalTimUBL2026', 'Sudah Ditinjau', '2026-11-10'),
+(2, 2, 'Rancang Bangun Prototipe Pengering Sampah Otomatis Berbasis Panel Surya', 'PKM-PI', 'https://drive.google.com/drive/folders/1ContohProposalGreenTech2026', 'Sedang Ditinjau', '2026-11-15'),
+(3, 3, 'Pemberdayaan Literasi Digital untuk UMKM Lansia di Wilayah Jakarta Selatan', 'PKM-PM', 'https://drive.google.com/drive/folders/1ContohProposalEduKarsa2026', 'Diunggah', '2026-11-16'),
+(4, 4, 'Fenomena Fear of Missing Out (FOMO) dan Pengaruhnya terhadap Perilaku Konsumtif Mahasiswa di Era Digital.', 'PKM-RSH', 'https://drive.google.com/file/d/1BUlh5dwTsFchv2tPPXzplbAHF0qsY9qE/view?usp=sharing', 'Sedang Ditinjau', '2026-11-24');
 
 -- 4. Data Peninjauan Proposal (id_user merujuk ke Dosen Peninjau di users.id_user = 3)
 INSERT INTO `peninjauan_proposal` (`idPeninjauan`, `idProposal`, `id_user`, `catatanAdministrasi`, `catatanSubstansi`, `tautanRekapDrive`, `statusPenugasan`, `tglPenugasan`, `tglSelesaiTinjau`) VALUES
-(1, 1, 3, '1. Margin kiri sudah 4 cm, daftar pustaka konsisten.\n2. Lembar pengesahan lengkap.', '1. Latar belakang urgensi inovasi relevan dan sangat kuat.\n2. Metodologi pengujian akurasi sensor telah diperjelas.', 'https://drive.google.com/drive/folders/1HasilRekapPenilaianDosenUBL2026', 'Belum Ditinjau', '2026-11-17', '2026-11-16');
+(1, 1, 3, '1. Margin kiri sudah 4 cm, daftar pustaka konsisten.\n2. Lembar pengesahan lengkap.', '1. Latar belakang urgensi inovasi relevan dan sangat kuat.\n2. Metodologi pengujian akurasi sensor telah diperjelas.', 'https://drive.google.com/drive/folders/1HasilRekapPenilaianDosenUBL2026', 'Selesai', '2026-11-17', '2026-11-20'),
+(2, 2, 3, NULL, NULL, NULL, 'Belum Ditinjau', '2026-11-24', NULL),
+(3, 4, 3, NULL, NULL, NULL, 'Belum Ditinjau', '2026-11-25', NULL);
 
 -- 5. Data Informasi Lomba (id_user merujuk ke Admin DKKA di users.id_user = 2 / 1)
 INSERT INTO `informasi_lomba` (`idLomba`, `id_user`, `judulLomba`, `kategoriLomba`, `deskripsiLomba`, `timelineMulai`, `timelineSelesai`, `posterBanner`) VALUES
