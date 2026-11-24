@@ -16,10 +16,10 @@
     </div>
   <?php endif; ?>
 
-  <!-- Banner Admin DKKA & Role Preview Switcher -->
+  <!-- Banner Admin DKKA -->
   <div class="sipkm-card p-4 mb-4 border-0 shadow-sm" style="background: linear-gradient(135deg, #0f294a 0%, #1e3a8a 100%); color: #fff;">
     <div class="row align-items-center">
-      <div class="col-lg-8">
+      <div class="col-12">
         <div class="d-flex align-items-center gap-2 mb-2">
           <span class="badge bg-warning text-dark fw-bold px-3 py-1 rounded-pill">
             <i class="bi bi-shield-fill-check me-1"></i> Mode: <?= esc($role) ?>
@@ -30,16 +30,6 @@
         <p class="mb-0 text-white-50">
           Selamat bertugas, <strong><?= esc($userName ?? 'Admin DKKA') ?></strong> &bull; Direktorat Kemahasiswaan dan Karir Alumni
         </p>
-      </div>
-      <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-        <div class="btn-group shadow-sm">
-          <a href="<?= base_url('admin/dashboard?role=Admin') ?>" class="btn btn-sm <?= $role === 'Admin' ? 'btn-warning text-dark fw-bold' : 'btn-outline-light' ?>">
-            <i class="bi bi-person-badge"></i> Admin DKKA
-          </a>
-          <a href="<?= base_url('admin/dashboard?role=Super+Admin') ?>" class="btn btn-sm <?= $role === 'Super Admin' ? 'btn-warning text-dark fw-bold' : 'btn-outline-light' ?>">
-            <i class="bi bi-shield-lock"></i> Super Admin
-          </a>
-        </div>
       </div>
     </div>
   </div>

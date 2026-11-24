@@ -43,11 +43,8 @@
         Sesuai hak otorisasi role, manajemen akun Administrator DKKA hanya dapat dilakukan oleh <strong>Super Admin</strong>.
       </p>
       <div class="mt-3">
-        <a href="<?= base_url('admin/pengguna?tab=dosen') ?>" class="btn btn-outline-primary btn-sm me-2">
+        <a href="<?= base_url('admin/pengguna?tab=dosen') ?>" class="btn btn-outline-primary btn-sm">
           <i class="bi bi-person-badge me-1"></i> Kelola Dosen Peninjau Saja
-        </a>
-        <a href="<?= base_url('admin/dashboard?role=Super+Admin') ?>" class="btn btn-warning text-dark btn-sm fw-bold">
-          <i class="bi bi-arrow-repeat me-1"></i> Simulasi Switch ke Super Admin
         </a>
       </div>
     </div>

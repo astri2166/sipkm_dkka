@@ -294,17 +294,33 @@
           <i class="bi bi-info-circle text-primary me-2"></i>10 Bidang PKM Kemdikbudristek
         </h6>
         <p class="text-muted small mb-3">Pastikan skema yang dipilih sesuai dengan inovasi tim:</p>
+        <?php
+          $skemaPilihan = strtoupper(trim((string)($proposal['jenisPKM'] ?? $kelompok['jenisPKM'] ?? '')));
+          $daftar10Bidang = [
+            'PKM-RE'  => 'Riset Eksakta',
+            'PKM-RSH' => 'Riset Sosial Humaniora',
+            'PKM-K'   => 'Kewirausahaan',
+            'PKM-PM'  => 'Pengabdian kepada Masyarakat',
+            'PKM-PI'  => 'Penerapan IPTEK',
+            'PKM-KC'  => 'Karsa Cipta',
+            'PKM-KI'  => 'Karya Inovatif',
+            'PKM-VGK' => 'Video Gagasan Konstruktif',
+            'PKM-GFT' => 'Gagasan Futuristik Tertulis',
+            'PKM-AI'  => 'Artikel Ilmiah',
+          ];
+        ?>
         <div class="d-flex flex-wrap gap-1 mb-3">
-          <span class="badge bg-light text-dark border">PKM-RE</span>
-          <span class="badge bg-light text-dark border">PKM-RSH</span>
-          <span class="badge bg-light text-dark border">PKM-K</span>
-          <span class="badge bg-light text-dark border">PKM-PM</span>
-          <span class="badge bg-light text-dark border">PKM-PI</span>
-          <span class="badge bg-primary text-white">PKM-KC</span>
-          <span class="badge bg-light text-dark border">PKM-KI</span>
-          <span class="badge bg-light text-dark border">PKM-VGK</span>
-          <span class="badge bg-light text-dark border">PKM-GFT</span>
-          <span class="badge bg-light text-dark border">PKM-AI</span>
+          <?php foreach ($daftar10Bidang as $kode => $nama): ?>
+            <?php 
+              $isAktif = (!empty($skemaPilihan) && (
+                $skemaPilihan === $kode ||
+                strpos($skemaPilihan, $kode) !== false
+              ));
+            ?>
+            <span class="badge <?= $isAktif ? 'bg-primary text-white shadow-sm' : 'bg-light text-dark border' ?>" title="<?= esc($kode) ?> - <?= esc($nama) ?>">
+              <?= esc($kode) ?>
+            </span>
+          <?php endforeach; ?>
         </div>
         <a href="<?= base_url('/') ?>" class="btn btn-outline-secondary btn-sm w-100">
           <i class="bi bi-trophy me-1"></i> Buka Informasi Lomba Lainnya

@@ -146,17 +146,6 @@
   <div class="flex-grow-1 d-flex flex-column">
     <header class="bg-white border-bottom px-4 py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
       <h5 class="mb-0 fw-bold text-dark"><?= esc($pageHeader ?? 'Dashboard') ?></h5>
-      <!-- Switcher Cepat Preview Role (Hanya untuk Fase UI/UX Preview) -->
-      <div class="d-flex align-items-center gap-2">
-        <span class="badge bg-info-subtle text-info-emphasis border border-info-subtle">Mode Preview UI</span>
-        <div class="btn-group btn-group-sm">
-          <a href="<?= base_url('mahasiswa/dashboard?role=Ketua+Kelompok') ?>" class="btn btn-outline-secondary">Ketua</a>
-          <a href="<?= base_url('mahasiswa/dashboard?role=Anggota+Kelompok') ?>" class="btn btn-outline-secondary">Anggota</a>
-          <a href="<?= base_url('dosen/dashboard') ?>" class="btn btn-outline-secondary">Dosen</a>
-          <a href="<?= base_url('admin/dashboard?role=Admin') ?>" class="btn btn-outline-secondary">Admin</a>
-          <a href="<?= base_url('superadmin/dashboard?role=Super+Admin') ?>" class="btn btn-outline-secondary">Super Admin</a>
-        </div>
-      </div>
     </header>
 
     <main class="p-4 flex-grow-1">
