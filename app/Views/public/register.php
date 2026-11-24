@@ -52,13 +52,21 @@
               <label class="form-label fw-medium">Program Studi <span class="text-danger">*</span></label>
               <select name="programStudi" class="form-select" required>
                 <option value="">-- Pilih Program Studi --</option>
-                <option value="Sistem Informasi" <?= old('programStudi') === 'Sistem Informasi' ? 'selected' : '' ?>>Sistem Informasi</option>
                 <option value="Teknik Informatika" <?= old('programStudi') === 'Teknik Informatika' ? 'selected' : '' ?>>Teknik Informatika</option>
                 <option value="Sistem Komputer" <?= old('programStudi') === 'Sistem Komputer' ? 'selected' : '' ?>>Sistem Komputer</option>
+                <option value="Sistem Informasi" <?= old('programStudi') === 'Sistem Informasi' ? 'selected' : '' ?>>Sistem Informasi</option>
+                <option value="Ilmu Komunikasi" <?= old('programStudi') === 'Ilmu Komunikasi' ? 'selected' : '' ?>>Ilmu Komunikasi</option>
+                <option value="Design Komunikasi Visual" <?= old('programStudi') === 'Design Komunikasi Visual' ? 'selected' : '' ?>>Design Komunikasi Visual</option>
+                <option value="Hubungan Internasional" <?= old('programStudi') === 'Hubungan Internasional' ? 'selected' : '' ?>>Hubungan Internasional</option>
+                <option value="Kriminologi" <?= old('programStudi') === 'Kriminologi' ? 'selected' : '' ?>>Kriminologi</option>
                 <option value="Manajemen" <?= old('programStudi') === 'Manajemen' ? 'selected' : '' ?>>Manajemen</option>
                 <option value="Akuntansi" <?= old('programStudi') === 'Akuntansi' ? 'selected' : '' ?>>Akuntansi</option>
-                <option value="Ilmu Komunikasi" <?= old('programStudi') === 'Ilmu Komunikasi' ? 'selected' : '' ?>>Ilmu Komunikasi</option>
-                <option value="Hubungan Internasional" <?= old('programStudi') === 'Hubungan Internasional' ? 'selected' : '' ?>>Hubungan Internasional</option>
+                <option value="International Program" <?= old('programStudi') === 'International Program' ? 'selected' : '' ?>>International Program</option>
+                <option value="Manajemen Bencana" <?= old('programStudi') === 'Manajemen Bencana' ? 'selected' : '' ?>>Manajemen Bencana</option>
+                <option value="Arsitektur" <?= old('programStudi') === 'Arsitektur' ? 'selected' : '' ?>>Arsitektur</option>
+                <option value="Teknik Elektro" <?= old('programStudi') === 'Teknik Elektro' ? 'selected' : '' ?>>Teknik Elektro</option>
+                <option value="Pariwisata" <?= old('programStudi') === 'Pariwisata' ? 'selected' : '' ?>>Pariwisata</option>
+                <option value="Sekretari" <?= old('programStudi') === 'Sekretari' ? 'selected' : '' ?>>Sekretari</option>
               </select>
             </div>
             <div class="col-md-6">
