@@ -65,7 +65,7 @@ class DosenController extends BaseController
         $countBelum   = count(array_filter($daftarTugas, fn($t) => $t['statusPenugasan'] === 'Belum Ditinjau'));
         $countSelesai = count(array_filter($daftarTugas, fn($t) => $t['statusPenugasan'] === 'Selesai'));
 
-        $masterTemplateUrl = env('sipkm.templatePenilaianUrl', 'https://drive.google.com/drive/folders/MASTER_TEMPLATE_PENILAIAN_DKKA');
+        $masterTemplateUrl = env('sipkm.templatePenilaianUrl', 'https://drive.google.com/drive/folders/16nQdJOWCSaw7Da5kdwJt2rxSq8EfWlk-?usp=sharing');
 
         $data = [
             'title'             => 'Dashboard Dosen Peninjau | SIPKM-DKKA',
@@ -114,7 +114,7 @@ class DosenController extends BaseController
             });
         }
 
-        $masterTemplateUrl = env('sipkm.templatePenilaianUrl', 'https://drive.google.com/drive/folders/MASTER_TEMPLATE_PENILAIAN_DKKA');
+        $masterTemplateUrl = env('sipkm.templatePenilaianUrl', 'https://drive.google.com/drive/folders/16nQdJOWCSaw7Da5kdwJt2rxSq8EfWlk-?usp=sharing');
 
         $data = [
             'title'             => 'Peninjauan Proposal PKM | SIPKM-DKKA',
@@ -152,7 +152,7 @@ class DosenController extends BaseController
             return redirect()->to(base_url('dosen/peninjauan'))->with('error', 'Akses ditolak: Proposal ini tidak ditugaskan kepada Anda.');
         }
 
-        $masterTemplateUrl = env('sipkm.templatePenilaianUrl', 'https://drive.google.com/drive/folders/MASTER_TEMPLATE_PENILAIAN_DKKA');
+        $masterTemplateUrl = env('sipkm.templatePenilaianUrl', 'https://drive.google.com/drive/folders/16nQdJOWCSaw7Da5kdwJt2rxSq8EfWlk-?usp=sharing');
 
         $data = [
             'title'             => 'Evaluasi Proposal #' . $tugas['idProposal'] . ' | SIPKM-DKKA',
