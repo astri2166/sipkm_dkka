@@ -16,7 +16,7 @@
         <div class="mb-4">
           <span class="badge bg-primary-subtle text-primary px-3 py-2 mb-2">Registrasi Akun Mandiri</span>
           <h4 class="fw-bold mb-1">Pendaftaran Akun Mahasiswa PKM</h4>
-          <p class="text-muted small">Akun baru otomatis terdaftar sebagai <strong>Anggota Kelompok</strong> dan dapat langsung membuat atau bergabung ke tim PKM.</p>
+          <p class="text-muted small">Pilih peran akun sebagai <strong>Ketua Kelompok</strong> atau <strong>Anggota Kelompok</strong> sesuai peran Anda dalam tim PKM.</p>
         </div>
 
         <?php if (session()->getFlashdata('errors')): ?>
@@ -49,6 +49,14 @@
               <input type="text" name="namaMahasiswa" class="form-control" placeholder="Sesuai KTM" value="<?= old('namaMahasiswa') ?>" required>
             </div>
             <div class="col-md-6">
+              <label class="form-label fw-medium">Daftar Sebagai (Peran Akun) <span class="text-danger">*</span></label>
+              <select name="role" class="form-select" required>
+                <option value="">-- Pilih Peran Akun --</option>
+                <option value="Ketua" <?= in_array(old('role'), ['Ketua', 'Ketua Kelompok']) ? 'selected' : '' ?>>Ketua Kelompok</option>
+                <option value="Member" <?= in_array(old('role'), ['Member', 'Anggota Kelompok', 'Anggota']) ? 'selected' : '' ?>>Anggota Kelompok</option>
+              </select>
+            </div>
+            <div class="col-md-6">
               <label class="form-label fw-medium">Program Studi <span class="text-danger">*</span></label>
               <select name="programStudi" class="form-select" required>
                 <option value="">-- Pilih Program Studi --</option>
@@ -74,14 +82,14 @@
               <input type="tel" name="noWhatsapp" class="form-control" placeholder="0812xxxxxxxx" value="<?= old('noWhatsapp') ?>" required>
             </div>
             <div class="col-md-6">
+              <label class="form-label fw-medium">Email Kampus / Aktif <span class="text-danger">*</span></label>
+              <input type="email" name="email" class="form-control" placeholder="nim@student.budiluhur.ac.id" value="<?= old('email') ?>" required>
+            </div>
+            <div class="col-md-6">
               <label class="form-label fw-medium">Username <span class="text-danger">*</span></label>
               <input type="text" name="username" class="form-control" placeholder="Username login" value="<?= old('username') ?>" required>
             </div>
             <div class="col-md-6">
-              <label class="form-label fw-medium">Email Kampus / Aktif <span class="text-danger">*</span></label>
-              <input type="email" name="email" class="form-control" placeholder="nim@student.budiluhur.ac.id" value="<?= old('email') ?>" required>
-            </div>
-            <div class="col-12">
               <label class="form-label fw-medium">Password <span class="text-danger">*</span></label>
               <input type="password" name="password" class="form-control" placeholder="Minimal 6 karakter" minlength="6" required>
             </div>

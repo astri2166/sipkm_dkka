@@ -113,6 +113,7 @@ class AuthController extends BaseController
             'username' => 'required|min_length[3]|max_length[50]|is_unique[users.username]',
             'email'    => 'required|valid_email|max_length[100]|is_unique[users.email]',
             'password' => 'required|min_length[6]',
+            'role'     => 'required|in_list[Ketua,Member,Ketua Kelompok,Anggota Kelompok]',
         ];
 
         $messages = [
@@ -125,6 +126,10 @@ class AuthController extends BaseController
             'email' => [
                 'is_unique' => 'Email ini sudah terdaftar di sistem.',
             ],
+            'role' => [
+                'required' => 'Silakan pilih peran akun (Ketua Kelompok atau Anggota Kelompok).',
+                'in_list'  => 'Pilihan peran akun tidak valid.',
+            ],
         ];
 
         if (! $this->validate($rules, $messages)) {
@@ -132,20 +137,22 @@ class AuthController extends BaseController
         }
 
         $namaLengkap = trim((string) ($this->request->getPost('nama_lengkap') ?? $this->request->getPost('namaMahasiswa') ?? ''));
-        $prodi = trim((string) ($this->request->getPost('program_studi') ?? $this->request->getPost('programStudi') ?? ''));
+        $prodi       = trim((string) ($this->request->getPost('program_studi') ?? $this->request->getPost('programStudi') ?? ''));
+        $roleInput   = trim((string) $this->request->getPost('role'));
+        $roleDb      = ($roleInput === 'Ketua' || $roleInput === 'Ketua Kelompok') ? 'Ketua' : 'Member';
 
         if (empty($namaLengkap)) {
             return redirect()->back()->withInput()->with('error', 'Nama lengkap mahasiswa wajib diisi.');
         }
 
-        // Cukup 1x INSERT ke tabel users: role = 'Member', id_kelompok = NULL, status_akun = 'Aktif'
+        // Cukup 1x INSERT ke tabel users: role sesuai pilihan ('Ketua' atau 'Member'), id_kelompok = NULL, status_akun = 'Aktif'
         $userData = [
             'id_kelompok'   => null,
             'username'      => trim($this->request->getPost('username')),
             'email'         => trim($this->request->getPost('email')),
             'password'      => password_hash($this->request->getPost('password'), PASSWORD_BCRYPT),
             'nama_lengkap'  => $namaLengkap,
-            'role'          => 'Member',
+            'role'          => $roleDb,
             'nim'           => trim($this->request->getPost('nim')),
             'nip'           => null,
             'program_studi' => $prodi,
