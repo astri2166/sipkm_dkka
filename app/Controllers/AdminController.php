@@ -75,7 +75,7 @@ class AdminController extends BaseController
             'totalLomba'     => $this->lombaModel->countAllResults(),
         ];
 
-        $masterTemplateUrl      = env('sipkm.templatePenilaianUrl', 'https://drive.google.com/drive/folders/16nQdJOWCSaw7Da5kdwJt2rxSq8EfWlk-?usp=sharing');
+        $masterTemplateUrl      = env('sipkm.templatePenilaianUrl', 'https://drive.google.com/drive/folders/1thAAeuQ7cBhFvA02yIUNgj34UhDxtOhy?usp=sharing');
         $daftarLombaTerbaru     = $this->lombaModel->orderBy('idLomba', 'DESC')->findAll(3);
         $daftarProposalPlotting = $this->proposalModel->getProposalDashboard(10);
         $daftarDosen            = $this->userModel->getAllDosen();
@@ -362,7 +362,7 @@ class AdminController extends BaseController
         $daftarProposal = $this->proposalModel->getProposalWithPlotting();
         $daftarDosen    = $this->userModel->getAllDosen();
 
-        $masterTemplateUrl = env('sipkm.templatePenilaianUrl', 'https://drive.google.com/drive/folders/16nQdJOWCSaw7Da5kdwJt2rxSq8EfWlk-?usp=sharing');
+        $masterTemplateUrl = env('sipkm.templatePenilaianUrl', 'https://drive.google.com/drive/folders/1thAAeuQ7cBhFvA02yIUNgj34UhDxtOhy?usp=sharing');
 
         $data = [
             'title'             => 'Kelola Proposal & Plotting | SIPKM-DKKA',
