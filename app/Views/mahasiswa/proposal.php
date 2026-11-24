@@ -22,15 +22,6 @@
       <h4 class="fw-bold text-dark mb-1">Pengajuan & Pengunggahan Proposal PKM</h4>
       <p class="text-muted small mb-0">Input rincian skema, judul, dan tautan berkas proposal Google Drive/Docs resmi tim kamu.</p>
     </div>
-    <!-- Quick Role Switcher -->
-    <div class="btn-group btn-group-sm shadow-sm">
-      <a href="<?= base_url('mahasiswa/proposal?role=Ketua+Kelompok') ?>" class="btn <?= $role === 'Ketua Kelompok' ? 'btn-primary' : 'btn-outline-primary' ?>">
-        <i class="bi bi-person-fill-gear me-1"></i> Mode Ketua Kelompok
-      </a>
-      <a href="<?= base_url('mahasiswa/proposal?role=Anggota+Kelompok') ?>" class="btn <?= $role === 'Anggota Kelompok' ? 'btn-primary' : 'btn-outline-primary' ?>">
-        <i class="bi bi-person-fill me-1"></i> Mode Anggota Kelompok
-      </a>
-    </div>
   </div>
 
   <?php if ($role !== 'Ketua Kelompok'): ?>

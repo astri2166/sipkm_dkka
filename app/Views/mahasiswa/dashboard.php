@@ -16,10 +16,10 @@
     </div>
   <?php endif; ?>
 
-  <!-- Banner Pengguna & Navigasi Cepat Role Preview -->
+  <!-- Banner Pengguna -->
   <div class="sipkm-card p-4 mb-4 border-0 shadow-sm" style="background: linear-gradient(135deg, #0f294a 0%, #1e40af 100%); color: #fff;">
     <div class="row align-items-center">
-      <div class="col-lg-8">
+      <div class="col-12">
         <span class="badge bg-warning text-dark fw-bold mb-2 px-3 py-1 rounded-pill">
           <i class="bi bi-person-badge-fill me-1"></i> Mode Mahasiswa: <?= esc($role) ?>
         </span>
@@ -29,19 +29,6 @@
           Program Studi: <strong><?= esc($mahasiswa['programStudi'] ?? 'Sistem Informasi') ?></strong> &bull; 
           Periode PKM: <strong><?= esc($kelompok['tahunPeriode'] ?? '2026') ?></strong>
         </p>
-      </div>
-      <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-        <div class="btn-group shadow-sm">
-          <a href="<?= base_url('mahasiswa/dashboard?role=Ketua+Kelompok') ?>" class="btn btn-sm <?= $role === 'Ketua Kelompok' ? 'btn-warning text-dark fw-bold' : 'btn-outline-light' ?>">
-            <i class="bi bi-person-fill-gear"></i> Ketua
-          </a>
-          <a href="<?= base_url('mahasiswa/dashboard?role=Anggota+Kelompok') ?>" class="btn btn-sm <?= $role === 'Anggota Kelompok' ? 'btn-warning text-dark fw-bold' : 'btn-outline-light' ?>">
-            <i class="bi bi-person-fill"></i> Anggota
-          </a>
-          <a href="<?= base_url('mahasiswa/dashboard?role=Ketua+Kelompok&has_kelompok=0') ?>" class="btn btn-sm <?= isset($_GET['has_kelompok']) && $_GET['has_kelompok'] === '0' ? 'btn-warning text-dark fw-bold' : 'btn-outline-light' ?>">
-            <i class="bi bi-person-x"></i> Belum Kelompok
-          </a>
-        </div>
       </div>
     </div>
   </div>

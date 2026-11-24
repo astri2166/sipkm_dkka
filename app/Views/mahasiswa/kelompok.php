@@ -22,15 +22,6 @@
       <h4 class="fw-bold text-dark mb-1">Manajemen Kelompok PKM</h4>
       <p class="text-muted small mb-0">Kelola susunan anggota tim, kode registrasi kelompok, dan verifikasi anggota.</p>
     </div>
-    <!-- Switcher Simulasi Pengujian -->
-    <div class="btn-group btn-group-sm shadow-sm">
-      <a href="<?= base_url('mahasiswa/kelompok?role=Ketua+Kelompok') ?>" class="btn <?= $hasKelompok && $role === 'Ketua Kelompok' ? 'btn-primary' : 'btn-outline-primary' ?>">
-        <i class="bi bi-person-check-fill me-1"></i> Ketua Kelompok
-      </a>
-      <a href="<?= base_url('mahasiswa/kelompok?role=Anggota+Kelompok') ?>" class="btn <?= $hasKelompok && $role === 'Anggota Kelompok' ? 'btn-primary' : 'btn-outline-primary' ?>">
-        <i class="bi bi-person-fill me-1"></i> Anggota Kelompok
-      </a>
-    </div>
   </div>
 
   <?php if ($hasKelompok): ?>
