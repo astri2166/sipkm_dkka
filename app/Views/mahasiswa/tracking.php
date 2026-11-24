@@ -16,30 +16,11 @@
     </div>
   <?php endif; ?>
 
-  <!-- Header & Switcher Simulasi Status Proposal -->
+  <!-- Header Halaman -->
   <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
     <div>
       <h4 class="fw-bold text-dark mb-1">Tracking Status & Catatan Peninjauan Proposal</h4>
       <p class="text-muted small mb-0">Pantau proses evaluasi administrasi dan substansi dari Dosen Peninjau DKKA secara transparan.</p>
-    </div>
-    <!-- Status Switcher untuk Pengetesan Pratinjau Frontend -->
-    <div class="btn-group btn-group-sm shadow-sm">
-      <span class="btn btn-light disabled text-dark fw-bold border">Uji Status:</span>
-      <a href="<?= base_url('mahasiswa/tracking?status=Diunggah') ?>" class="btn <?= $statusProposal === 'Diunggah' ? 'btn-primary' : 'btn-outline-secondary' ?>">
-        Diunggah
-      </a>
-      <a href="<?= base_url('mahasiswa/tracking?status=Sedang+Ditinjau') ?>" class="btn <?= $statusProposal === 'Sedang Ditinjau' ? 'btn-primary' : 'btn-outline-secondary' ?>">
-        Sedang Ditinjau
-      </a>
-      <a href="<?= base_url('mahasiswa/tracking?status=Sudah+Ditinjau') ?>" class="btn <?= $statusProposal === 'Sudah Ditinjau' ? 'btn-primary' : 'btn-outline-secondary' ?>">
-        Sudah Ditinjau
-      </a>
-      <a href="<?= base_url('mahasiswa/tracking?status=Layak') ?>" class="btn <?= $statusProposal === 'Layak' ? 'btn-success text-white' : 'btn-outline-success' ?>">
-        Layak (Didanai)
-      </a>
-      <a href="<?= base_url('mahasiswa/tracking?status=Tidak+Layak') ?>" class="btn <?= $statusProposal === 'Tidak Layak' ? 'btn-danger text-white' : 'btn-outline-danger' ?>">
-        Tidak Layak
-      </a>
     </div>
   </div>
 

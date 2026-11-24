@@ -394,8 +394,7 @@ class MahasiswaController extends BaseController
             $proposal = $this->proposalModel->findByKelompokId((int) $idKelompok);
 
             if ($proposal) {
-                $statusParam = $this->request->getGet('status');
-                $statusProposal = ! empty($statusParam) ? $statusParam : $proposal['statusProposal'];
+                $statusProposal = $proposal['statusProposal'] ?? 'Diunggah';
 
                 $peninjauan = $this->peninjauanModel->findByProposalId((int) $proposal['idProposal']);
                 if ($peninjauan && ! empty($peninjauan['id_user'])) {
