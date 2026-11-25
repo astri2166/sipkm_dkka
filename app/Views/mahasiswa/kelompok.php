@@ -181,23 +181,25 @@
             <?= csrf_field() ?>
             <div class="modal-body">
               <p class="text-muted small">
-                Pilih mahasiswa yang saat ini berstatus <strong>belum memiliki kelompok</strong> (<code>idKelompok IS NULL</code>):
+                Pilih mahasiswa yang ingin ditambahkan ke dalam kelompok:
               </p>
               <div class="mb-3">
-                <label class="form-label small fw-semibold">Pilih Mahasiswa Bebas:</label>
+                <label class="form-label small fw-semibold">Pilih Mahasiswa:</label>
                 <select name="nim" class="form-select" required>
                   <option value="">-- Pilih Mahasiswa --</option>
                   <?php foreach ($mahasiswaBebas as $mb): 
-                    $isKetua = ($mb['role'] === 'Ketua' || $mb['role'] === 'Ketua Kelompok');
+                    $hasGroup = !empty($mb['id_kelompok']);
+                    $isKetua  = ($mb['role'] === 'Ketua' || $mb['role'] === 'Ketua Kelompok');
+                    $isUnavailable = ($hasGroup || $isKetua);
                   ?>
-                    <option value="<?= esc($mb['nim']) ?>" <?= $isKetua ? 'disabled class="text-muted"' : '' ?>>
-                      <?= esc($mb['nim']) ?> - <?= esc($mb['namaMahasiswa']) ?> (<?= esc($mb['programStudi']) ?>) <?= $isKetua ? '— [Akun Ketua - Tidak Dapat Dipilih]' : '' ?>
+                    <option value="<?= esc($mb['nim']) ?>" <?= $isUnavailable ? 'disabled class="text-muted"' : '' ?>>
+                      <?= esc($mb['nim']) ?> - <?= esc($mb['namaMahasiswa']) ?> (<?= esc($mb['programStudi']) ?>) <?= $isUnavailable ? '— [Akun Sudah Ada di Kelompok Lain' . (!empty($mb['namaKelompok']) ? ': ' . esc($mb['namaKelompok']) : '') . ']' : '' ?>
                     </option>
                   <?php endforeach; ?>
                 </select>
               </div>
               <div class="alert alert-info small mb-0">
-                <i class="bi bi-info-circle me-1"></i> Mahasiswa yang sudah masuk kelompok otomatis tidak akan muncul di daftar pilihan ini.
+                <i class="bi bi-info-circle me-1"></i> Mahasiswa yang sudah masuk ke kelompok lain tidak dapat dipilih.
               </div>
             </div>
             <div class="modal-footer bg-light">
@@ -252,28 +254,30 @@
             <div class="mb-4">
               <label class="form-label fw-semibold text-dark d-flex justify-content-between align-items-center">
                 <span>Undang Rekan Tim Tambahan (Pilihan)</span>
-                <span class="badge bg-info-subtle text-info-emphasis">Filter: idKelompok = NULL</span>
+                <span class="badge bg-secondary-subtle text-secondary border"><i class="bi bi-info-circle me-1"></i>Hanya Mahasiswa Bebas yang Dapat Dipilih</span>
               </label>
               <div class="border rounded-3 p-3 bg-light">
                 <p class="small text-muted mb-2">Centang mahasiswa yang ingin diikutsertakan dalam kelompok:</p>
                 <?php if (!empty($mahasiswaBebas)): ?>
                   <?php foreach ($mahasiswaBebas as $mb): if ($mb['nim'] !== $mahasiswa['nim']): 
-                    $isKetua = ($mb['role'] === 'Ketua' || $mb['role'] === 'Ketua Kelompok');
+                    $hasGroup = !empty($mb['id_kelompok']);
+                    $isKetua  = ($mb['role'] === 'Ketua' || $mb['role'] === 'Ketua Kelompok');
+                    $isUnavailable = ($hasGroup || $isKetua);
                   ?>
                     <div class="form-check mb-2 d-flex align-items-center flex-wrap">
-                      <input class="form-check-input me-2" type="checkbox" name="anggota[]" value="<?= esc($mb['nim']) ?>" id="mhs_<?= esc($mb['nim']) ?>" <?= $isKetua ? 'disabled' : '' ?>>
-                      <label class="form-check-label small <?= $isKetua ? 'text-muted' : '' ?>" for="mhs_<?= esc($mb['nim']) ?>">
+                      <input class="form-check-input me-2" type="checkbox" name="anggota[]" value="<?= esc($mb['nim']) ?>" id="mhs_<?= esc($mb['nim']) ?>" <?= $isUnavailable ? 'disabled' : '' ?>>
+                      <label class="form-check-label small <?= $isUnavailable ? 'text-muted' : '' ?>" for="mhs_<?= esc($mb['nim']) ?>">
                         <strong><?= esc($mb['namaMahasiswa']) ?></strong> (NIM: <?= esc($mb['nim']) ?>) &bull; <?= esc($mb['programStudi']) ?>
                       </label>
-                      <?php if ($isKetua): ?>
+                      <?php if ($isUnavailable): ?>
                         <span class="badge bg-warning-subtle text-warning-emphasis border border-warning ms-2 py-1 px-2">
-                          <i class="bi bi-lock-fill me-1"></i>Akun Ketua (Tidak Dapat Dipilih)
+                          <i class="bi bi-lock-fill me-1"></i>Akun Sudah Ada di Kelompok Lain<?= !empty($mb['namaKelompok']) ? ' (' . esc($mb['namaKelompok']) . ')' : '' ?>
                         </span>
                       <?php endif; ?>
                     </div>
                   <?php endif; endforeach; ?>
                 <?php else: ?>
-                  <span class="small text-muted">Belum ada mahasiswa lain yang berstatus bebas (belum berkelompok).</span>
+                  <span class="small text-muted">Belum ada mahasiswa lain yang terdaftar.</span>
                 <?php endif; ?>
               </div>
             </div>

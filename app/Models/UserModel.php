@@ -166,15 +166,19 @@ class UserModel extends Model
     }
 
     /**
-     * Mahasiswa yang belum tergabung kelompok (id_kelompok IS NULL)
+     * Dapatkan daftar seluruh mahasiswa aktif untuk opsi pemilihan rekan tim / anggota
+     * Mengambil seluruh mahasiswa (baik yang bebas maupun yang sudah memiliki kelompok)
+     * Diurutkan dari yang masih berstatus bebas terlebih dahulu
      */
     public function getMahasiswaBebas(): array
     {
-        $rows = $this->select('users.*, users.id_user as idMahasiswa, users.id_user as idUser, users.nama_lengkap as namaMahasiswa, users.program_studi as programStudi, users.status_akun as statusAkun')
-                     ->where('id_kelompok', null)
-                     ->whereIn('role', ['Member', 'Ketua'])
-                     ->where('status_akun', 'Aktif')
-                     ->where('nim IS NOT NULL', null, false)
+        $rows = $this->select('users.*, users.id_user as idMahasiswa, users.id_user as idUser, users.nama_lengkap as namaMahasiswa, users.program_studi as programStudi, users.status_akun as statusAkun, kelompok_pkm.namaKelompok')
+                     ->join('kelompok_pkm', 'kelompok_pkm.idKelompok = users.id_kelompok', 'left')
+                     ->whereIn('users.role', ['Member', 'Ketua'])
+                     ->where('users.status_akun', 'Aktif')
+                     ->where('users.nim IS NOT NULL', null, false)
+                     ->orderBy("CASE WHEN users.id_kelompok IS NULL AND users.role = 'Member' THEN 0 ELSE 1 END", 'ASC', false)
+                     ->orderBy('users.nama_lengkap', 'ASC')
                      ->findAll();
 
         return array_map([$this, 'formatUserAliases'], $rows);
