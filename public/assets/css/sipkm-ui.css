@@ -65,6 +65,37 @@ body {
   color: #fff;
 }
 
+.btn-primary {
+  background-color: var(--sipkm-primary);
+  border-color: var(--sipkm-primary);
+}
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+  background-color: var(--sipkm-primary-hover) !important;
+  border-color: var(--sipkm-primary-hover) !important;
+}
+
+.btn-outline-primary {
+  color: var(--sipkm-primary);
+  border-color: var(--sipkm-primary);
+}
+.btn-outline-primary:hover, .btn-outline-primary:focus, .btn-outline-primary:active {
+  background-color: var(--sipkm-primary) !important;
+  border-color: var(--sipkm-primary) !important;
+  color: #ffffff !important;
+}
+
+.btn-warning {
+  background-color: var(--sipkm-accent);
+  border-color: var(--sipkm-accent);
+  color: #112842;
+  font-weight: 600;
+}
+.btn-warning:hover {
+  background-color: #d97706;
+  border-color: #d97706;
+  color: #ffffff;
+}
+
 /* 3. Interactive Form Inputs & Shake Feedback */
 .form-control, .form-select {
   border-radius: 10px;
@@ -381,4 +412,67 @@ body.modal-open .animate-fade-up {
   font-family: monospace;
   font-weight: 600;
   letter-spacing: 1px;
+}
+
+/* 9. Global Overrides for Table, Badges, Tabs, and Banners */
+.table {
+  --bs-table-hover-bg: #f8fafc;
+  color: var(--sipkm-text-main);
+}
+
+.table thead th {
+  background-color: #f1f5f9 !important;
+  color: #475569 !important;
+  font-weight: 600;
+  border-bottom: 1px solid var(--sipkm-card-border) !important;
+}
+
+.nav-pills .nav-link {
+  color: #64748b;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.nav-pills .nav-link.active {
+  background-color: var(--sipkm-primary) !important;
+  color: #ffffff !important;
+}
+
+.badge {
+  font-weight: 600;
+  border-radius: 50px;
+  padding: 0.35em 0.75em;
+}
+
+.bg-primary-subtle {
+  background-color: #e0f2fe !important;
+  color: #0369a1 !important;
+}
+
+.bg-warning-subtle {
+  background-color: #fef3c7 !important;
+  color: #92400e !important;
+}
+
+.bg-success-subtle {
+  background-color: #dcfce7 !important;
+  color: #166534 !important;
+}
+
+.bg-danger-subtle {
+  background-color: #ffe4e6 !important;
+  color: #9f1239 !important;
+}
+
+.bg-info-subtle {
+  background-color: #e0f2fe !important;
+  color: #0284c7 !important;
+}
+
+.banner-role-navy {
+  background: var(--sipkm-primary);
+  color: #ffffff;
+  border-radius: var(--sipkm-card-radius);
+  padding: 1.5rem 1.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }

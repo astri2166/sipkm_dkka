@@ -22,7 +22,7 @@
   </div>
 </nav>
 
-<section class="py-5 text-white" style="background: linear-gradient(135deg, #0f294a 0%, #1e40af 100%);">
+<section class="py-5 text-white" style="background: linear-gradient(135deg, #112842 0%, #1d3b5e 100%);">
   <div class="container py-2">
     <div class="row align-items-center">
       <div class="col-lg-8">

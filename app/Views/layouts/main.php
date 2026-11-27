@@ -62,7 +62,7 @@
         <?php if ($activeRole === 'Super Admin'): ?>
           <li class="nav-item">
             <a class="nav-link <?= $activeMenu === 'dashboard' ? 'active' : '' ?>" href="<?= base_url('superadmin/dashboard') ?>">
-              <i class="bi bi-speedometer2"></i> Dashboard Super Admin
+              <i class="bi bi-speedometer2"></i> Dashboard
             </a>
           </li>
           <li class="nav-item">
@@ -101,7 +101,7 @@
         <?php elseif ($activeRole === 'Dosen Peninjau'): ?>
           <li class="nav-item">
             <a class="nav-link <?= $activeMenu === 'dashboard' ? 'active' : '' ?>" href="<?= base_url('dosen/dashboard') ?>">
-              <i class="bi bi-speedometer2"></i> Dashboard Dosen
+              <i class="bi bi-speedometer2"></i> Dashboard
             </a>
           </li>
           <li class="nav-item">
@@ -113,7 +113,7 @@
         <?php else: /* Ketua Kelompok / Anggota Kelompok */ ?>
           <li class="nav-item">
             <a class="nav-link <?= $activeMenu === 'dashboard' ? 'active' : '' ?>" href="<?= base_url('mahasiswa/dashboard') ?>">
-              <i class="bi bi-speedometer2"></i> Dashboard Mahasiswa
+              <i class="bi bi-speedometer2"></i> Dashboard
             </a>
           </li>
           <li class="nav-item">
