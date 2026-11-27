@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Papan Informasi Lomba & PKM | DKKA Universitas Budi Luhur</title>
+  <link rel="icon" type="image/png" href="<?= base_url('assets/img/logo-budiluhur.png') ?>">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <link href="<?= base_url('assets/css/sipkm-ui.css') ?>" rel="stylesheet">
@@ -13,7 +14,8 @@
 <nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow-sm" style="background-color: var(--sipkm-primary);">
   <div class="container">
     <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="<?= base_url('/') ?>">
-      <span class="badge bg-warning text-dark">DKKA</span> SIPKM Universitas Budi Luhur
+      <img src="<?= base_url('assets/img/logo-budiluhur.png') ?>" alt="Logo Universitas Budi Luhur" class="rounded-circle bg-white p-1" style="width: 38px; height: 38px; object-fit: contain;">
+      <span>SIPKM Universitas Budi Luhur</span>
     </a>
     <div class="d-flex gap-2">
       <a href="<?= base_url('login') ?>" class="btn btn-outline-light btn-sipkm btn-sm px-3">Masuk</a>
@@ -26,7 +28,10 @@
   <div class="container py-2">
     <div class="row align-items-center">
       <div class="col-lg-8">
-        <span class="badge bg-warning text-dark mb-2 px-3 py-2 rounded-pill">Direktorat Kemahasiswaan dan Karir Alumni</span>
+        <div class="d-inline-flex align-items-center gap-2 bg-white text-dark rounded-pill px-3 py-1 mb-3 shadow-sm">
+          <img src="<?= base_url('assets/img/logo-budiluhur.png') ?>" alt="Logo UBL" class="rounded-circle" style="width: 22px; height: 22px; object-fit: contain;">
+          <span class="small fw-semibold">Direktorat Kemahasiswaan dan Karir Alumni</span>
+        </div>
         <h1 class="display-6 fw-bold mb-3">Papan Informasi Lomba & Pengelolaan Proposal PKM</h1>
         <p class="lead opacity-75 mb-4">Temukan kompetisi bergengsi tingkat nasional maupun internal kampus, bentuk tim PKM, dan pantau hasil peninjauan dosen secara transparan.</p>
         <div class="d-flex flex-wrap gap-2">

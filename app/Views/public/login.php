@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login | SIPKM-DKKA Universitas Budi Luhur</title>
+  <link rel="icon" type="image/png" href="<?= base_url('assets/img/logo-budiluhur.png') ?>">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <link href="<?= base_url('assets/css/sipkm-ui.css') ?>" rel="stylesheet">
@@ -14,9 +15,9 @@
     <div class="col-md-5">
       <div class="sipkm-card p-4 p-md-5 shadow-sm animate-fade-up">
         <div class="text-center mb-4">
-          <span class="badge bg-warning text-dark fw-bold px-3 py-2 mb-2">DKKA UNIVERSITAS BUDI LUHUR</span>
+          <img src="<?= base_url('assets/img/logo-budiluhur.png') ?>" alt="Logo Universitas Budi Luhur" class="rounded-circle shadow-sm mb-3" style="width: 76px; height: 76px; object-fit: contain;">
           <h4 class="fw-bold mb-1">Masuk ke SIPKM-DKKA</h4>
-          <p class="text-muted small">Gunakan akun Mahasiswa, Dosen Peninjau, atau Admin</p>
+          <p class="text-muted small">Universitas Budi Luhur &bull; Direktorat Kemahasiswaan</p>
         </div>
 
         <?php if (session()->getFlashdata('error')): ?>

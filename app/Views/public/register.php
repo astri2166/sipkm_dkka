@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registrasi Mahasiswa | SIPKM-DKKA</title>
+  <link rel="icon" type="image/png" href="<?= base_url('assets/img/logo-budiluhur.png') ?>">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <link href="<?= base_url('assets/css/sipkm-ui.css') ?>" rel="stylesheet">
@@ -13,10 +14,13 @@
   <div class="row justify-content-center">
     <div class="col-md-7">
       <div class="sipkm-card p-4 p-md-5 shadow-sm animate-fade-up">
-        <div class="mb-4">
-          <span class="badge bg-primary-subtle text-primary px-3 py-2 mb-2">Registrasi Akun Mandiri</span>
-          <h4 class="fw-bold mb-1">Pendaftaran Akun Mahasiswa PKM</h4>
-          <p class="text-muted small">Pilih peran akun sebagai <strong>Ketua Kelompok</strong> atau <strong>Anggota Kelompok</strong> sesuai peran Anda dalam tim PKM.</p>
+        <div class="d-flex align-items-center gap-3 mb-4">
+          <img src="<?= base_url('assets/img/logo-budiluhur.png') ?>" alt="Logo Universitas Budi Luhur" class="rounded-circle shadow-sm flex-shrink-0" style="width: 58px; height: 58px; object-fit: contain;">
+          <div>
+            <span class="badge bg-primary-subtle text-primary px-3 py-1 mb-1">Registrasi Akun Mandiri</span>
+            <h4 class="fw-bold mb-0">Pendaftaran Akun Mahasiswa PKM</h4>
+            <small class="text-muted">Universitas Budi Luhur &bull; Direktorat Kemahasiswaan</small>
+          </div>
         </div>
 
         <?php if (session()->getFlashdata('errors')): ?>
