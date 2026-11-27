@@ -353,6 +353,33 @@ class AdminController extends BaseController
     }
 
     /**
+     * Reset Password Mahasiswa (Ketua / Anggota) oleh Admin DKKA
+     */
+    public function resetPasswordMahasiswa()
+    {
+        $idUser = (int) $this->request->getPost('id_user');
+        $user   = $this->userModel->findByUserId($idUser);
+
+        if (! $user || ! in_array($user['role'], ['Ketua', 'Member'], true)) {
+            return redirect()->back()->with('error', 'Data akun mahasiswa tidak valid.');
+        }
+
+        $passwordBaru = trim((string) $this->request->getPost('password_baru'));
+        if (empty($passwordBaru)) {
+            $passwordBaru = 'password123'; // Default reset jika dikosongkan
+        }
+
+        if (strlen($passwordBaru) < 6) {
+            return redirect()->back()->with('error', 'Password baru minimal 6 karakter.');
+        }
+
+        $this->userModel->resetUserPassword($idUser, $passwordBaru);
+
+        return redirect()->to(base_url('admin/kelompok'))
+                         ->with('success', 'Password mahasiswa ' . esc($user['nama_lengkap']) . ' (NIM: ' . esc($user['nim']) . ') berhasil direset menjadi: "' . esc($passwordBaru) . '"');
+    }
+
+    /**
      * 3. Kelola Proposal PKM & Sidang Pleno Penetapan Kelayakan
      */
     public function proposal()

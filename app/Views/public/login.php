@@ -40,7 +40,10 @@
             <input type="text" name="username" id="loginUsername" class="form-control" placeholder="Contoh: ketua_pkm1" value="<?= old('username') ?>" required>
           </div>
           <div class="mb-3">
-            <label class="form-label fw-medium">Password</label>
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <label class="form-label fw-medium mb-0">Password</label>
+              <a href="<?= base_url('reset-password') ?>" class="small text-decoration-none text-primary fw-medium">Lupa Password?</a>
+            </div>
             <input type="password" name="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
           </div>
           <button type="submit" class="btn btn-primary-sipkm btn-sipkm w-100 py-2 mt-2" data-loading-text="Memverifikasi Akun...">
@@ -60,6 +63,7 @@
         </div>
 
         <div class="text-center mt-4 small">
+          Lupa kata sandi? <a href="<?= base_url('reset-password') ?>" class="fw-semibold text-decoration-none">Reset Password Akun</a><br>
           Belum punya akun mahasiswa? <a href="<?= base_url('register') ?>" class="fw-semibold text-decoration-none">Daftar Akun Mandiri</a><br>
           <a href="<?= base_url('/') ?>" class="text-muted text-decoration-none d-inline-block mt-2">&larr; Kembali ke Papan Informasi Lomba</a>
         </div>

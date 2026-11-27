@@ -146,11 +146,56 @@
   <div class="flex-grow-1 d-flex flex-column">
     <header class="bg-white border-bottom px-4 py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
       <h5 class="mb-0 fw-bold text-dark"><?= esc($pageHeader ?? 'Dashboard') ?></h5>
+      <div class="d-flex align-items-center gap-2">
+        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#modalGantiPasswordGlobal" title="Ubah Password Akun Anda">
+          <i class="bi bi-key-fill me-1"></i> Ganti Password
+        </button>
+      </div>
     </header>
 
     <main class="p-4 flex-grow-1">
       <?= $this->renderSection('content') ?>
     </main>
+  </div>
+</div>
+
+<!-- Modal Global Ganti Password untuk Pengguna yang Sedang Login -->
+<div class="modal fade" id="modalGantiPasswordGlobal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-light">
+        <h6 class="modal-title fw-bold text-dark">
+          <i class="bi bi-shield-lock-fill text-primary me-2"></i>Ganti Password Akun
+        </h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="<?= base_url('ubah-password') ?>" method="post" class="sipkm-form" novalidate>
+        <?= csrf_field() ?>
+        <div class="modal-body">
+          <p class="small text-muted mb-3">
+            Perbarui kata sandi akun Anda untuk menjaga keamanan akses ke dalam sistem SIPKM-DKKA.
+          </p>
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Password Saat Ini (Lama) <span class="text-danger">*</span></label>
+            <input type="password" name="password_lama" class="form-control" placeholder="Masukkan password lama" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Password Baru <span class="text-danger">*</span></label>
+            <input type="password" name="password_baru" class="form-control" placeholder="Minimal 6 karakter" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Konfirmasi Password Baru <span class="text-danger">*</span></label>
+            <input type="password" name="konfirmasi_password" class="form-control" placeholder="Ulangi password baru" required>
+          </div>
+        </div>
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
+          <button type="submit" class="btn btn-primary-sipkm btn-sm" data-loading-text="Menyimpan...">
+            <i class="bi bi-check2-circle me-1"></i> Simpan Password Baru
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 

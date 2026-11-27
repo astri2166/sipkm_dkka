@@ -171,6 +171,122 @@ class AuthController extends BaseController
     }
 
     /**
+     * Menampilkan formulir reset / lupa password (GET)
+     * Dapat diakses oleh seluruh peran akun: SuperAdmin, Admin, Dosen, Ketua, dan Member
+     */
+    public function resetPassword()
+    {
+        if (session()->get('isLoggedIn')) {
+            return $this->redirectByRole(session()->get('role'));
+        }
+
+        return view('public/reset_password');
+    }
+
+    /**
+     * Memproses reset password akun (POST)
+     * Mengizinkan pencarian via Username, Email, NIM, atau NIP
+     */
+    public function prosesResetPassword()
+    {
+        $rules = [
+            'identity'            => 'required',
+            'password_baru'       => 'required|min_length[6]',
+            'konfirmasi_password' => 'required|matches[password_baru]',
+        ];
+
+        $messages = [
+            'identity' => [
+                'required' => 'Silakan masukkan Username, Email, NIM, atau NIP akun Anda.',
+            ],
+            'password_baru' => [
+                'required'   => 'Password baru wajib diisi.',
+                'min_length' => 'Password baru minimal terdiri dari 6 karakter.',
+            ],
+            'konfirmasi_password' => [
+                'required' => 'Konfirmasi password baru wajib diisi.',
+                'matches'  => 'Konfirmasi password tidak cocok dengan password baru.',
+            ],
+        ];
+
+        if (! $this->validate($rules, $messages)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $identity = trim((string) $this->request->getPost('identity'));
+        $user     = $this->userModel->findByLoginOrIdentifier($identity);
+
+        if (! $user) {
+            return redirect()->back()->withInput()->with('error', 'Akun dengan identitas "' . esc($identity) . '" tidak ditemukan dalam sistem SIPKM-DKKA.');
+        }
+
+        if (($user['status_akun'] ?? $user['statusAkun']) !== 'Aktif') {
+            return redirect()->back()->withInput()->with('error', 'Akun tersebut saat ini berstatus nonaktif. Silakan hubungi Administrator DKKA.');
+        }
+
+        $passwordBaru = (string) $this->request->getPost('password_baru');
+        $this->userModel->resetUserPassword((int) $user['id_user'], $passwordBaru);
+
+        $roleLabel = $user['role'];
+        if ($roleLabel === 'Member') $roleLabel = 'Anggota Kelompok';
+        if ($roleLabel === 'Ketua')  $roleLabel = 'Ketua Kelompok';
+
+        return redirect()->to(base_url('login'))
+                         ->with('success', 'Password akun ' . esc($user['nama_lengkap']) . ' (' . esc($roleLabel) . ') berhasil direset! Silakan masuk menggunakan password baru.');
+    }
+
+    /**
+     * Memproses ganti password untuk pengguna yang sedang login (POST)
+     */
+    public function ubahPasswordLogin()
+    {
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to(base_url('login'));
+        }
+
+        $idUser = (int) session()->get('id_user');
+
+        $rules = [
+            'password_lama'       => 'required',
+            'password_baru'       => 'required|min_length[6]',
+            'konfirmasi_password' => 'required|matches[password_baru]',
+        ];
+
+        $messages = [
+            'password_lama' => [
+                'required' => 'Password lama wajib diisi untuk verifikasi keamanan.',
+            ],
+            'password_baru' => [
+                'required'   => 'Password baru wajib diisi.',
+                'min_length' => 'Password baru minimal terdiri dari 6 karakter.',
+            ],
+            'konfirmasi_password' => [
+                'required' => 'Konfirmasi password baru wajib diisi.',
+                'matches'  => 'Konfirmasi password tidak cocok dengan password baru.',
+            ],
+        ];
+
+        if (! $this->validate($rules, $messages)) {
+            return redirect()->back()->with('error', implode('<br>', $this->validator->getErrors()));
+        }
+
+        $user = $this->userModel->findByUserId($idUser);
+        if (! $user) {
+            return redirect()->back()->with('error', 'Data akun tidak ditemukan.');
+        }
+
+        $passwordLama = (string) $this->request->getPost('password_lama');
+        if (! password_verify($passwordLama, $user['password'])) {
+            return redirect()->back()->with('error', 'Password lama yang Anda masukkan salah.');
+        }
+
+        $passwordBaru = (string) $this->request->getPost('password_baru');
+        $this->userModel->resetUserPassword($idUser, $passwordBaru);
+
+        return redirect()->back()->with('success', 'Password akun Anda berhasil diperbarui!');
+    }
+
+    /**
      * Logout pengguna dan hancurkan sesi
      */
     public function logout()

@@ -17,6 +17,12 @@ $routes->post('login', 'AuthController::verifikasiLogin');
 $routes->get('register', 'AuthController::register');
 $routes->post('register', 'AuthController::prosesRegister');
 
+$routes->get('reset-password', 'AuthController::resetPassword');
+$routes->post('reset-password', 'AuthController::prosesResetPassword');
+$routes->get('forgot-password', 'AuthController::resetPassword');
+$routes->post('forgot-password', 'AuthController::prosesResetPassword');
+$routes->post('ubah-password', 'AuthController::ubahPasswordLogin');
+
 $routes->get('logout', 'AuthController::logout');
 
 // ====================================================================
@@ -67,6 +73,7 @@ $routes->group('admin', ['filter' => 'role:Admin'], static function ($routes) {
     $routes->get('dosen/detail/(:num)', 'AdminController::detailDosen/$1');
     $routes->get('kelompok', 'AdminController::kelompok');
     $routes->get('kelompok/hapus/(:num)', 'AdminController::hapusKelompok/$1');
+    $routes->post('kelompok/reset-password-mahasiswa', 'AdminController::resetPasswordMahasiswa');
     $routes->get('proposal', 'AdminController::proposal');
     $routes->post('proposal/plotting', 'AdminController::plottingDosen');
     $routes->post('proposal/bulk-plotting', 'AdminController::bulkPlottingDosen');

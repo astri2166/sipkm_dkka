@@ -134,6 +134,7 @@
                                 <th>Nama Mahasiswa</th>
                                 <th>Program Studi</th>
                                 <th>Peran</th>
+                                <th class="text-center" style="width: 120px;">Aksi Akun</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -149,6 +150,11 @@
                                       <span class="badge bg-secondary-subtle text-secondary">Anggota</span>
                                     <?php endif; ?>
                                   </td>
+                                  <td class="text-center">
+                                    <button type="button" class="btn btn-outline-warning btn-sm py-0 px-2" data-bs-toggle="modal" data-bs-target="#modalResetPwMhs_<?= $ang['id_user'] ?>" title="Reset Password Mahasiswa">
+                                      <i class="bi bi-key-fill me-1"></i>Reset
+                                    </button>
+                                  </td>
                                 </tr>
                               <?php endforeach; ?>
                             </tbody>
@@ -161,6 +167,43 @@
                     </div>
                   </div>
                 </div>
+
+                <!-- Modal-Modal Reset Password Mahasiswa -->
+                <?php foreach ($k['anggota'] as $ang): ?>
+                  <div class="modal fade" id="modalResetPwMhs_<?= $ang['id_user'] ?>" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-sm">
+                      <div class="modal-content border-0 shadow">
+                        <div class="modal-header bg-light py-2">
+                          <h6 class="modal-title fw-bold text-dark small">
+                            <i class="bi bi-key-fill text-warning me-1"></i>Reset Password Mahasiswa
+                          </h6>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="<?= base_url('admin/kelompok/reset-password-mahasiswa') ?>" method="post" class="sipkm-form">
+                          <?= csrf_field() ?>
+                          <input type="hidden" name="id_user" value="<?= $ang['id_user'] ?>">
+                          <div class="modal-body text-start">
+                            <div class="small mb-2 p-2 bg-light rounded">
+                              <div class="fw-bold text-dark"><?= esc($ang['namaMahasiswa']) ?></div>
+                              <span class="text-muted">NIM: <?= esc($ang['nim']) ?> &bull; <?= esc($ang['programStudi']) ?></span>
+                            </div>
+                            <div class="mb-2">
+                              <label class="form-label small fw-semibold">Password Baru:</label>
+                              <input type="password" name="password_baru" class="form-control form-control-sm" placeholder="Default: password123">
+                              <div class="form-text small" style="font-size: 11px;">Biarkan kosong untuk mereset ke <code>password123</code></div>
+                            </div>
+                          </div>
+                          <div class="modal-footer bg-light py-2">
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-warning btn-sm" data-loading-text="Mereset...">
+                              <i class="bi bi-check2"></i> Simpan
+                            </button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                <?php endforeach; ?>
               </td>
             </tr>
           <?php endforeach; ?>

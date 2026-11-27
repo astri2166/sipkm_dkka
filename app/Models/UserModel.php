@@ -109,6 +109,32 @@ class UserModel extends Model
     }
 
     /**
+     * Cari user berdasarkan username, email, NIM, atau NIP (untuk Reset Password)
+     */
+    public function findByLoginOrIdentifier(string $identifier): ?array
+    {
+        $user = $this->groupStart()
+                     ->where('username', $identifier)
+                     ->orWhere('email', $identifier)
+                     ->orWhere('nim', $identifier)
+                     ->orWhere('nip', $identifier)
+                     ->groupEnd()
+                     ->first();
+
+        return $this->formatUserAliases($user);
+    }
+
+    /**
+     * Reset password user berdasarkan id_user
+     */
+    public function resetUserPassword(int $idUser, string $newPassword): bool
+    {
+        return $this->update($idUser, [
+            'password' => password_hash($newPassword, PASSWORD_BCRYPT),
+        ]);
+    }
+
+    /**
      * Cari user berdasarkan id_user
      */
     public function findByUserId(int $idUser): ?array
