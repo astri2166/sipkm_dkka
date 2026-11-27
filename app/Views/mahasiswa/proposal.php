@@ -51,22 +51,54 @@
 
   <?php else: ?>
     <!-- ============================================================== -->
-    <!-- FORMULIR INPUT PROPOSAL (KHUSUS KETUA KELOMPOK)                -->
+    <!-- FORMULIR INPUT / EDIT PROPOSAL (KHUSUS KETUA KELOMPOK)         -->
     <!-- ============================================================== -->
     <div class="row g-4">
       <!-- Kolom Formulir Utama -->
       <div class="col-lg-8">
         <div class="sipkm-card p-4 shadow-sm border-top border-primary border-4">
-          <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
-            <h5 class="fw-bold text-dark mb-0">
-              <i class="bi bi-cloud-arrow-up-fill text-primary me-2"></i>Formulir Tautan Proposal PKM
-            </h5>
-            <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
-              Periode <?= esc($kelompok['tahunPeriode'] ?? '2026') ?>
-            </span>
+          <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom flex-wrap gap-2">
+            <div>
+              <h5 class="fw-bold mb-0" style="color: #112842;">
+                <?php if ($hasProposal): ?>
+                  <i class="bi bi-pencil-square text-primary me-2"></i>Perbarui / Edit Berkas Proposal PKM
+                <?php else: ?>
+                  <i class="bi bi-cloud-arrow-up-fill text-primary me-2"></i>Formulir Tautan Proposal PKM
+                <?php endif; ?>
+              </h5>
+              <?php if ($hasProposal): ?>
+                <small class="text-muted">Kelompok sudah mengajukan proposal. Anda dapat memperbarui judul, skema, atau tautan berkas.</small>
+              <?php endif; ?>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <span class="pill-badge-blue">
+                Periode <?= esc($kelompok['tahunPeriode'] ?? '2026') ?>
+              </span>
+              <?php if ($hasProposal): ?>
+                <button type="submit" form="formProposal" class="btn btn-primary-sipkm btn-sm rounded-pill px-3 shadow-sm" data-loading-text="Menyimpan...">
+                  <i class="bi bi-check2-circle me-1"></i> Simpan Perubahan
+                </button>
+              <?php endif; ?>
+            </div>
           </div>
 
-          <form action="<?= base_url('mahasiswa/proposal/simpan') ?>" method="post" class="sipkm-form">
+          <?php if ($hasProposal): ?>
+            <!-- Banner Mode Edit Aktif -->
+            <div class="alert alert-info py-3 px-3 mb-4 rounded-3 border-0 shadow-sm d-flex flex-wrap align-items-center justify-content-between gap-3" style="background: #e0f2fe; color: #0369a1;">
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-info-circle-fill fs-4 flex-shrink-0"></i>
+                <div>
+                  <div class="fw-bold">Proposal Anda Sudah Terdaftar di Sistem</div>
+                  <small>Silakan edit Skema, Judul, atau Tautan Google Docs/Drive pada formulir di bawah ini kapan saja, lalu tekan tombol <strong>Simpan Perubahan</strong>.</small>
+                </div>
+              </div>
+              <button type="submit" form="formProposal" class="btn btn-primary-sipkm btn-sm rounded-pill px-4 py-2 flex-shrink-0 shadow-sm" data-loading-text="Menyimpan...">
+                <i class="bi bi-check2-circle me-1"></i> Simpan Perubahan
+              </button>
+            </div>
+          <?php endif; ?>
+
+          <form action="<?= base_url('mahasiswa/proposal/simpan') ?>" method="post" class="sipkm-form" id="formProposal">
             <?= csrf_field() ?>
 
             <!-- Informasi Tim (Readonly) -->
@@ -107,7 +139,7 @@
                 <label class="form-label fw-semibold text-dark mb-0">
                   Judul Proposal PKM <span class="text-danger">*</span>
                 </label>
-                <small class="text-muted" id="charCount">0 / 250 karakter</small>
+                <small class="text-muted" id="charCount"><?= strlen((string)($proposal['judulProposal'] ?? '')) ?> / 250 karakter</small>
               </div>
               <textarea name="judulProposal" class="form-control" rows="3" required placeholder="Contoh: Sistem Deteksi Dini Kualitas Udara Kampus Berbasis IoT dan Edge AI" id="judulProposal" maxlength="250" oninput="document.getElementById('charCount').textContent = `${this.value.length} / 250 karakter`;"><?= esc($proposal['judulProposal'] ?? '') ?></textarea>
               <div class="form-text">Judul harus padat, jelas, menarik, dan tidak menggunakan singkatan yang tidak baku.</div>
@@ -145,7 +177,7 @@
 
             <!-- Pakta Integritas / Pernyataan Orisinalitas -->
             <div class="form-check mb-4 p-3 bg-light rounded-3 border">
-              <input class="form-check-input ms-0 me-2" type="checkbox" id="checkPakta" required>
+              <input class="form-check-input ms-0 me-2" type="checkbox" id="checkPakta" <?= $hasProposal ? 'checked' : '' ?> required>
               <label class="form-check-label small fw-medium" for="checkPakta">
                 Saya menyatakan dengan sungguh-sungguh bahwa proposal ini adalah karya orisinal tim kami, belum pernah didanai oleh sumber lain, dan tidak mengandung unsur plagiarisme.
               </label>
@@ -153,12 +185,18 @@
 
             <!-- Tombol Aksi -->
             <div class="d-flex justify-content-between align-items-center pt-3 border-top">
-              <a href="<?= base_url('mahasiswa/dashboard') ?>" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left me-1"></i> Batal
+              <a href="<?= base_url('mahasiswa/dashboard') ?>" class="btn btn-outline-secondary rounded-pill px-3">
+                <i class="bi bi-arrow-left me-1"></i> Kembali ke Dashboard
               </a>
-              <button type="submit" class="btn btn-primary-sipkm px-4" data-loading-text="Mengunggah Berkas Proposal...">
-                <i class="bi bi-cloud-arrow-up-fill me-1"></i> Simpan & Ajukan Proposal
-              </button>
+              <?php if ($hasProposal): ?>
+                <button type="submit" class="btn btn-primary-sipkm rounded-pill px-4 py-2 shadow-sm" data-loading-text="Menyimpan Perubahan...">
+                  <i class="bi bi-check2-circle me-1"></i> Simpan Perubahan Proposal
+                </button>
+              <?php else: ?>
+                <button type="submit" class="btn btn-primary-sipkm rounded-pill px-4 py-2 shadow-sm" data-loading-text="Mengunggah Berkas Proposal...">
+                  <i class="bi bi-cloud-arrow-up-fill me-1"></i> Simpan &amp; Ajukan Proposal
+                </button>
+              <?php endif; ?>
             </div>
           </form>
         </div>
@@ -176,7 +214,7 @@
             <div class="p-3 bg-light rounded-3 border mb-3">
               <div class="d-flex justify-content-between mb-2">
                 <small class="text-muted">Skema:</small>
-                <span class="badge bg-primary"><?= esc($proposal['jenisPKM']) ?></span>
+                <span class="pill-badge-blue"><?= esc($proposal['jenisPKM']) ?></span>
               </div>
               <div class="d-flex justify-content-between mb-2">
                 <small class="text-muted">Status:</small>
@@ -186,7 +224,7 @@
               </div>
               <div class="d-flex justify-content-between mb-2">
                 <small class="text-muted">Tgl Unggah:</small>
-                <span class="small fw-semibold"><?= esc($proposal['tglUnggah']) ?></span>
+                <span class="small fw-semibold text-dark"><?= esc($proposal['tglUnggah']) ?></span>
               </div>
               <div class="mt-2 pt-2 border-top text-truncate">
                 <small class="text-muted d-block mb-1">Tautan Aktif:</small>
@@ -195,7 +233,15 @@
                 </a>
               </div>
             </div>
-            <a href="<?= base_url('mahasiswa/tracking') ?>" class="btn btn-outline-primary btn-sm w-100">
+
+            <!-- Tombol Aksi Cepat Edit & Tracking -->
+            <button type="button" onclick="focusEditProposal()" class="btn btn-warning text-dark btn-sm w-100 fw-bold rounded-pill mb-2 shadow-sm">
+              <i class="bi bi-pencil-square me-1"></i> Edit Data Proposal
+            </button>
+            <button type="submit" form="formProposal" class="btn btn-primary-sipkm btn-sm w-100 rounded-pill mb-2 shadow-sm" data-loading-text="Menyimpan...">
+              <i class="bi bi-check2-circle me-1"></i> Simpan Perubahan
+            </button>
+            <a href="<?= base_url('mahasiswa/tracking') ?>" class="btn btn-outline-primary btn-sm w-100 rounded-pill">
               <i class="bi bi-activity me-1"></i> Cek Tracking Peninjauan
             </a>
           <?php else: ?>
@@ -217,6 +263,18 @@
         </div>
       </div>
     </div>
+
+    <script>
+    function focusEditProposal() {
+      const el = document.getElementById('judulProposal');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.focus();
+        el.classList.add('border-primary');
+        setTimeout(() => el.classList.remove('border-primary'), 1500);
+      }
+    }
+    </script>
   <?php endif; ?>
 </div>
 <?= $this->endSection() ?>
