@@ -61,42 +61,30 @@
             <div>
               <h5 class="fw-bold mb-0" style="color: #112842;">
                 <?php if ($hasProposal): ?>
-                  <i class="bi bi-pencil-square text-primary me-2"></i>Perbarui / Edit Berkas Proposal PKM
+                  <i class="bi bi-file-earmark-check text-primary me-2"></i>Data Berkas Proposal PKM
                 <?php else: ?>
                   <i class="bi bi-cloud-arrow-up-fill text-primary me-2"></i>Formulir Tautan Proposal PKM
                 <?php endif; ?>
               </h5>
-              <?php if ($hasProposal): ?>
-                <small class="text-muted">Kelompok sudah mengajukan proposal. Anda dapat memperbarui judul, skema, atau tautan berkas.</small>
-              <?php endif; ?>
+              <small class="text-muted">
+                <?= $hasProposal ? 'Status usulan tersimpan. Untuk mengubah data, silakan klik tombol Edit Proposal.' : 'Input rincian skema, judul, dan tautan berkas Google Drive/Docs resmi tim kamu.' ?>
+              </small>
             </div>
             <div class="d-flex align-items-center gap-2">
               <span class="pill-badge-blue">
                 Periode <?= esc($kelompok['tahunPeriode'] ?? '2026') ?>
               </span>
               <?php if ($hasProposal): ?>
-                <button type="submit" form="formProposal" class="btn btn-primary-sipkm btn-sm rounded-pill px-3 shadow-sm" data-loading-text="Menyimpan...">
-                  <i class="bi bi-check2-circle me-1"></i> Simpan Perubahan
+                <!-- Tombol Tunggal untuk Mengaktifkan Mode Edit -->
+                <button type="button" id="btnAktifkanEdit" class="btn btn-warning text-dark btn-sm rounded-pill px-3 fw-bold shadow-sm" onclick="aktifkanModeEdit()">
+                  <i class="bi bi-pencil-square me-1"></i> Edit Proposal
                 </button>
+                <span id="badgeModeEdit" class="badge bg-warning text-dark px-3 py-1 rounded-pill fw-bold" style="display: none;">
+                  <i class="bi bi-pencil-fill me-1"></i> Mode Edit Terbuka
+                </span>
               <?php endif; ?>
             </div>
           </div>
-
-          <?php if ($hasProposal): ?>
-            <!-- Banner Mode Edit Aktif -->
-            <div class="alert alert-info py-3 px-3 mb-4 rounded-3 border-0 shadow-sm d-flex flex-wrap align-items-center justify-content-between gap-3" style="background: #e0f2fe; color: #0369a1;">
-              <div class="d-flex align-items-center gap-2">
-                <i class="bi bi-info-circle-fill fs-4 flex-shrink-0"></i>
-                <div>
-                  <div class="fw-bold">Proposal Anda Sudah Terdaftar di Sistem</div>
-                  <small>Silakan edit Skema, Judul, atau Tautan Google Docs/Drive pada formulir di bawah ini kapan saja, lalu tekan tombol <strong>Simpan Perubahan</strong>.</small>
-                </div>
-              </div>
-              <button type="submit" form="formProposal" class="btn btn-primary-sipkm btn-sm rounded-pill px-4 py-2 flex-shrink-0 shadow-sm" data-loading-text="Menyimpan...">
-                <i class="bi bi-check2-circle me-1"></i> Simpan Perubahan
-              </button>
-            </div>
-          <?php endif; ?>
 
           <form action="<?= base_url('mahasiswa/proposal/simpan') ?>" method="post" class="sipkm-form" id="formProposal">
             <?= csrf_field() ?>
@@ -118,7 +106,7 @@
               <label class="form-label fw-semibold text-dark">
                 Bidang / Skema PKM <span class="text-danger">*</span>
               </label>
-              <select class="form-select" required name="jenisPKM" id="jenisPKM">
+              <select class="form-select <?= $hasProposal ? 'bg-light' : '' ?>" required name="jenisPKM" id="jenisPKM" <?= $hasProposal ? 'disabled' : '' ?>>
                 <option value="">-- Pilih 1 dari 10 Skema PKM Belmawa --</option>
                 <option value="PKM-RE" <?= ($proposal['jenisPKM'] ?? '') === 'PKM-RE' ? 'selected' : '' ?>>PKM-RE (Riset Eksakta)</option>
                 <option value="PKM-RSH" <?= ($proposal['jenisPKM'] ?? '') === 'PKM-RSH' ? 'selected' : '' ?>>PKM-RSH (Riset Sosial Humaniora)</option>
@@ -141,11 +129,11 @@
                 </label>
                 <small class="text-muted" id="charCount"><?= strlen((string)($proposal['judulProposal'] ?? '')) ?> / 250 karakter</small>
               </div>
-              <textarea name="judulProposal" class="form-control" rows="3" required placeholder="Contoh: Sistem Deteksi Dini Kualitas Udara Kampus Berbasis IoT dan Edge AI" id="judulProposal" maxlength="250" oninput="document.getElementById('charCount').textContent = `${this.value.length} / 250 karakter`;"><?= esc($proposal['judulProposal'] ?? '') ?></textarea>
+              <textarea name="judulProposal" class="form-control <?= $hasProposal ? 'bg-light' : '' ?>" rows="3" required placeholder="Contoh: Sistem Deteksi Dini Kualitas Udara Kampus Berbasis IoT dan Edge AI" id="judulProposal" maxlength="250" <?= $hasProposal ? 'disabled' : '' ?> oninput="document.getElementById('charCount').textContent = `${this.value.length} / 250 karakter`;"><?= esc($proposal['judulProposal'] ?? '') ?></textarea>
               <div class="form-text">Judul harus padat, jelas, menarik, dan tidak menggunakan singkatan yang tidak baku.</div>
             </div>
 
-            <!-- 3. Tautan Google Docs / Google Drive (Dengan Validasi Real-time) -->
+            <!-- 3. Tautan Google Docs / Google Drive -->
             <div class="mb-3">
               <label class="form-label fw-semibold text-dark">
                 Tautan Berkas Proposal (Google Docs / Google Drive) <span class="text-danger">*</span>
@@ -154,7 +142,7 @@
                 <span class="input-group-text bg-light text-danger">
                   <i class="bi bi-google"></i>
                 </span>
-                <input type="url" name="tautanGoogleDocs" class="form-control" placeholder="https://docs.google.com/document/d/... atau https://drive.google.com/..." required data-validate-drive="true" id="tautanGoogleDocs" value="<?= esc($proposal['tautanGoogleDocs'] ?? '') ?>">
+                <input type="url" name="tautanGoogleDocs" class="form-control <?= $hasProposal ? 'bg-light' : '' ?>" placeholder="https://docs.google.com/document/d/... atau https://drive.google.com/..." required data-validate-drive="true" id="tautanGoogleDocs" value="<?= esc($proposal['tautanGoogleDocs'] ?? '') ?>" <?= $hasProposal ? 'disabled' : '' ?>>
               </div>
               <div class="form-text mt-1 text-muted" id="driveHelp">
                 <i class="bi bi-shield-check text-success me-1"></i>
@@ -162,8 +150,8 @@
               </div>
             </div>
 
-            <!-- Petunjuk Pengaturan Akses Dokumen -->
-            <div class="alert alert-warning small mb-4">
+            <!-- Petunjuk Pengaturan Akses Dokumen (Hanya saat edit atau baru) -->
+            <div class="alert alert-warning small mb-4" id="alertPetunjukAkses" style="<?= $hasProposal ? 'display: none;' : '' ?>">
               <div class="d-flex gap-2">
                 <i class="bi bi-exclamation-triangle-fill fs-5 text-warning flex-shrink-0"></i>
                 <div>
@@ -175,23 +163,40 @@
               </div>
             </div>
 
-            <!-- Pakta Integritas / Pernyataan Orisinalitas -->
-            <div class="form-check mb-4 p-3 bg-light rounded-3 border">
-              <input class="form-check-input ms-0 me-2" type="checkbox" id="checkPakta" <?= $hasProposal ? 'checked' : '' ?> required>
+            <!-- Pakta Integritas / Pernyataan Orisinalitas (Hanya saat edit atau baru) -->
+            <div class="form-check mb-4 p-3 bg-light rounded-3 border" id="boxPakta" style="<?= $hasProposal ? 'display: none;' : '' ?>">
+              <input class="form-check-input ms-0 me-2" type="checkbox" id="checkPakta" checked required <?= $hasProposal ? 'disabled' : '' ?>>
               <label class="form-check-label small fw-medium" for="checkPakta">
                 Saya menyatakan dengan sungguh-sungguh bahwa proposal ini adalah karya orisinal tim kami, belum pernah didanai oleh sumber lain, dan tidak mengandung unsur plagiarisme.
               </label>
             </div>
 
-            <!-- Tombol Aksi -->
+            <!-- Tombol Aksi Bawah -->
             <div class="d-flex justify-content-between align-items-center pt-3 border-top">
               <a href="<?= base_url('mahasiswa/dashboard') ?>" class="btn btn-outline-secondary rounded-pill px-3">
                 <i class="bi bi-arrow-left me-1"></i> Kembali ke Dashboard
               </a>
+
               <?php if ($hasProposal): ?>
-                <button type="submit" class="btn btn-primary-sipkm rounded-pill px-4 py-2 shadow-sm" data-loading-text="Menyimpan Perubahan...">
-                  <i class="bi bi-check2-circle me-1"></i> Simpan Perubahan Proposal
-                </button>
+                <!-- Keadaan 1: Terkunci (Hanya 1 tombol Edit di bawah jika diperlukan) -->
+                <div id="viewModeActions" class="d-flex align-items-center gap-2">
+                  <span class="text-muted small d-none d-sm-inline">
+                    <i class="bi bi-lock-fill me-1 text-secondary"></i> Data proposal terkunci
+                  </span>
+                  <button type="button" class="btn btn-warning text-dark rounded-pill px-4 py-2 fw-bold shadow-sm" onclick="aktifkanModeEdit()">
+                    <i class="bi bi-pencil-square me-1"></i> Edit Proposal
+                  </button>
+                </div>
+
+                <!-- Keadaan 2: Mode Edit Aktif (Hanya ada Batal & 1 Tombol Simpan Perubahan) -->
+                <div id="editModeActions" class="d-flex align-items-center gap-2" style="display: none !important;">
+                  <button type="button" class="btn btn-outline-secondary rounded-pill px-3" onclick="batalkanModeEdit()">
+                    Batal
+                  </button>
+                  <button type="submit" class="btn btn-primary-sipkm rounded-pill px-4 py-2 shadow-sm" data-loading-text="Menyimpan Perubahan...">
+                    <i class="bi bi-check2-circle me-1"></i> Simpan Perubahan
+                  </button>
+                </div>
               <?php else: ?>
                 <button type="submit" class="btn btn-primary-sipkm rounded-pill px-4 py-2 shadow-sm" data-loading-text="Mengunggah Berkas Proposal...">
                   <i class="bi bi-cloud-arrow-up-fill me-1"></i> Simpan &amp; Ajukan Proposal
@@ -204,7 +209,7 @@
 
       <!-- Kolom Info & Riwayat Usulan -->
       <div class="col-lg-4">
-        <!-- Card Status Proposal Tersimpan -->
+        <!-- Card Status Proposal Tersimpan (Bersih tanpa tombol redundant) -->
         <div class="sipkm-card p-4 shadow-sm mb-4">
           <h6 class="fw-bold text-dark mb-3">
             <i class="bi bi-info-circle-fill text-primary me-2"></i>Status Berkas Saat Ini
@@ -234,13 +239,7 @@
               </div>
             </div>
 
-            <!-- Tombol Aksi Cepat Edit & Tracking -->
-            <button type="button" onclick="focusEditProposal()" class="btn btn-warning text-dark btn-sm w-100 fw-bold rounded-pill mb-2 shadow-sm">
-              <i class="bi bi-pencil-square me-1"></i> Edit Data Proposal
-            </button>
-            <button type="submit" form="formProposal" class="btn btn-primary-sipkm btn-sm w-100 rounded-pill mb-2 shadow-sm" data-loading-text="Menyimpan...">
-              <i class="bi bi-check2-circle me-1"></i> Simpan Perubahan
-            </button>
+            <!-- Tombol Tracking Peninjauan -->
             <a href="<?= base_url('mahasiswa/tracking') ?>" class="btn btn-outline-primary btn-sm w-100 rounded-pill">
               <i class="bi bi-activity me-1"></i> Cek Tracking Peninjauan
             </a>
@@ -264,17 +263,105 @@
       </div>
     </div>
 
-    <script>
-    function focusEditProposal() {
-      const el = document.getElementById('judulProposal');
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        el.focus();
-        el.classList.add('border-primary');
-        setTimeout(() => el.classList.remove('border-primary'), 1500);
+    <?php if ($hasProposal): ?>
+      <script>
+      const originalData = {
+        jenisPKM: <?= json_encode($proposal['jenisPKM'] ?? '') ?>,
+        judulProposal: <?= json_encode($proposal['judulProposal'] ?? '') ?>,
+        tautanGoogleDocs: <?= json_encode($proposal['tautanGoogleDocs'] ?? '') ?>
+      };
+
+      function aktifkanModeEdit() {
+        // Buka kunci field formulir
+        ['jenisPKM', 'judulProposal', 'tautanGoogleDocs', 'checkPakta'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) {
+            el.disabled = false;
+            el.classList.remove('bg-light');
+          }
+        });
+
+        // Tampilkan petunjuk dan pakta integritas
+        const alertPetunjuk = document.getElementById('alertPetunjukAkses');
+        if (alertPetunjuk) alertPetunjuk.style.display = 'block';
+
+        const boxPakta = document.getElementById('boxPakta');
+        if (boxPakta) boxPakta.style.display = 'block';
+
+        // Ganti tombol edit di header menjadi badge
+        const btnEdit = document.getElementById('btnAktifkanEdit');
+        if (btnEdit) btnEdit.style.display = 'none';
+
+        const badgeEdit = document.getElementById('badgeModeEdit');
+        if (badgeEdit) badgeEdit.style.display = 'inline-block';
+
+        // Tampilkan tombol Batal & Simpan di bawah
+        const viewActions = document.getElementById('viewModeActions');
+        if (viewActions) viewActions.style.setProperty('display', 'none', 'important');
+
+        const editActions = document.getElementById('editModeActions');
+        if (editActions) editActions.style.setProperty('display', 'flex', 'important');
+
+        // Fokuskan ke kolom judul
+        const judul = document.getElementById('judulProposal');
+        if (judul) {
+          judul.focus();
+          judul.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
       }
-    }
-    </script>
+
+      function batalkanModeEdit() {
+        // Kembalikan isi input ke data semula
+        const jenis = document.getElementById('jenisPKM');
+        if (jenis) jenis.value = originalData.jenisPKM;
+
+        const judul = document.getElementById('judulProposal');
+        if (judul) {
+          judul.value = originalData.judulProposal;
+          const charEl = document.getElementById('charCount');
+          if (charEl) charEl.textContent = `${judul.value.length} / 250 karakter`;
+        }
+
+        const tautan = document.getElementById('tautanGoogleDocs');
+        if (tautan) tautan.value = originalData.tautanGoogleDocs;
+
+        // Kunci kembali input
+        ['jenisPKM', 'judulProposal', 'tautanGoogleDocs', 'checkPakta'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) {
+            el.disabled = true;
+            el.classList.add('bg-light');
+          }
+        });
+
+        // Sembunyikan petunjuk dan pakta integritas
+        const alertPetunjuk = document.getElementById('alertPetunjukAkses');
+        if (alertPetunjuk) alertPetunjuk.style.display = 'none';
+
+        const boxPakta = document.getElementById('boxPakta');
+        if (boxPakta) boxPakta.style.display = 'none';
+
+        // Kembalikan tombol header
+        const btnEdit = document.getElementById('btnAktifkanEdit');
+        if (btnEdit) btnEdit.style.display = 'inline-block';
+
+        const badgeEdit = document.getElementById('badgeModeEdit');
+        if (badgeEdit) badgeEdit.style.display = 'none';
+
+        // Kembalikan tombol aksi bawah
+        const viewActions = document.getElementById('viewModeActions');
+        if (viewActions) viewActions.style.setProperty('display', 'flex', 'important');
+
+        const editActions = document.getElementById('editModeActions');
+        if (editActions) editActions.style.setProperty('display', 'none', 'important');
+      }
+
+      // Pastikan sebelum submit, input yang disabled dibuka agar terkirim ke server
+      document.getElementById('formProposal')?.addEventListener('submit', function() {
+        this.querySelectorAll(':disabled').forEach(el => el.disabled = false);
+      });
+      </script>
+    <?php endif; ?>
   <?php endif; ?>
 </div>
 <?= $this->endSection() ?>
