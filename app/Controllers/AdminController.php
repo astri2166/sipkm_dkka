@@ -73,12 +73,22 @@ class AdminController extends BaseController
             'totalDosen'     => $this->userModel->where('role', 'Dosen')->where('status_akun', 'Aktif')->countAllResults(),
             'needPlotting'   => $this->proposalModel->where('statusProposal', 'Diunggah')->countAllResults(),
             'totalLomba'     => $this->lombaModel->countAllResults(),
+            'totalPlotted'   => $this->peninjauanModel->countAllResults(),
+        ];
+
+        $statsProposalStatus = [
+            'menunggu' => (int) ($stats['needPlotting'] ?? 0),
+            'ditinjau' => $this->proposalModel->where('statusProposal', 'Sedang Ditinjau')->countAllResults(),
+            'layak'    => (int) ($stats['proposalLayak'] ?? 0),
+            'revisi'   => $this->proposalModel->whereIn('statusProposal', ['Sudah Ditinjau', 'Tidak Layak'])->countAllResults(),
         ];
 
         $masterTemplateUrl      = env('sipkm.templatePenilaianUrl', 'https://drive.google.com/drive/folders/1thAAeuQ7cBhFvA02yIUNgj34UhDxtOhy?usp=sharing');
-        $daftarLombaTerbaru     = $this->lombaModel->orderBy('idLomba', 'DESC')->findAll(3);
+        $daftarLombaTerbaru     = $this->lombaModel->orderBy('idLomba', 'DESC')->findAll(4);
         $daftarProposalPlotting = $this->proposalModel->getProposalDashboard(10);
         $daftarDosen            = $this->userModel->getAllDosen();
+        $daftarDosenWithStats   = $this->userModel->getDosenWithStats();
+        $daftarKelompokRingkas  = $this->kelompokModel->getKelompokWithDetails();
 
         // Hitung sebaran aktual seluruh 10 Bidang PKM Belmawa
         $sebaranRaw = $this->proposalModel->select('jenisPKM, COUNT(*) as total')
@@ -132,6 +142,9 @@ class AdminController extends BaseController
             'daftarLombaTerbaru'     => $daftarLombaTerbaru,
             'daftarProposalPlotting' => $daftarProposalPlotting,
             'daftarDosen'            => $daftarDosen,
+            'daftarDosenWithStats'   => $daftarDosenWithStats,
+            'daftarKelompokRingkas'  => $daftarKelompokRingkas,
+            'statsProposalStatus'    => $statsProposalStatus,
             'sebaran10Bidang'        => $sebaran10Bidang,
         ];
 

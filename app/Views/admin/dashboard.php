@@ -4,307 +4,483 @@
 <div class="container-fluid p-0">
   <!-- Flash Messages -->
   <?php if (session()->getFlashdata('success')): ?>
-    <div class="alert alert-success small py-2 px-3 mb-3 d-flex align-items-center gap-2">
-      <i class="bi bi-check-circle-fill flex-shrink-0"></i>
+    <div class="alert alert-success small py-2 px-3 mb-3 d-flex align-items-center gap-2 rounded-3 border-0 shadow-sm">
+      <i class="bi bi-check-circle-fill text-success flex-shrink-0"></i>
       <div><?= session()->getFlashdata('success') ?></div>
     </div>
   <?php endif; ?>
   <?php if (session()->getFlashdata('error')): ?>
-    <div class="alert alert-danger small py-2 px-3 mb-3 d-flex align-items-center gap-2">
-      <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+    <div class="alert alert-danger small py-2 px-3 mb-3 d-flex align-items-center gap-2 rounded-3 border-0 shadow-sm">
+      <i class="bi bi-exclamation-triangle-fill text-danger flex-shrink-0"></i>
       <div><?= session()->getFlashdata('error') ?></div>
     </div>
   <?php endif; ?>
 
-  <!-- Banner Admin DKKA -->
-  <div class="sipkm-card p-4 mb-4 border-0 shadow-sm" style="background: linear-gradient(135deg, #0f294a 0%, #1e3a8a 100%); color: #fff;">
-    <div class="row align-items-center">
-      <div class="col-12">
-        <div class="d-flex align-items-center gap-2 mb-2">
-          <span class="badge bg-warning text-dark fw-bold px-3 py-1 rounded-pill">
-            <i class="bi bi-shield-fill-check me-1"></i> Mode: <?= esc($role) ?>
-          </span>
-          <span class="badge bg-white text-dark opacity-75">Tahun Akademik 2026</span>
-        </div>
-        <h3 class="fw-bold mb-1">Pusat Kendali SIPKM-DKKA Universitas Budi Luhur</h3>
-        <p class="mb-0 text-white-50">
-          Selamat bertugas, <strong><?= esc($userName ?? 'Admin DKKA') ?></strong> &bull; Direktorat Kemahasiswaan dan Karir Alumni
-        </p>
+  <!-- 1. Top Banner Admin DKKA -->
+  <div class="banner-admin-navy mb-4 shadow-sm">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+      <div>
+        <h4 class="fw-bold text-white mb-1">Selamat bertugas, <?= esc($userName ?? 'Rina Kartika, S.E.') ?></h4>
+        <small class="text-white-50" style="font-size: 0.85rem;">
+          Admin DKKA, Universitas Budi Luhur &bull; Tahun Akademik 2026
+        </small>
       </div>
-    </div>
-  </div>
-
-  <!-- 4 Statistik Kartu Ringkasan Operasional -->
-  <div class="row g-3 mb-4">
-    <!-- Stat 1: Usulan Proposal PKM -->
-    <div class="col-12 col-sm-6 col-xl-3">
-      <div class="sipkm-card sipkm-card-hover p-3 h-100 shadow-sm border-start border-primary border-4">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <small class="text-muted fw-semibold d-block">Total Proposal PKM</small>
-            <h4 class="fw-bold text-dark mb-0 mt-1"><?= esc($stats['totalProposal'] ?? 12) ?> Usulan</h4>
-            <span class="badge bg-primary-subtle text-primary border border-primary-subtle mt-1">
-              <?= esc($stats['proposalLayak'] ?? 4) ?> Dinyatakan Layak
-            </span>
-          </div>
-          <div class="bg-primary-subtle text-primary p-3 rounded-circle">
-            <i class="bi bi-file-earmark-text-fill fs-4"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Stat 2: Kelompok Terdaftar -->
-    <div class="col-12 col-sm-6 col-xl-3">
-      <div class="sipkm-card sipkm-card-hover p-3 h-100 shadow-sm border-start border-info border-4">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <small class="text-muted fw-semibold d-block">Kelompok PKM</small>
-            <h4 class="fw-bold text-dark mb-0 mt-1"><?= esc($stats['totalKelompok'] ?? 15) ?> Tim</h4>
-            <span class="badge bg-info-subtle text-info-emphasis border border-info-subtle mt-1">
-              <?= esc($stats['totalMahasiswa'] ?? 48) ?> Mahasiswa
-            </span>
-          </div>
-          <div class="bg-info-subtle text-info p-3 rounded-circle">
-            <i class="bi bi-people-fill fs-4"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Stat 3: Dosen Peninjau & Plotting -->
-    <div class="col-12 col-sm-6 col-xl-3">
-      <div class="sipkm-card sipkm-card-hover p-3 h-100 shadow-sm border-start border-warning border-4">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <small class="text-muted fw-semibold d-block">Dosen Peninjau</small>
-            <h4 class="fw-bold text-warning mb-0 mt-1"><?= esc($stats['totalDosen'] ?? 6) ?> Dosen</h4>
-            <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle mt-1">
-              <?= esc($stats['needPlotting'] ?? 2) ?> Butuh Plotting
-            </span>
-          </div>
-          <div class="bg-warning-subtle text-warning p-3 rounded-circle">
-            <i class="bi bi-person-workspace fs-4"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Stat 4: Informasi Lomba Publik -->
-    <div class="col-12 col-sm-6 col-xl-3">
-      <div class="sipkm-card sipkm-card-hover p-3 h-100 shadow-sm border-start border-success border-4">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <small class="text-muted fw-semibold d-block">Lomba Aktif</small>
-            <h4 class="fw-bold text-success mb-0 mt-1"><?= esc($stats['totalLomba'] ?? 3) ?> Program</h4>
-            <span class="badge bg-success-subtle text-success border border-success-subtle mt-1">
-              Papan Publik Terbit
-            </span>
-          </div>
-          <div class="bg-success-subtle text-success p-3 rounded-circle">
-            <i class="bi bi-trophy-fill fs-4"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="row g-4 mb-4">
-    <!-- Kolom Kiri: Proposal Butuh Plotting Dosen Segera -->
-    <div class="col-lg-8">
-      <div class="sipkm-card p-4 shadow-sm mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom flex-wrap gap-2">
-          <div>
-            <h5 class="fw-bold text-dark mb-0">
-              <i class="bi bi-exclamation-diamond-fill text-warning me-2"></i>Usulan Proposal Perlu Plotting Dosen
-            </h5>
-            <small class="text-muted">Daftar usulan proposal mahasiswa (maksimal 10 usulan) &bull; Prioritas butuh plotting Dosen Peninjau</small>
-          </div>
-          <a href="<?= base_url('admin/proposal') ?>" class="btn btn-primary-sipkm btn-sm">
-            <i class="bi bi-person-plus-fill me-1"></i> Plotting Massal
-          </a>
-        </div>
-
-        <!-- Kolom Pencarian Cepat Proposal -->
-        <div class="row g-2 mb-3 align-items-center">
-          <div class="col-sm-7 col-md-8">
-            <div class="input-group input-group-sm">
-              <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
-              <input type="text" id="searchProposalDashboard" class="form-control" placeholder="Cari judul proposal, kelompok, NIM ketua, atau skema..." onkeyup="filterProposalDashboard()">
-            </div>
-          </div>
-          <div class="col-sm-5 col-md-4 text-sm-end">
-            <span class="small text-muted" id="countProposalDashboard">
-              Menampilkan <strong><?= count($daftarProposalPlotting ?? []) ?></strong> usulan
-            </span>
-          </div>
-        </div>
-
-        <div class="table-responsive">
-          <table class="table table-hover align-middle mb-0" id="tableProposalDashboard">
-            <thead class="table-light small">
-              <tr>
-                <th style="width: 45px;">No</th>
-                <th>Skema & Judul Usulan</th>
-                <th>Kelompok Pengusul</th>
-                <th>Tgl Unggah</th>
-                <th class="text-center" style="width: 130px;">Aksi Cepat</th>
-              </tr>
-            </thead>
-            <tbody class="small" id="tbodyProposalDashboard">
-              <?php if (! empty($daftarProposalPlotting)): ?>
-                <?php $no = 1; foreach ($daftarProposalPlotting as $p): ?>
-                  <?php
-                    $isDiunggah = ($p['statusProposal'] === 'Diunggah' || empty($p['idDosen']));
-                    $searchData = strtolower($p['judulProposal'] . ' ' . $p['namaKelompok'] . ' ' . $p['nimKetua'] . ' ' . ($p['namaKetua'] ?? '') . ' ' . $p['jenisPKM']);
-                  ?>
-                  <tr class="item-proposal-dashboard" data-text="<?= esc($searchData) ?>">
-                    <td><?= $no++ ?></td>
-                    <td>
-                      <span class="badge bg-primary-subtle text-primary mb-1"><?= esc($p['jenisPKM']) ?></span>
-                      <div class="fw-bold text-dark lh-sm"><?= esc($p['judulProposal']) ?></div>
-                      <small class="text-muted font-monospace">ID: #<?= esc($p['idProposal']) ?></small>
-                    </td>
-                    <td>
-                      <div class="fw-semibold text-dark"><?= esc($p['namaKelompok']) ?></div>
-                      <small class="text-muted">Ketua: <?= esc($p['nimKetua']) ?><?= !empty($p['namaKetua']) ? ' (' . esc($p['namaKetua']) . ')' : '' ?></small>
-                    </td>
-                    <td><?= esc($p['tglUnggah']) ?></td>
-                    <td class="text-center">
-                      <?php if ($isDiunggah): ?>
-                        <button type="button" class="btn btn-outline-primary btn-sm py-1 px-2" data-bs-toggle="modal" data-bs-target="#modalPlottingDash_<?= $p['idProposal'] ?>" title="Tugaskan Dosen Peninjau">
-                          <i class="bi bi-person-plus me-1"></i> Plotting
-                        </button>
-                      <?php else: ?>
-                        <span class="badge bg-success-subtle text-success border border-success-subtle d-inline-block py-1 px-2">
-                          <i class="bi bi-check-circle me-1"></i><?= esc($p['namaDosen'] ?? 'Sudah Diplotting') ?>
-                        </span>
-                      <?php endif; ?>
-                    </td>
-                  </tr>
-                <?php endforeach; ?>
-                <tr id="noMatchProposalDashboard" style="display: none;">
-                  <td colspan="5" class="text-center py-4 text-muted">
-                    <i class="bi bi-search me-1"></i> Tidak ditemukan proposal yang cocok dengan kata kunci pencarian.
-                  </td>
-                </tr>
-              <?php else: ?>
-                <tr>
-                  <td colspan="5" class="text-center py-4 text-muted">
-                    Belum ada kelompok yang mengajukan usulan proposal PKM.
-                  </td>
-                </tr>
-              <?php endif; ?>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Ringkasan Sebaran 10 Bidang PKM Belmawa -->
-      <div class="sipkm-card p-4 shadow-sm">
-        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom flex-wrap gap-2">
-          <h5 class="fw-bold text-dark mb-0">
-            <i class="bi bi-pie-chart-fill text-primary me-2"></i>Sebaran Usulan 10 Bidang PKM 2026
-          </h5>
-          <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
-            Total: <?= (int)($stats['totalProposal'] ?? 0) ?> Usulan Masuk
-          </span>
-        </div>
-        <div class="row g-3 small">
-          <?php
-            $sebaranList = $sebaran10Bidang ?? [];
-            $half = ceil(count($sebaranList) / 2);
-            $leftCol = array_slice($sebaranList, 0, $half);
-            $rightCol = array_slice($sebaranList, $half);
-          ?>
-          <div class="col-md-6">
-            <?php foreach ($leftCol as $item): ?>
-              <div class="d-flex justify-content-between mb-1">
-                <span><strong><?= esc($item['kode']) ?></strong> <span class="text-muted">(<?= esc($item['nama']) ?>)</span></span>
-                <strong><?= $item['total'] ?> Usulan (<?= $item['persentase'] ?>%)</strong>
-              </div>
-              <div class="progress mb-3" style="height: 8px;">
-                <div class="progress-bar" style="width: <?= $item['persentase'] ?>%; background-color: <?= esc($item['color']) ?>;"></div>
-              </div>
-            <?php endforeach; ?>
-          </div>
-          <div class="col-md-6">
-            <?php foreach ($rightCol as $item): ?>
-              <div class="d-flex justify-content-between mb-1">
-                <span><strong><?= esc($item['kode']) ?></strong> <span class="text-muted">(<?= esc($item['nama']) ?>)</span></span>
-                <strong><?= $item['total'] ?> Usulan (<?= $item['persentase'] ?>%)</strong>
-              </div>
-              <div class="progress mb-3" style="height: 8px;">
-                <div class="progress-bar" style="width: <?= $item['persentase'] ?>%; background-color: <?= esc($item['color']) ?>;"></div>
-              </div>
-            <?php endforeach; ?>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Kolom Kanan: Pintasan Navigasi & Master Penilaian -->
-    <div class="col-lg-4">
-      <!-- Master Template Penilaian DKKA -->
-      <div class="sipkm-card p-4 mb-4 shadow-sm border-start border-warning border-4">
-        <h6 class="fw-bold text-dark mb-2">
-          <i class="bi bi-google text-danger me-2"></i>Folder Master Penilaian DKKA
-        </h6>
-        <p class="text-muted small mb-3">
-          Tautan resmi Google Drive DKKA tempat seluruh Dosen Peninjau mengunduh lembar form rubrik penilaian:
-        </p>
-        <a href="<?= esc($masterTemplateUrl) ?>" target="_blank" class="btn btn-warning text-dark btn-sm w-100 fw-bold mb-2">
-          <i class="bi bi-box-arrow-up-right me-1"></i> Buka Folder Master Drive
+      <div class="d-flex flex-wrap align-items-center gap-2">
+        <a href="<?= esc($masterTemplateUrl) ?>" target="_blank" class="btn btn-outline-light btn-sm rounded-pill px-3 py-1" style="border-color: rgba(255,255,255,0.3); font-size: 0.82rem;">
+          <i class="bi bi-folder2-open me-1"></i> Folder Penilaian
         </a>
-      </div>
-
-      <!-- Widget Lomba Terbit Terkini -->
-      <div class="sipkm-card p-4 mb-4 shadow-sm">
-        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
-          <h6 class="fw-bold text-dark mb-0">
-            <i class="bi bi-trophy-fill text-warning me-2"></i>Lomba Terbit di Papan Publik
-          </h6>
-          <a href="<?= base_url('admin/lomba') ?>" class="small text-primary text-decoration-none fw-semibold">Kelola &rarr;</a>
+        <div class="d-inline-flex align-items-center gap-1 p-1 rounded-pill" style="background: rgba(255, 255, 255, 0.08);">
+          <a href="<?= base_url('mahasiswa/dashboard') ?>" class="btn btn-sm text-white-50 border-0 rounded-pill px-3 py-1 text-decoration-none" style="font-size: 0.8rem;">Ketua</a>
+          <a href="<?= base_url('mahasiswa/dashboard') ?>" class="btn btn-sm text-white-50 border-0 rounded-pill px-3 py-1 text-decoration-none" style="font-size: 0.8rem;">Anggota</a>
+          <a href="<?= base_url('dosen/dashboard') ?>" class="btn btn-sm text-white-50 border-0 rounded-pill px-3 py-1 text-decoration-none" style="font-size: 0.8rem;">Dosen</a>
+          <span class="badge rounded-pill px-3 py-1 fw-bold" style="background: #fbbf24; color: #112842; font-size: 0.8rem;">Admin</span>
+          <a href="<?= base_url('superadmin/dashboard') ?>" class="btn btn-sm text-white-50 border-0 rounded-pill px-3 py-1 text-decoration-none" style="font-size: 0.8rem;">Super Admin</a>
         </div>
-        <div class="d-flex flex-column gap-2">
-          <?php if (!empty($daftarLombaTerbaru)): foreach ($daftarLombaTerbaru as $lt): ?>
-            <div class="d-flex align-items-center gap-2 p-2 rounded bg-light border border-light-subtle">
-              <img src="<?= base_url('assets/uploads/poster/' . esc($lt['posterBanner'])) ?>" alt="Poster" class="rounded shadow-sm" style="width: 52px; height: 35px; object-fit: cover;" onerror="this.src='https://placehold.co/80x50/0f294a/fff?text=Poster'">
-              <div class="overflow-hidden flex-grow-1">
-                <div class="fw-bold small text-dark text-truncate"><?= esc($lt['judulLomba']) ?></div>
-                <small class="text-muted" style="font-size: 11px;"><?= esc($lt['kategoriLomba']) ?> &bull; s/d <?= esc($lt['timelineSelesai']) ?></small>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Row of 4 Stat Cards -->
+  <div class="row g-3 mb-4">
+    <!-- Stat 1: Total proposal (Deep Navy) -->
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card-stat-navy h-100 d-flex flex-column justify-content-between">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <span class="small text-white-50">Total proposal</span>
+          <div class="rounded-3 d-flex align-items-center justify-content-center" style="width: 34px; height: 34px; background: #fbbf24; color: #112842;">
+            <i class="bi bi-file-earmark-text fs-5"></i>
+          </div>
+        </div>
+        <div>
+          <div class="fw-bold text-white mb-1" style="font-size: 2.2rem; line-height: 1.1;">
+            <?= (int)($stats['totalProposal'] ?? 0) ?>
+          </div>
+          <small class="text-white-50" style="font-size: 0.82rem;">
+            <?= (int)($statsProposalStatus['menunggu'] ?? 0) ?> menunggu plotting
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stat 2: Kelompok PKM (Deep Navy) -->
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card-stat-navy h-100 d-flex flex-column justify-content-between">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <span class="small text-white-50">Kelompok PKM</span>
+          <div class="rounded-3 d-flex align-items-center justify-content-center" style="width: 34px; height: 34px; background: rgba(255,255,255,0.14); color: #ffffff;">
+            <i class="bi bi-people fs-5"></i>
+          </div>
+        </div>
+        <div>
+          <div class="fw-bold text-white mb-1" style="font-size: 2.2rem; line-height: 1.1;">
+            <?= (int)($stats['totalKelompok'] ?? 0) ?>
+          </div>
+          <small class="text-white-50" style="font-size: 0.82rem;">
+            <?= (int)($stats['totalMahasiswa'] ?? 0) ?> mahasiswa
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stat 3: Dosen peninjau (Pastel Blue) -->
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card-stat-pastel h-100 d-flex flex-column justify-content-between">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <span class="small fw-semibold" style="color: #475569;">Dosen peninjau</span>
+          <div class="rounded-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 34px; height: 34px; background: #ffffff; color: #112842;">
+            <i class="bi bi-person fs-5"></i>
+          </div>
+        </div>
+        <div>
+          <div class="fw-bold mb-1" style="font-size: 2.2rem; line-height: 1.1; color: #112842;">
+            <?= (int)($stats['totalDosen'] ?? 0) ?>
+          </div>
+          <small class="fw-medium" style="font-size: 0.82rem; color: #475569;">
+            <?= (int)($stats['totalPlotted'] ?? 0) ?> proposal sudah di-plot
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stat 4: Lomba aktif (Pastel Blue) -->
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card-stat-pastel h-100 d-flex flex-column justify-content-between">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <span class="small fw-semibold" style="color: #475569;">Lomba aktif</span>
+          <div class="rounded-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 34px; height: 34px; background: #ffffff; color: #112842;">
+            <i class="bi bi-trophy fs-5"></i>
+          </div>
+        </div>
+        <div>
+          <div class="fw-bold mb-1" style="font-size: 2.2rem; line-height: 1.1; color: #112842;">
+            <?= (int)($stats['totalLomba'] ?? 0) ?>
+          </div>
+          <small class="fw-medium" style="font-size: 0.82rem; color: #475569;">
+            Terbit di papan publik
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Middle Row: Status Proposal Donut Chart & Usulan per Bidang -->
+  <div class="row g-3 mb-4">
+    <!-- Middle Left: Status Proposal (Donut Chart) -->
+    <div class="col-12 col-lg-5">
+      <div class="sipkm-card p-4 h-100">
+        <h6 class="fw-bold mb-3" style="color: #112842;">Status proposal</h6>
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+          <?php
+            $totProp = max(1, (int)($stats['totalProposal'] ?? 0));
+            $sMenunggu = (int)($statsProposalStatus['menunggu'] ?? 0);
+            $sDitinjau = (int)($statsProposalStatus['ditinjau'] ?? 0);
+            $sLayak    = (int)($statsProposalStatus['layak'] ?? 0);
+            $sRevisi   = (int)($statsProposalStatus['revisi'] ?? 0);
+
+            // Perhitungan SVG Donut Chart (Radius = 40, Circumference = 2 * PI * 40 ~= 251.327)
+            $C = 251.327;
+            $segments = [
+              ['key' => 'menunggu', 'val' => $sMenunggu, 'color' => '#fbbf24', 'label' => 'Menunggu plotting'],
+              ['key' => 'ditinjau', 'val' => $sDitinjau, 'color' => '#3b82f6', 'label' => 'Sedang ditinjau'],
+              ['key' => 'layak',    'val' => $sLayak,    'color' => '#112842', 'label' => 'Layak'],
+              ['key' => 'revisi',   'val' => $sRevisi,   'color' => '#334155', 'label' => 'Perlu revisi'],
+            ];
+
+            $offset = 0;
+            $svgSegments = [];
+            foreach ($segments as $seg) {
+              $segLen = ($seg['val'] / $totProp) * $C;
+              $dashArray = sprintf('%.2f %.2f', $segLen, $C - $segLen);
+              $dashOffset = sprintf('%.2f', -$offset);
+              $svgSegments[] = [
+                'color'      => $seg['color'],
+                'dashArray'  => $dashArray,
+                'dashOffset' => $dashOffset,
+              ];
+              $offset += $segLen;
+            }
+          ?>
+
+          <!-- Donut SVG -->
+          <div class="position-relative d-flex align-items-center justify-content-center" style="width: 140px; height: 140px;">
+            <svg width="140" height="140" viewBox="0 0 100 100" style="transform: rotate(-90deg);">
+              <circle cx="50" cy="50" r="40" fill="transparent" stroke="#f1f5f9" stroke-width="14" />
+              <?php foreach ($svgSegments as $ss): ?>
+                <circle cx="50" cy="50" r="40" fill="transparent" stroke="<?= $ss['color'] ?>" stroke-width="14" stroke-dasharray="<?= $ss['dashArray'] ?>" stroke-dashoffset="<?= $ss['dashOffset'] ?>" />
+              <?php endforeach; ?>
+            </svg>
+            <div class="position-absolute text-center" style="line-height: 1.1;">
+              <div class="fw-bold" style="font-size: 1.55rem; color: #112842;"><?= (int)($stats['totalProposal'] ?? 0) ?></div>
+              <small class="text-muted" style="font-size: 0.72rem;">proposal</small>
+            </div>
+          </div>
+
+          <!-- Donut Legend List -->
+          <div class="flex-grow-1 ps-2" style="font-size: 0.85rem;">
+            <?php foreach ($segments as $seg): ?>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="donut-legend-dot" style="background-color: <?= $seg['color'] ?>;"></span>
+                  <span class="text-secondary"><?= esc($seg['label']) ?></span>
+                </div>
+                <span class="fw-bold" style="color: #112842;"><?= $seg['val'] ?></span>
+              </div>
+            <?php endforeach; ?>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Middle Right: Usulan per Bidang (Gradient Bars) -->
+    <div class="col-12 col-lg-7">
+      <div class="sipkm-card p-4 h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h6 class="fw-bold mb-0" style="color: #112842;">Usulan per bidang</h6>
+          <button type="button" class="btn btn-sm btn-link text-decoration-none p-0 fw-semibold" style="font-size: 0.82rem; color: #112842;" data-bs-toggle="modal" data-bs-target="#modal10BidangPKM">
+            Semua 10 Bidang &rarr;
+          </button>
+        </div>
+
+        <?php
+          // Urutkan skema berdasarkan total terbanyak
+          $sebaranSorted = $sebaran10Bidang ?? [];
+          usort($sebaranSorted, function ($a, $b) {
+            return $b['total'] <=> $a['total'];
+          });
+          $topSkema = array_slice($sebaranSorted, 0, 5);
+          $maxCount = 1;
+          foreach ($topSkema as $ts) {
+            if ($ts['total'] > $maxCount) {
+              $maxCount = $ts['total'];
+            }
+          }
+        ?>
+
+        <div class="d-flex flex-column gap-3">
+          <?php foreach ($topSkema as $sk): ?>
+            <?php $barPct = max(8, round(($sk['total'] / $maxCount) * 100)); ?>
+            <div>
+              <div class="d-flex justify-content-between align-items-center mb-1" style="font-size: 0.84rem;">
+                <span class="fw-semibold text-dark"><?= esc($sk['kode']) ?></span>
+                <span class="fw-bold" style="color: #112842;"><?= $sk['total'] ?></span>
+              </div>
+              <div class="progress" style="height: 6px; background-color: #f1f5f9; border-radius: 50px;">
+                <div class="progress-bar progress-bar-gradient" style="width: <?= $barPct ?>%;"></div>
               </div>
             </div>
-          <?php endforeach; else: ?>
-            <small class="text-muted">Belum ada lomba terbit.</small>
-          <?php endif; ?>
+          <?php endforeach; ?>
         </div>
       </div>
+    </div>
+  </div>
 
-      <!-- Menu Pintasan Cepat Admin -->
-      <div class="sipkm-card p-4 shadow-sm">
-        <h6 class="fw-bold text-dark mb-3">
-          <i class="bi bi-grid-fill text-primary me-2"></i>Pintasan Pengelolaan
-        </h6>
-        <div class="d-grid gap-2">
-          <a href="<?= base_url('admin/dosen') ?>" class="btn btn-outline-secondary btn-sm text-start py-2">
-            <i class="bi bi-person-badge text-primary me-2"></i> Kelola Dosen Peninjau
-          </a>
-          <a href="<?= base_url('admin/kelompok') ?>" class="btn btn-outline-secondary btn-sm text-start py-2">
-            <i class="bi bi-people text-info me-2"></i> Kelola Kelompok PKM
-          </a>
-          <a href="<?= base_url('admin/proposal') ?>" class="btn btn-outline-secondary btn-sm text-start py-2">
-            <i class="bi bi-file-earmark-text text-warning me-2"></i> Kelola Proposal & Rekap
-          </a>
-          <a href="<?= base_url('admin/lomba') ?>" class="btn btn-outline-secondary btn-sm text-start py-2">
-            <i class="bi bi-trophy text-success me-2"></i> Kelola Papan Informasi Lomba
-          </a>
-          <?php if ($role === 'Super Admin'): ?>
-            <a href="<?= base_url('superadmin/kelola-admin') ?>" class="btn btn-outline-danger btn-sm text-start py-2">
-              <i class="bi bi-shield-lock-fill me-2"></i> Kelola Akun Admin DKKA
+  <!-- 4. Bottom 2x2 Grid Cards -->
+  <div class="row g-3 mb-4">
+    <!-- Bottom 1: Proposal PKM -->
+    <div class="col-12 col-lg-6">
+      <div class="sipkm-card p-4 h-100 d-flex flex-column justify-content-between">
+        <div>
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+              <h6 class="fw-bold mb-0" style="color: #112842;">Proposal PKM</h6>
+              <small class="text-muted" style="font-size: 0.8rem;">
+                <?= (int)($statsProposalStatus['menunggu'] ?? 0) ?> perlu plotting dosen
+              </small>
+            </div>
+            <a href="<?= base_url('admin/proposal') ?>" class="small text-decoration-none fw-semibold" style="color: #112842; font-size: 0.82rem;">
+              Kelola proposal &rarr;
             </a>
+          </div>
+
+          <!-- Proposal List -->
+          <?php $proposals4 = array_slice($daftarProposalPlotting ?? [], 0, 4); ?>
+          <?php if (!empty($proposals4)): ?>
+            <?php foreach ($proposals4 as $p): ?>
+              <?php $needsPlot = ($p['statusProposal'] === 'Diunggah' || empty($p['idDosen'])); ?>
+              <div class="dash-list-item">
+                <div class="overflow-hidden pe-2">
+                  <div class="fw-semibold text-dark text-truncate" style="font-size: 0.88rem;">
+                    <?= esc($p['namaKelompok'] ?: $p['judulProposal']) ?>
+                  </div>
+                  <small class="text-muted d-block" style="font-size: 0.78rem;">
+                    <?= esc($p['jenisPKM']) ?> &bull; diunggah <?= esc(date('d M', strtotime($p['tglUnggah'] ?? 'now'))) ?>
+                  </small>
+                </div>
+                <div class="flex-shrink-0">
+                  <?php if ($needsPlot): ?>
+                    <button type="button" class="pill-btn-plotting" data-bs-toggle="modal" data-bs-target="#modalPlottingDash_<?= $p['idProposal'] ?>">
+                      Plotting
+                    </button>
+                  <?php else: ?>
+                    <span class="pill-badge-blue">
+                      <?= esc($p['statusProposal'] === 'Sedang Ditinjau' ? 'Ditinjau' : $p['statusProposal']) ?>
+                    </span>
+                  <?php endif; ?>
+                </div>
+              </div>
+            <?php endforeach; ?>
+          <?php else: ?>
+            <p class="small text-muted py-3 mb-0 text-center">Belum ada usulan proposal yang masuk.</p>
           <?php endif; ?>
         </div>
+
+        <div class="mt-3 pt-2">
+          <a href="<?= base_url('admin/proposal') ?>" class="small text-muted text-decoration-none">
+            +<?= max(0, count($daftarProposalPlotting ?? []) - 4) ?> lainnya
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom 2: Dosen Peninjau -->
+    <div class="col-12 col-lg-6">
+      <div class="sipkm-card p-4 h-100 d-flex flex-column justify-content-between">
+        <div>
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+              <h6 class="fw-bold mb-0" style="color: #112842;">Dosen Peninjau</h6>
+              <small class="text-muted" style="font-size: 0.8rem;">Beban tinjauan per dosen</small>
+            </div>
+            <a href="<?= base_url('admin/dosen') ?>" class="small text-decoration-none fw-semibold" style="color: #112842; font-size: 0.82rem;">
+              Kelola dosen &rarr;
+            </a>
+          </div>
+
+          <!-- Dosen List -->
+          <?php $dosen4 = array_slice($daftarDosenWithStats ?? [], 0, 4); ?>
+          <?php if (!empty($dosen4)): ?>
+            <?php foreach ($dosen4 as $dos): ?>
+              <?php $totalTugas = (int)(($dos['tugasPending'] ?? 0) + ($dos['tugasSelesai'] ?? 0)); ?>
+              <div class="dash-list-item">
+                <div class="overflow-hidden pe-2">
+                  <div class="fw-semibold text-dark text-truncate" style="font-size: 0.88rem;">
+                    <?= esc($dos['namaDosen']) ?>
+                  </div>
+                  <small class="text-muted d-block" style="font-size: 0.78rem;">
+                    <?= (int)($dos['tugasPending'] ?? 0) ?> sedang ditinjau
+                  </small>
+                </div>
+                <div class="flex-shrink-0">
+                  <span class="pill-badge-blue">
+                    <?= $totalTugas ?> proposal
+                  </span>
+                </div>
+              </div>
+            <?php endforeach; ?>
+          <?php else: ?>
+            <p class="small text-muted py-3 mb-0 text-center">Belum ada data dosen peninjau.</p>
+          <?php endif; ?>
+        </div>
+
+        <div class="mt-3 pt-2">
+          <a href="<?= base_url('admin/dosen') ?>" class="small text-muted text-decoration-none">
+            +<?= max(0, count($daftarDosenWithStats ?? []) - 4) ?> lainnya
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom 3: Kelompok PKM -->
+    <div class="col-12 col-lg-6">
+      <div class="sipkm-card p-4 h-100 d-flex flex-column justify-content-between">
+        <div>
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+              <h6 class="fw-bold mb-0" style="color: #112842;">Kelompok PKM</h6>
+              <small class="text-muted" style="font-size: 0.8rem;">
+                <?= (int)($stats['totalKelompok'] ?? 0) ?> tim, <?= (int)($stats['totalMahasiswa'] ?? 0) ?> mahasiswa
+              </small>
+            </div>
+            <a href="<?= base_url('admin/kelompok') ?>" class="small text-decoration-none fw-semibold" style="color: #112842; font-size: 0.82rem;">
+              Kelola kelompok &rarr;
+            </a>
+          </div>
+
+          <!-- Kelompok List -->
+          <?php $kelompok4 = array_slice($daftarKelompokRingkas ?? [], 0, 4); ?>
+          <?php if (!empty($kelompok4)): ?>
+            <?php foreach ($kelompok4 as $k): ?>
+              <div class="dash-list-item">
+                <div class="overflow-hidden pe-2">
+                  <div class="fw-semibold text-dark text-truncate" style="font-size: 0.88rem;">
+                    <?= esc($k['namaKelompok']) ?>
+                  </div>
+                  <small class="text-muted d-block" style="font-size: 0.78rem;">
+                    <?= (int)($k['jumlahAnggota'] ?? 4) ?> anggota
+                  </small>
+                </div>
+                <div class="flex-shrink-0">
+                  <span class="pill-badge-blue">
+                    <?= esc(!empty($k['jenisPKM']) ? $k['jenisPKM'] : 'PKM') ?>
+                  </span>
+                </div>
+              </div>
+            <?php endforeach; ?>
+          <?php else: ?>
+            <p class="small text-muted py-3 mb-0 text-center">Belum ada kelompok PKM terdaftar.</p>
+          <?php endif; ?>
+        </div>
+
+        <div class="mt-3 pt-2">
+          <a href="<?= base_url('admin/kelompok') ?>" class="small text-muted text-decoration-none">
+            +<?= max(0, count($daftarKelompokRingkas ?? []) - 4) ?> lainnya
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom 4: Informasi Lomba -->
+    <div class="col-12 col-lg-6">
+      <div class="sipkm-card p-4 h-100 d-flex flex-column justify-content-between">
+        <div>
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+              <h6 class="fw-bold mb-0" style="color: #112842;">Informasi Lomba</h6>
+              <small class="text-muted" style="font-size: 0.8rem;">
+                <?= (int)($stats['totalLomba'] ?? 0) ?> lomba aktif
+              </small>
+            </div>
+            <a href="<?= base_url('admin/lomba') ?>" class="small text-decoration-none fw-semibold" style="color: #112842; font-size: 0.82rem;">
+              Kelola lomba &rarr;
+            </a>
+          </div>
+
+          <!-- Lomba List -->
+          <?php $lomba4 = array_slice($daftarLombaTerbaru ?? [], 0, 4); ?>
+          <?php if (!empty($lomba4)): ?>
+            <?php foreach ($lomba4 as $l): ?>
+              <div class="dash-list-item">
+                <div class="overflow-hidden pe-2">
+                  <div class="fw-semibold text-dark text-truncate" style="font-size: 0.88rem;">
+                    <?= esc($l['judulLomba']) ?>
+                  </div>
+                  <small class="text-muted d-block" style="font-size: 0.78rem;">
+                    Batas daftar <?= esc($l['timelineSelesai'] ?? '-') ?>
+                  </small>
+                </div>
+                <div class="flex-shrink-0">
+                  <span class="pill-badge-blue">
+                    Aktif
+                  </span>
+                </div>
+              </div>
+            <?php endforeach; ?>
+          <?php else: ?>
+            <p class="small text-muted py-3 mb-0 text-center">Belum ada program lomba terbit.</p>
+          <?php endif; ?>
+        </div>
+
+        <div class="mt-3 pt-2">
+          <a href="<?= base_url('admin/lomba') ?>" class="small text-muted text-decoration-none">
+            +<?= max(0, count($daftarLombaTerbaru ?? []) - 4) ?> lainnya
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center my-3">
+    <small class="text-muted" style="font-size: 0.78rem;">
+      Data terhubung secara real-time dengan basis data SIPKM-DKKA Universitas Budi Luhur.
+    </small>
+  </div>
+</div>
+
+<!-- Modal 10 Bidang PKM Belmawa Lengkap -->
+<div class="modal fade" id="modal10BidangPKM" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-light">
+        <h6 class="modal-title fw-bold" style="color: #112842;">
+          <i class="bi bi-pie-chart-fill text-primary me-2"></i>Sebaran Usulan Seluruh 10 Bidang PKM 2026
+        </h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div class="row g-3">
+          <?php foreach ($sebaran10Bidang ?? [] as $sb): ?>
+            <div class="col-12 col-md-6">
+              <div class="p-3 rounded-3 border" style="background: #f8fafc;">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <div>
+                    <span class="fw-bold text-dark"><?= esc($sb['kode']) ?></span>
+                    <small class="text-muted d-block"><?= esc($sb['nama']) ?></small>
+                  </div>
+                  <div class="text-end">
+                    <span class="fw-bold" style="color: #112842;"><?= $sb['total'] ?> usulan</span>
+                    <small class="text-muted d-block">(<?= $sb['persentase'] ?>%)</small>
+                  </div>
+                </div>
+                <div class="progress mt-2" style="height: 6px;">
+                  <div class="progress-bar" style="width: <?= $sb['persentase'] ?>%; background-color: <?= esc($sb['color']) ?>;"></div>
+                </div>
+              </div>
+            </div>
+          <?php endforeach; ?>
+        </div>
+      </div>
+      <div class="modal-footer bg-light py-2">
+        <button type="button" class="btn btn-secondary btn-sm rounded-pill px-3" data-bs-dismiss="modal">Tutup</button>
       </div>
     </div>
   </div>
@@ -344,12 +520,12 @@
                 </select>
               </div>
               <div class="alert alert-info small mb-0">
-                <i class="bi bi-info-circle me-1"></i> Setelah disimpan, data penugasan akan masuk ke sistem peninjauan dan status usulan otomatis menjadi <strong>Sedang Ditinjau</strong>.
+                <i class="bi bi-info-circle me-1"></i> Setelah disimpan, status usulan otomatis menjadi <strong>Sedang Ditinjau</strong> dan dosen peninjau terkait dapat langsung mengevaluasi proposal ini.
               </div>
             </div>
             <div class="modal-footer bg-light">
-              <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
-              <button type="submit" class="btn btn-primary-sipkm btn-sm" data-loading-text="Menugaskan...">
+              <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" data-bs-dismiss="modal">Batal</button>
+              <button type="submit" class="btn btn-primary-sipkm btn-sm rounded-pill px-3" data-loading-text="Menugaskan...">
                 <i class="bi bi-check2-circle me-1"></i> Simpan Penugasan
               </button>
             </div>
@@ -360,31 +536,4 @@
   <?php endforeach; ?>
 <?php endif; ?>
 
-<script>
-function filterProposalDashboard() {
-  const query = document.getElementById('searchProposalDashboard').value.toLowerCase().trim();
-  const rows = document.querySelectorAll('#tbodyProposalDashboard tr.item-proposal-dashboard');
-  let visibleCount = 0;
-
-  rows.forEach(row => {
-    const text = row.getAttribute('data-text') || '';
-    if (!query || text.includes(query)) {
-      row.style.display = '';
-      visibleCount++;
-    } else {
-      row.style.display = 'none';
-    }
-  });
-
-  const noMatch = document.getElementById('noMatchProposalDashboard');
-  if (noMatch) {
-    noMatch.style.display = (visibleCount === 0 && rows.length > 0) ? '' : 'none';
-  }
-
-  const countEl = document.getElementById('countProposalDashboard');
-  if (countEl) {
-    countEl.innerHTML = `Menampilkan <strong>${visibleCount}</strong> dari ${rows.length} usulan`;
-  }
-}
-</script>
 <?= $this->endSection() ?>

@@ -48,9 +48,14 @@
         </div>
       </div>
 
-      <div class="mb-3 px-2 py-2 rounded-3" style="background: rgba(255,255,255,0.08);">
-        <small class="d-block text-warning fw-semibold"><?= esc($activeRole) ?></small>
-        <span class="small text-white"><?= esc($userName ?? 'Pengguna Preview') ?></span>
+      <div class="mb-3 px-3 py-2 rounded-3 d-flex justify-content-between align-items-center" style="background: rgba(255,255,255,0.08);">
+        <div class="overflow-hidden">
+          <small class="d-block text-warning fw-semibold" style="font-size: 11px;"><?= esc($activeRole) ?></small>
+          <span class="small text-white text-truncate d-block"><?= esc($userName ?? 'Pengguna Preview') ?></span>
+        </div>
+        <button type="button" class="btn btn-sm text-light p-0 border-0 opacity-75 ms-2 flex-shrink-0" data-bs-toggle="modal" data-bs-target="#modalGantiPasswordGlobal" title="Ganti Password">
+          <i class="bi bi-key fs-6"></i>
+        </button>
       </div>
 
       <ul class="nav flex-column">
@@ -69,27 +74,27 @@
         <?php elseif ($activeRole === 'Admin'): ?>
           <li class="nav-item">
             <a class="nav-link <?= $activeMenu === 'dashboard' ? 'active' : '' ?>" href="<?= base_url('admin/dashboard') ?>">
-              <i class="bi bi-speedometer2"></i> Dashboard Admin
+              <i class="bi bi-speedometer2"></i> Dashboard
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link <?= $activeMenu === 'dosen' ? 'active' : '' ?>" href="<?= base_url('admin/dosen') ?>">
-              <i class="bi bi-person-badge"></i> Kelola Dosen Peninjau
+              <i class="bi bi-person-badge"></i> Dosen Peninjau
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link <?= $activeMenu === 'kelompok' ? 'active' : '' ?>" href="<?= base_url('admin/kelompok') ?>">
-              <i class="bi bi-people"></i> Kelola Kelompok PKM
+              <i class="bi bi-people"></i> Kelompok PKM
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link <?= $activeMenu === 'proposal' ? 'active' : '' ?>" href="<?= base_url('admin/proposal') ?>">
-              <i class="bi bi-file-earmark-text"></i> Kelola Proposal PKM
+              <i class="bi bi-file-earmark-text"></i> Proposal PKM
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link <?= $activeMenu === 'lomba' ? 'active' : '' ?>" href="<?= base_url('admin/lomba') ?>">
-              <i class="bi bi-trophy"></i> Kelola Informasi Lomba
+              <i class="bi bi-trophy"></i> Informasi Lomba
             </a>
           </li>
 
@@ -144,14 +149,16 @@
 
   <!-- Main Content -->
   <div class="flex-grow-1 d-flex flex-column">
-    <header class="bg-white border-bottom px-4 py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
-      <h5 class="mb-0 fw-bold text-dark"><?= esc($pageHeader ?? 'Dashboard') ?></h5>
+    <?php if (($activeMenu ?? '') !== 'dashboard'): ?>
+    <header class="border-bottom px-4 py-3 d-flex flex-wrap justify-content-between align-items-center gap-2" style="background: var(--sipkm-card-bg); border-color: var(--sipkm-card-border) !important;">
+      <h5 class="mb-0 fw-bold" style="color: var(--sipkm-primary);"><?= esc($pageHeader ?? 'Dashboard') ?></h5>
       <div class="d-flex align-items-center gap-2">
-        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#modalGantiPasswordGlobal" title="Ubah Password Akun Anda">
+        <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#modalGantiPasswordGlobal" title="Ubah Password Akun Anda">
           <i class="bi bi-key-fill me-1"></i> Ganti Password
         </button>
       </div>
     </header>
+    <?php endif; ?>
 
     <main class="p-4 flex-grow-1">
       <?= $this->renderSection('content') ?>

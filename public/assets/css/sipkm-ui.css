@@ -1,36 +1,51 @@
 :root {
-  --sipkm-primary: #0f294a;
-  --sipkm-primary-light: #1e40af;
-  --sipkm-accent: #f59e0b;
-  --sipkm-bg: #f4f6f9;
-  --sipkm-card-border: #e2e8f0;
+  --sipkm-primary: #112842;          /* Rich Deep Navy (Sidebar, Top Banner, Dark Stat Cards) */
+  --sipkm-primary-hover: #173557;
+  --sipkm-primary-light: #2563eb;    /* Vibrant Royal/Cyan Blue */
+  --sipkm-soft-blue: #d4e4f7;        /* Soft Pastel Blue for Stat Cards */
+  --sipkm-soft-blue-text: #112842;
+  --sipkm-soft-blue-subtext: #475569;
+  --sipkm-badge-blue: #e0f2fe;       /* Pill Badge Soft Blue */
+  --sipkm-badge-blue-text: #0284c7;
+  --sipkm-accent: #f59e0b;           /* Warm Gold / Yellow */
+  --sipkm-accent-light: #fef3c7;     /* Soft Yellow for Plotting Pill */
+  --sipkm-accent-text: #92400e;
+  --sipkm-bg: #edf3f8;               /* Cool soft blue-gray body background */
+  --sipkm-card-bg: #ffffff;
+  --sipkm-card-border: #e2ebf3;
+  --sipkm-text-main: #1e293b;        /* Charcoal body text */
+  --sipkm-text-muted: #64748b;
+  --sipkm-sidebar-bg: #112842;
+  --sipkm-sidebar-active: rgba(255, 255, 255, 0.12);
+  --sipkm-card-radius: 18px;
 }
 
 body {
   background-color: var(--sipkm-bg);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  color: #1e293b;
+  color: var(--sipkm-text-main);
   overflow-x: hidden;
 }
 
 /* 1. Interactive Card & Hover Lift Effect */
 .sipkm-card {
-  background: #ffffff;
+  background: var(--sipkm-card-bg);
   border: 1px solid var(--sipkm-card-border);
-  border-radius: 14px;
+  border-radius: var(--sipkm-card-radius);
+  box-shadow: 0 2px 8px rgba(17, 40, 66, 0.04);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sipkm-card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px -8px rgba(15, 41, 74, 0.14);
-  border-color: #93c5fd;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px -6px rgba(17, 40, 66, 0.1);
+  border-color: #cbd5e1;
 }
 
 /* 2. Button States & Active Press */
 .btn-sipkm {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: 10px;
+  border-radius: 12px;
   font-weight: 500;
 }
 
@@ -45,8 +60,8 @@ body {
 }
 
 .btn-primary-sipkm:hover:not(:disabled) {
-  background-color: var(--sipkm-primary-light);
-  border-color: var(--sipkm-primary-light);
+  background-color: var(--sipkm-primary-hover);
+  border-color: var(--sipkm-primary-hover);
   color: #fff;
 }
 
@@ -144,29 +159,35 @@ body.modal-open .animate-fade-up {
 
 /* 6. Sidebar Layout & Floating Toast */
 .sipkm-sidebar {
-  width: 265px;
+  width: 260px;
   min-height: 100vh;
-  background: var(--sipkm-primary);
-  color: #e2e8f0;
+  background: var(--sipkm-sidebar-bg);
+  color: #cbd5e1;
   transition: all 0.3s ease;
 }
 
 .sipkm-sidebar .nav-link {
-  color: #cbd5e1;
-  border-radius: 10px;
+  color: #94a3b8;
+  border-radius: 12px;
   padding: 10px 14px;
   margin-bottom: 4px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  font-weight: 500;
+  font-size: 0.92rem;
   transition: all 0.2s ease;
 }
 
-.sipkm-sidebar .nav-link:hover,
-.sipkm-sidebar .nav-link.active {
-  background: rgba(255, 255, 255, 0.14);
+.sipkm-sidebar .nav-link:hover {
+  background: rgba(255, 255, 255, 0.08);
   color: #ffffff;
-  transform: translateX(3px);
+}
+
+.sipkm-sidebar .nav-link.active {
+  background: var(--sipkm-sidebar-active);
+  color: #ffffff;
+  font-weight: 600;
 }
 
 #sipkm-toast-container {
@@ -174,6 +195,98 @@ body.modal-open .animate-fade-up {
   bottom: 24px;
   right: 24px;
   z-index: 9999;
+}
+
+/* 6.1 Theme Pallet Component Classes (Mockup Accurate) */
+.banner-admin-navy {
+  background: var(--sipkm-primary);
+  color: #ffffff;
+  border-radius: var(--sipkm-card-radius);
+  padding: 1.5rem 1.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.card-stat-navy {
+  background: var(--sipkm-primary);
+  color: #ffffff;
+  border-radius: var(--sipkm-card-radius);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 1.25rem 1.4rem;
+  transition: all 0.2s ease;
+}
+.card-stat-navy:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(17, 40, 66, 0.22);
+}
+
+.card-stat-pastel {
+  background: var(--sipkm-soft-blue);
+  color: var(--sipkm-soft-blue-text);
+  border-radius: var(--sipkm-card-radius);
+  border: 1px solid rgba(17, 40, 66, 0.05);
+  padding: 1.25rem 1.4rem;
+  transition: all 0.2s ease;
+}
+.card-stat-pastel:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(17, 40, 66, 0.08);
+}
+
+.pill-btn-plotting {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+  font-weight: 600;
+  font-size: 0.78rem;
+  padding: 4px 14px;
+  border-radius: 50px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.pill-btn-plotting:hover {
+  background: #fde047;
+  color: #78350f;
+  transform: scale(1.03);
+}
+
+.pill-badge-blue {
+  background: #e0f2fe;
+  color: #0369a1;
+  font-weight: 600;
+  font-size: 0.75rem;
+  padding: 4px 12px;
+  border-radius: 50px;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.progress-bar-gradient {
+  background: linear-gradient(90deg, #112842 0%, #3b82f6 100%);
+  border-radius: 50px;
+}
+
+.donut-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.dash-list-item {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+.dash-list-item:last-child {
+  border-bottom: none;
 }
 
 /* 7. Stepper Horizontal Timeline (Tracking Proposal) */
